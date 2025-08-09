@@ -186,7 +186,11 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
   const handleRegenerate = async () => {
     try {
       const res = await regenerateWords(regeneratePassword);
-      setNewSeed(res.seed);
+      const phrase = res.mnemonic
+        .sort((a, b) => a.position - b.position)
+        .map((w) => w.word)
+        .join(" ");
+      setNewSeed(phrase);
       setRegeneratePassword("");
     } catch (err) {
       console.error(err);
