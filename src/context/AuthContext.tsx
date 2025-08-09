@@ -30,7 +30,7 @@ interface AuthContextValue {
   tokens: Tokens | null;
   isAuthenticated: boolean;
   userInfo: UserInfo | null;
-  login: (username: string, password: string) => Promise<void>;
+  login: (username: string, password: string, code?: string) => Promise<void>;
   register: (
     username: string,
     password: string,
@@ -78,8 +78,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const login = async (
     username: string,
     password: string,
+    code?: string,
   ): Promise<void> => {
-    const t = await apiLogin(username, password);
+    const t = await apiLogin(username, password, code);
     saveTokens(t);
     setTokens(t);
     const p = await apiProfile();

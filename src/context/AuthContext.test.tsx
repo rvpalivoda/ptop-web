@@ -54,7 +54,7 @@ describe("AuthContext", () => {
       await ctx!.login("user", "pass");
     });
 
-    expect(login).toHaveBeenCalledWith("user", "pass");
+    expect(login).toHaveBeenCalledWith("user", "pass", undefined);
     expect(profile).toHaveBeenCalled();
     expect(ctx!.userInfo).toEqual({
       username: "user",
