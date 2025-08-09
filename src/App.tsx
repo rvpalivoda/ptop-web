@@ -15,6 +15,7 @@ import Adverts from "./pages/Adverts";
 import Orders from "./pages/Orders";
 import Transactions from "./pages/Transactions";
 import Escrow from "./pages/Escrow";
+import { ScrollToTopButton } from "./components/ScrollToTopButton";
 
 const queryClient = new QueryClient();
 
@@ -38,6 +39,7 @@ const App = () => (
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <ScrollToTopButton />
         </BrowserRouter>
       </AuthProvider>
     </TooltipProvider>

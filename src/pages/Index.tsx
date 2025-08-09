@@ -21,7 +21,7 @@ const Index = () => {
     <div className="min-h-screen bg-gray-900 text-white">
       <Header />
 
-      <div className="container mx-auto px-4 py-0">
+      <div className="container mx-auto px-4 pt-20">
         {/* Trading
         <TradingStats />
         Stats */}
