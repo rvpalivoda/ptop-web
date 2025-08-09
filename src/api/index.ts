@@ -4,3 +4,5 @@ export * from './two_factor';
 export * from './adverts';
 export * from './dictionaries';
 export * from './pin';
+export * from './offers';
+export * from './clientPaymentMethods';
