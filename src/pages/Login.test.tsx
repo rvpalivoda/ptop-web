@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import { render, screen, fireEvent } from '@testing-library/react';
 import Login from './Login';
+import '../i18n';
 
 const loginMock = vi.fn();
 vi.mock('@/context/AuthContext', () => ({
@@ -9,7 +10,7 @@ vi.mock('@/context/AuthContext', () => ({
 }));
 
 describe('Login page', () => {
-  it('отправляет учетные данные при сабмите', async () => {
+  it('submits credentials', async () => {
     loginMock.mockResolvedValue(undefined);
     render(
       <MemoryRouter>
@@ -20,12 +21,12 @@ describe('Login page', () => {
     fireEvent.change(screen.getByPlaceholderText(/username/i), {
       target: { value: 'user' },
     });
-    fireEvent.change(screen.getByPlaceholderText(/Введите пароль/i), {
+    fireEvent.change(screen.getByPlaceholderText(/Enter password/i), {
       target: { value: 'pass' },
     });
-    fireEvent.click(screen.getByRole('button', { name: /войти/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Sign In/i }));
 
-    await screen.findByText(/Забыли пароль\?/i);
+    await screen.findByText(/Forgot password\?/i);
     expect(loginMock).toHaveBeenCalledWith('user', 'pass');
   });
 });

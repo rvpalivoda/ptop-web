@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import Recover from './Recover';
+import '../i18n';
 
 const recoverMock = vi.fn();
 vi.mock('@/context', () => ({ useAuth: () => ({ recover: recoverMock }) }));
@@ -13,7 +14,7 @@ const recoverChallengeMock = vi.mocked(recoverChallenge);
 recoverChallengeMock.mockResolvedValue({ positions: [1, 2, 3] });
 
 describe('Recover page', () => {
-  it('отправляет слова и новый пароль', async () => {
+  it('submits words and new password', async () => {
     recoverMock.mockResolvedValue(undefined);
     render(
       <MemoryRouter>
@@ -35,7 +36,7 @@ describe('Recover page', () => {
     fireEvent.change(passFields[0], { target: { value: 'password1' } });
     fireEvent.change(passFields[1], { target: { value: 'password1' } });
 
-    fireEvent.click(screen.getByRole('button', { name: /Восстановить/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Recover/i }));
 
     await waitFor(() =>
       expect(recoverMock).toHaveBeenCalledWith(
