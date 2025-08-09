@@ -4,7 +4,12 @@
     "register": "Register",
     "trade": "Trade",
     "wallet": "Wallet",
-    "history": "History"
+    "history": "History",
+    "balance": "Balance",
+    "adverts": "Adverts",
+    "orders": "Orders",
+    "transactions": "Transactions",
+    "escrow": "Escrow"
   },
   "login": {
     "back": "Back",

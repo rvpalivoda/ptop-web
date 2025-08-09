@@ -22,14 +22,23 @@ export const Header = () => {
             </div>
           </div>
 
-          {/* Desktop Navigation
           <nav className="hidden md:flex items-center space-x-8">
-            <a href="#" className="text-gray-300 hover:text-white transition-colors">P2P</a>
-            <a href="#" className="text-gray-300 hover:text-white transition-colors">{t('header.trade')}</a>
-            <a href="#" className="text-gray-300 hover:text-white transition-colors">{t('header.wallet')}</a>
-            <a href="#" className="text-gray-300 hover:text-white transition-colors">{t('header.history')}</a>
+            <Link to="/balance" className="text-gray-300 hover:text-white transition-colors">
+              {t('header.balance')}
+            </Link>
+            <Link to="/adverts" className="text-gray-300 hover:text-white transition-colors">
+              {t('header.adverts')}
+            </Link>
+            <Link to="/orders" className="text-gray-300 hover:text-white transition-colors">
+              {t('header.orders')}
+            </Link>
+            <Link to="/transactions" className="text-gray-300 hover:text-white transition-colors">
+              {t('header.transactions')}
+            </Link>
+            <Link to="/escrow" className="text-gray-300 hover:text-white transition-colors">
+              {t('header.escrow')}
+            </Link>
           </nav>
-*/}
           {/* User Actions */}
           <div className="flex items-center space-x-4">
             <button className="text-gray-300 hover:text-white transition-colors">
@@ -68,10 +77,21 @@ export const Header = () => {
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t border-gray-700">
             <nav className="flex flex-col space-y-2">
-              <a href="#" className="text-gray-300 hover:text-white py-2 transition-colors">P2P</a>
-              <a href="#" className="text-gray-300 hover:text-white py-2 transition-colors">{t('header.trade')}</a>
-              <a href="#" className="text-gray-300 hover:text-white py-2 transition-colors">{t('header.wallet')}</a>
-              <a href="#" className="text-gray-300 hover:text-white py-2 transition-colors">{t('header.history')}</a>
+              <Link to="/balance" className="text-gray-300 hover:text-white py-2 transition-colors">
+                {t('header.balance')}
+              </Link>
+              <Link to="/adverts" className="text-gray-300 hover:text-white py-2 transition-colors">
+                {t('header.adverts')}
+              </Link>
+              <Link to="/orders" className="text-gray-300 hover:text-white py-2 transition-colors">
+                {t('header.orders')}
+              </Link>
+              <Link to="/transactions" className="text-gray-300 hover:text-white py-2 transition-colors">
+                {t('header.transactions')}
+              </Link>
+              <Link to="/escrow" className="text-gray-300 hover:text-white py-2 transition-colors">
+                {t('header.escrow')}
+              </Link>
               {isAuthenticated ? (
                 <ProfileDrawer triggerClassName="text-gray-300 hover:text-white py-2 transition-colors text-left flex" />
               ) : (
