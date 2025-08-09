@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import { getAssets, getPaymentMethods } from '@/api/dictionaries';
+import { useTranslation } from 'react-i18next';
 
 type AssetItem = {
   id?: string;
@@ -44,28 +45,29 @@ export const FilterPanel = ({
   onTabChange,
   onCreate
 }: FilterPanelProps) => {
+  const { t } = useTranslation();
   const [assets, setAssets] = useState<{ value: string; label: string }[]>([
-    { value: 'all', label: 'Все' }
+    { value: 'all', label: t('filters.all') }
   ]);
   const [paymentMethods, setPaymentMethods] = useState<{
     value: string;
     label: string;
-  }[]>([{ value: 'all', label: 'Все способы' }]);
+  }[]>([{ value: 'all', label: t('filters.allMethods') }]);
 
   useEffect(() => {
     async function loadDictionaries() {
       try {
         const a = await getAssets();
-        setAssets((prev) => [
-          prev[0],
+        setAssets([
+          { value: 'all', label: t('filters.all') },
           ...a.map((x: AssetItem) => ({
             value: x.id ?? x.ID ?? x.asset_code ?? x.name ?? x.Name ?? x,
             label: x.asset_code ?? x.name ?? x.Name ?? x
           }))
         ]);
         const pm = await getPaymentMethods();
-        setPaymentMethods((prev) => [
-          prev[0],
+        setPaymentMethods([
+          { value: 'all', label: t('filters.allMethods') },
           ...pm.map((x: PaymentMethodItem) => ({
             value: x.id ?? x.ID ?? x.name ?? x.Name ?? x,
             label: x.name ?? x.Name ?? x
@@ -76,7 +78,7 @@ export const FilterPanel = ({
       }
     }
     loadDictionaries();
-  }, []);
+  }, [t]);
 
   return (
     <div className="bg-gray-800 rounded-lg p-4 border border-gray-700 mb-3">
@@ -110,7 +112,7 @@ export const FilterPanel = ({
         <input
           data-testid="min-amount"
           type="number"
-          placeholder="Мин"
+          placeholder={t('filters.min')}
           value={filters.minAmount}
           onChange={(e) => onFiltersChange({ ...filters, minAmount: e.target.value })}
           className="w-24 bg-gray-700 border border-gray-600 rounded-md px-2 py-1 text-white placeholder-gray-400 focus:outline-none"
@@ -119,7 +121,7 @@ export const FilterPanel = ({
         <input
           data-testid="max-amount"
           type="number"
-          placeholder="Макс"
+          placeholder={t('filters.max')}
           value={filters.maxAmount}
           onChange={(e) => onFiltersChange({ ...filters, maxAmount: e.target.value })}
           className="w-24 bg-gray-700 border border-gray-600 rounded-md px-2 py-1 text-white placeholder-gray-400 focus:outline-none"
@@ -146,7 +148,7 @@ export const FilterPanel = ({
               activeTab === 'buy' ? 'bg-green-600 text-white' : 'text-gray-300'
             }`}
           >
-            Купить
+            {t('filters.buy')}
           </button>
           <button
             data-testid="sell-tab"
@@ -155,7 +157,7 @@ export const FilterPanel = ({
               activeTab === 'sell' ? 'bg-red-600 text-white' : 'text-gray-300'
             }`}
           >
-            Продать
+            {t('filters.sell')}
           </button>
         </div>
       </div>
@@ -165,7 +167,7 @@ export const FilterPanel = ({
           onClick={onCreate}
           className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105"
         >
-          + Создать объявление
+          + {t('filters.createAdvert')}
         </button>
       </div>
     </div>
