@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { CreateOfferForm } from '@/components/CreateOfferForm';
 import { getAssets, getPaymentMethods } from '@/api/dictionaries';
 import { useTranslation } from 'react-i18next';
 
@@ -36,7 +37,6 @@ interface FilterPanelProps {
   }) => void;
   activeTab: 'buy' | 'sell';
   onTabChange: (tab: 'buy' | 'sell') => void;
-  onCreate: () => void;
 }
 
 const normalizeAsset = (x: AssetItem): Option => ({
@@ -53,13 +53,13 @@ export const FilterPanel = ({
                               filters,
                               onFiltersChange,
                               activeTab,
-                              onTabChange,
-                              onCreate
+                              onTabChange
                             }: FilterPanelProps) => {
   const { t } = useTranslation();
 
   const [assets, setAssets] = useState<Option[]>([]);
   const [paymentMethods, setPaymentMethods] = useState<Option[]>([]);
+  const [showCreateForm, setShowCreateForm] = useState(false);
 
   // Базовые классы для единой высоты и внешнего вида
   const FIELD_BASE =
@@ -223,10 +223,18 @@ export const FilterPanel = ({
           </div>
 
           {/* Create Advert */}
-          <button type="button" onClick={onCreate} className={CREATE_BTN_CLS}>
+          <button
+            type="button"
+            data-testid="create-advert"
+            onClick={() => setShowCreateForm(true)}
+            className={CREATE_BTN_CLS}
+          >
             + {t('filters.createAdvert')}
           </button>
         </div>
+        {showCreateForm && (
+          <CreateOfferForm onClose={() => setShowCreateForm(false)} />
+        )}
       </div>
   );
 };
