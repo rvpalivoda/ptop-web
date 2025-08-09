@@ -1,0 +1,1499 @@
+basePath: /
+definitions:
+  handlers.ChangePasswordRequest:
+    properties:
+      confirm_password:
+        type: string
+      new_password:
+        type: string
+      old_password:
+        type: string
+    type: object
+  handlers.ChangeUsernameRequest:
+    properties:
+      new_username:
+        type: string
+      password:
+        type: string
+    type: object
+  handlers.CreateClientPaymentMethodRequest:
+    properties:
+      city:
+        type: string
+      country_id:
+        type: string
+      name:
+        type: string
+      payment_method_id:
+        type: string
+      post_code:
+        type: string
+    type: object
+  handlers.DebugDepositRequest:
+    properties:
+      amount:
+        type: string
+      wallet_id:
+        type: string
+    required:
+    - amount
+    - wallet_id
+    type: object
+  handlers.Disable2FARequest:
+    properties:
+      password:
+        type: string
+    type: object
+  handlers.Enable2FARequest:
+    properties:
+      password:
+        type: string
+    type: object
+  handlers.Enable2FAResponse:
+    properties:
+      secret:
+        type: string
+      url:
+        type: string
+    type: object
+  handlers.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  handlers.LoginRequest:
+    properties:
+      code:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  handlers.MnemonicWord:
+    properties:
+      position:
+        type: integer
+      word:
+        type: string
+    type: object
+  handlers.OfferRequest:
+    properties:
+      amount:
+        type: string
+      client_payment_method_ids:
+        items:
+          type: string
+        type: array
+      conditions:
+        type: string
+      from_asset_id:
+        type: string
+      max_amount:
+        type: string
+      min_amount:
+        type: string
+      order_expiration_timeout:
+        type: integer
+      price:
+        type: string
+      to_asset_id:
+        type: string
+    type: object
+  handlers.OrderMessageRequest:
+    properties:
+      content:
+        type: string
+    type: object
+  handlers.OrderRequest:
+    properties:
+      amount:
+        type: string
+      client_payment_method_id:
+        type: string
+      offer_id:
+        type: string
+    type: object
+  handlers.ProfileResponse:
+    properties:
+      pincode_set:
+        type: boolean
+      twofa_enabled:
+        type: boolean
+      username:
+        type: string
+    type: object
+  handlers.RecoverChallengeResponse:
+    properties:
+      positions:
+        items:
+          type: integer
+        type: array
+    type: object
+  handlers.RecoverPhrase:
+    properties:
+      position:
+        type: integer
+      word:
+        type: string
+    type: object
+  handlers.RecoverRequest:
+    properties:
+      new_password:
+        type: string
+      password_confirm:
+        type: string
+      phrases:
+        items:
+          $ref: '#/definitions/handlers.RecoverPhrase'
+        type: array
+      username:
+        type: string
+    type: object
+  handlers.RefreshRequest:
+    properties:
+      refresh_token:
+        type: string
+    type: object
+  handlers.RegenerateMnemonicRequest:
+    properties:
+      password:
+        type: string
+    type: object
+  handlers.RegenerateMnemonicResponse:
+    properties:
+      mnemonic:
+        items:
+          $ref: '#/definitions/handlers.MnemonicWord'
+        type: array
+    type: object
+  handlers.RegisterRequest:
+    properties:
+      password:
+        type: string
+      password_confirm:
+        type: string
+      username:
+        type: string
+    type: object
+  handlers.RegisterResponse:
+    properties:
+      access_token:
+        type: string
+      mnemonic:
+        items:
+          $ref: '#/definitions/handlers.MnemonicWord'
+        type: array
+      refresh_token:
+        type: string
+    type: object
+  handlers.SetPinCodeRequest:
+    properties:
+      password:
+        type: string
+      pincode:
+        type: string
+    type: object
+  handlers.StatusResponse:
+    properties:
+      status:
+        type: string
+    type: object
+  handlers.TokenResponse:
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+    type: object
+  handlers.VerifyPasswordRequest:
+    properties:
+      password:
+        type: string
+    type: object
+  handlers.VerifyPasswordResponse:
+    properties:
+      verified:
+        type: boolean
+    type: object
+  handlers.WalletRequest:
+    properties:
+      asset_id:
+        type: string
+    type: object
+  models.Asset:
+    properties:
+      id:
+        type: string
+      isActive:
+        type: boolean
+      isConvertible:
+        type: boolean
+      name:
+        type: string
+      type:
+        type: string
+    type: object
+  models.Balance:
+    properties:
+      amount:
+        type: number
+      amountEscrow:
+        type: number
+      assetID:
+        type: string
+      clientID:
+        type: string
+      createdAt:
+        type: string
+      id:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  models.ClientPaymentMethod:
+    properties:
+      city:
+        type: string
+      clientID:
+        type: string
+      countryID:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      paymentMethodID:
+        type: string
+      postCode:
+        type: string
+    type: object
+  models.Country:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  models.Escrow:
+    properties:
+      amount:
+        type: number
+      assetID:
+        type: string
+      clientID:
+        type: string
+      createdAt:
+        type: string
+      id:
+        type: string
+      offerID:
+        type: string
+      orderID:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  models.FeeSideType:
+    enum:
+    - sender
+    - receiver
+    - shared
+    type: string
+    x-enum-varnames:
+    - FeeSideSender
+    - FeeSideReceiver
+    - FeeSideShared
+  models.KycLevelHintType:
+    enum:
+    - low
+    - medium
+    - high
+    type: string
+    x-enum-varnames:
+    - KycLevelHintLow
+    - KycLevelHintMedium
+    - KycLevelHintHigh
+  models.MessageType:
+    enum:
+    - TEXT
+    - SYSTEM
+    - FILE
+    type: string
+    x-enum-varnames:
+    - MessageTypeText
+    - MessageTypeSystem
+    - MessageTypeFile
+  models.Offer:
+    properties:
+      amount:
+        type: number
+      clientID:
+        type: string
+      conditions:
+        type: string
+      createdAt:
+        type: string
+      disabledAt:
+        type: string
+      enabledAt:
+        type: string
+      fromAssetID:
+        type: string
+      id:
+        type: string
+      isEnabled:
+        type: boolean
+      maxAmount:
+        type: number
+      minAmount:
+        type: number
+      orderExpirationTimeout:
+        type: integer
+      price:
+        type: number
+      toAssetID:
+        type: string
+      ttl:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  models.Order:
+    properties:
+      amount:
+        type: number
+      buyerID:
+        type: string
+      clientPaymentMethodID:
+        type: string
+      createdAt:
+        type: string
+      expiresAt:
+        type: string
+      fromAssetID:
+        type: string
+      id:
+        type: string
+      isEscrow:
+        type: boolean
+      offerID:
+        type: string
+      price:
+        type: number
+      releasedAt:
+        type: string
+      sellerID:
+        type: string
+      status:
+        $ref: '#/definitions/models.OrderStatus'
+      toAssetID:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  models.OrderMessage:
+    properties:
+      chatID:
+        type: string
+      clientID:
+        type: string
+      content:
+        type: string
+      createdAt:
+        type: string
+      fileSize:
+        format: int64
+        type: integer
+      fileType:
+        type: string
+      fileURL:
+        type: string
+      id:
+        type: string
+      readAt:
+        type: string
+      type:
+        $ref: '#/definitions/models.MessageType'
+      updatedAt:
+        type: string
+    type: object
+  models.OrderStatus:
+    enum:
+    - WAIT_PAYMENT
+    - PAID
+    - RELEASED
+    - CANCELLED
+    - DISPUTE
+    type: string
+    x-enum-varnames:
+    - OrderStatusWaitPayment
+    - OrderStatusPaid
+    - OrderStatusReleased
+    - OrderStatusCancelled
+    - OrderStatusDispute
+  models.PaymentMethod:
+    properties:
+      chargebackWindowHours:
+        type: integer
+      countries:
+        items:
+          $ref: '#/definitions/models.Country'
+        type: array
+      feeSide:
+        $ref: '#/definitions/models.FeeSideType'
+      id:
+        type: string
+      isRealtime:
+        type: boolean
+      isReversible:
+        type: boolean
+      kycLevelHint:
+        $ref: '#/definitions/models.KycLevelHintType'
+      methodGroup:
+        type: string
+      name:
+        type: string
+      provider:
+        type: string
+      regions:
+        items:
+          type: string
+        type: array
+      settlementMinutes:
+        type: integer
+      typicalFiatCCY:
+        type: string
+    type: object
+  models.Wallet:
+    properties:
+      assetID:
+        type: string
+      clientID:
+        type: string
+      createdAt:
+        type: string
+      disabledAt:
+        type: string
+      enabledAt:
+        type: string
+      id:
+        type: string
+      index:
+        type: integer
+      isEnabled:
+        type: boolean
+      value:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: API сервиса PTOP
+  title: PTOP API
+  version: "1.0"
+paths:
+  /assets:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Asset'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Список активных активов
+      tags:
+      - reference
+  /auth/2fa/disable:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: подтверждение пароля
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.Disable2FARequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.StatusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Отключение двухфакторной аутентификации
+      tags:
+      - auth
+  /auth/2fa/enable:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: подтверждение пароля
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.Enable2FARequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Enable2FAResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Включение двухфакторной аутентификации
+      tags:
+      - auth
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Аутентифицирует клиента и выдаёт пару токенов. При включённой 2FA
+        требуется код.
+      parameters:
+      - description: учётные данные
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Вход клиента
+      tags:
+      - auth
+  /auth/logout:
+    post:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.StatusResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Выход клиента
+      tags:
+      - auth
+  /auth/mnemonic/regenerate:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: пароль
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.RegenerateMnemonicRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.RegenerateMnemonicResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Перегенерация мнемонической фразы
+      tags:
+      - auth
+  /auth/password:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: пароли
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.ChangePasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.StatusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Смена пароля
+      tags:
+      - auth
+  /auth/pincode:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: пин-код
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.SetPinCodeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.StatusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Установка PIN-кода
+      tags:
+      - auth
+  /auth/profile:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ProfileResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Профиль клиента
+      tags:
+      - auth
+  /auth/recover:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: фразы и новый пароль
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.RecoverRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Восстановление доступа
+      tags:
+      - auth
+  /auth/recover/{username}:
+    get:
+      parameters:
+      - description: имя пользователя
+        in: path
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.RecoverChallengeResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Запрос позиций для восстановления
+      tags:
+      - auth
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: refresh токен
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.RefreshRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Обновление access токена
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Создаёт нового клиента с уникальным именем, хешем пароля и мнемонической
+        фразой
+      parameters:
+      - description: данные регистрации
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.RegisterResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Регистрация клиента
+      tags:
+      - auth
+  /auth/username:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: новое имя
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.ChangeUsernameRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.StatusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Смена имени пользователя
+      tags:
+      - auth
+  /auth/verify-password:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: пароль
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.VerifyPasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.VerifyPasswordResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Проверка текущего пароля
+      tags:
+      - auth
+  /client/balances:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Balance'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Список балансов клиента
+      tags:
+      - balances
+  /client/escrows:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Escrow'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Список эскроу клиента
+      tags:
+      - escrows
+  /client/offers:
+    get:
+      parameters:
+      - description: фильтр по активным
+        in: query
+        name: enabled
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Offer'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Список объявлений клиента
+      tags:
+      - offers
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: данные
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.OfferRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Offer'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Создать объявление
+      tags:
+      - offers
+  /client/offers/{id}:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: данные
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.OfferRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Offer'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Изменить объявление
+      tags:
+      - offers
+  /client/offers/{id}/disable:
+    post:
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Offer'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Отключить объявление
+      tags:
+      - offers
+  /client/offers/{id}/enable:
+    post:
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Offer'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Включить объявление
+      tags:
+      - offers
+  /client/orders:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Order'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Список ордеров клиента
+      tags:
+      - orders
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: данные
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.OrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Order'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Создать ордер
+      tags:
+      - orders
+  /client/payment-methods:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ClientPaymentMethod'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Список платёжных методов клиента
+      tags:
+      - client-payment-methods
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: данные
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.CreateClientPaymentMethodRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ClientPaymentMethod'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Создать платёжный метод клиента
+      tags:
+      - client-payment-methods
+  /client/payment-methods/{id}:
+    delete:
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.StatusResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Удалить платёжный метод клиента
+      tags:
+      - client-payment-methods
+  /client/wallets:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Wallet'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Список кошельков клиента
+      tags:
+      - wallets
+    post:
+      consumes:
+      - application/json
+      description: При DEBUG_FAKE_NETWORK=true адрес генерируется без обращения к
+        сети в формате fake:{asset}:{client}:{index}
+      parameters:
+      - description: данные
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.WalletRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Wallet'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Создать кошелёк
+      tags:
+      - wallets
+  /countries:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Country'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Список стран
+      tags:
+      - reference
+  /debug/deposit:
+    post:
+      consumes:
+      - application/json
+      description: Создаёт фейковый депозит на указанный кошелёк
+      parameters:
+      - description: Запрос
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.DebugDepositRequest'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Тестовый депозит
+      tags:
+      - debug
+  /health:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.StatusResponse'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Проверка состояния сервиса
+      tags:
+      - health
+  /offers:
+    get:
+      parameters:
+      - description: ID актива от
+        in: query
+        name: from_asset
+        type: string
+      - description: ID актива к
+        in: query
+        name: to_asset
+        type: string
+      - description: минимальная сумма
+        in: query
+        name: min_amount
+        type: string
+      - description: максимальная сумма
+        in: query
+        name: max_amount
+        type: string
+      - description: ID способа оплаты
+        in: query
+        name: payment_method
+        type: string
+      - description: 'тип объявления: buy или sell'
+        in: query
+        name: type
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Offer'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Список активных объявлений
+      tags:
+      - offers
+  /orders/{id}/messages:
+    get:
+      parameters:
+      - description: ID ордера
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: cursor
+        in: query
+        name: cursor
+        type: string
+      - description: after
+        in: query
+        name: after
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.OrderMessage'
+            type: array
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Список сообщений ордера
+      tags:
+      - orders
+    post:
+      consumes:
+      - application/json
+      - multipart/form-data
+      description: 'Поддерживаются типы файлов: image/jpeg, image/png, application/pdf'
+      parameters:
+      - description: ID ордера
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: данные
+        in: body
+        name: input
+        schema:
+          $ref: '#/definitions/handlers.OrderMessageRequest'
+      - description: файл (image/jpeg, image/png, application/pdf)
+        in: formData
+        name: file
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.OrderMessage'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Отправить сообщение в ордер
+      tags:
+      - orders
+  /orders/{id}/messages/{msgId}/read:
+    patch:
+      parameters:
+      - description: ID ордера
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: ID сообщения
+        in: path
+        name: msgId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.OrderMessage'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Отметить сообщение прочитанным
+      tags:
+      - orders
+  /payment-methods:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Расширенная структура платёжных методов
+          schema:
+            items:
+              $ref: '#/definitions/models.PaymentMethod'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Список платёжных методов
+      tags:
+      - reference
+  /ws/orders/{id}/chat:
+    get:
+      description: При подключении отправляет историю сообщений из кеша Redis
+      parameters:
+      - description: ID ордера
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "101":
+          description: Switching Protocols
+          schema:
+            type: string
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Websocket чат ордера
+      tags:
+      - orders
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
