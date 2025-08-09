@@ -412,7 +412,7 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
             </DialogTrigger>
             <DialogContent className={modalContentCls}>
             <DialogHeader>
-              <DialogTitle>{t("profile.twoFactorAuth")}</DialogTitle>
+              <DialogTitle className="text-center">{t("profile.twoFactorAuth")}</DialogTitle>
             </DialogHeader>
               {!twoFactorEnabled && !twoFactorSecret && (
                 <div className="space-y-4 mt-4">
@@ -455,8 +455,10 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
                       <QRCode value={otpAuthUrl} size={250} />
                     </div>
                   )}
-                  <p className="text-sm">
-                    {t("profile.secret")}{" "}
+                  <p
+                    className="text-sm text-center cursor-pointer"
+                    onClick={() => navigator.clipboard.writeText(twoFactorSecret)}
+                  >
                     <span className="font-mono break-all">
                       {twoFactorSecret}
                     </span>
