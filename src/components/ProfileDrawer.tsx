@@ -238,7 +238,7 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
             "flex items-center space-x-2 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg transition-colors"
           }
         >
-          <User size={20} />
+
           <span>{t("profile.title")}</span>
         </button>
       </SheetTrigger>

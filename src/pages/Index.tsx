@@ -21,12 +21,12 @@ const Index = () => {
     <div className="min-h-screen bg-gray-900 text-white">
       <Header />
 
-      <div className="container mx-auto px-4 pt-20">
+      <div className="container mx-auto px-2 pt-4">
         {/* Trading
         <TradingStats />
         Stats */}
         {/* Main Content */}
-        <div className="mt-8">
+        <div className="mt-16">
           {/* <div className="bg-gray-800 rounded-lg p-6">*/}
           <div>
             <FilterPanel
