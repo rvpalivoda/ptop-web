@@ -239,7 +239,7 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
           }
         >
           <User size={20} />
-          <span className="hidden sm:block">{t("profile.title")}</span>
+          <span>{t("profile.title")}</span>
         </button>
       </SheetTrigger>
       <SheetContent

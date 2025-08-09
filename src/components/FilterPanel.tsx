@@ -88,7 +88,7 @@ export const FilterPanel = ({
             data-testid="from-asset"
             value={filters.fromAsset}
             onChange={(e) => onFiltersChange({ ...filters, fromAsset: e.target.value })}
-            className="w-1/2 sm:w-auto bg-gray-700 border border-gray-600 rounded-md px-2 py-1 text-white focus:outline-none"
+            className="w-1/2 sm:w-auto bg-gray-700 border border-gray-600 rounded-md px-2 py-1 text-white focus:outline-none h-10"
           >
             {assets.map((a) => (
               <option key={a.value} value={a.value}>
@@ -101,7 +101,7 @@ export const FilterPanel = ({
             data-testid="to-asset"
             value={filters.toAsset}
             onChange={(e) => onFiltersChange({ ...filters, toAsset: e.target.value })}
-            className="w-1/2 sm:w-auto bg-gray-700 border border-gray-600 rounded-md px-2 py-1 text-white focus:outline-none"
+            className="w-1/2 sm:w-auto bg-gray-700 border border-gray-600 rounded-md px-2 py-1 text-white focus:outline-none h-10"
           >
             {assets.map((a) => (
               <option key={a.value} value={a.value}>
@@ -135,7 +135,7 @@ export const FilterPanel = ({
           data-testid="payment-method"
           value={filters.paymentMethod}
           onChange={(e) => onFiltersChange({ ...filters, paymentMethod: e.target.value })}
-          className="w-full sm:w-auto bg-gray-700 border border-gray-600 rounded-md px-2 py-1 text-white focus:outline-none"
+          className="w-full sm:w-auto bg-gray-700 border border-gray-600 rounded-md px-2 py-1 text-white focus:outline-none h-10"
         >
           {paymentMethods.map((m) => (
             <option key={m.value} value={m.value}>
@@ -167,7 +167,7 @@ export const FilterPanel = ({
 
         <button
           onClick={onCreate}
-          className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105"
+          className="w-full sm:w-auto sm:ml-auto bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-3 py-1 text-sm rounded-md font-medium transition-all"
         >
           + {t('filters.createAdvert')}
         </button>
