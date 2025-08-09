@@ -6,5 +6,5 @@ export * from './dictionaries';
 export * from './pin';
 export * from './offers';
 export * from './clientPaymentMethods';
-export * from './balances';
+export * from './clientAssets';
 export * from './wallets';

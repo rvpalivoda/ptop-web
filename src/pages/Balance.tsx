@@ -1,22 +1,22 @@
 import { useEffect, useState } from 'react';
 import { Header } from '@/components/Header';
 import { useTranslation } from 'react-i18next';
-import { getBalances, createWallet, Balance as BalanceType } from '@/api';
+import { getClientAssets, createWallet, ClientAsset } from '@/api';
 
 const Balance = () => {
   const { t } = useTranslation();
-  const [balances, setBalances] = useState<BalanceType[]>([]);
+  const [assets, setAssets] = useState<ClientAsset[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getBalances()
-      .then(setBalances)
+    getClientAssets()
+      .then(setAssets)
       .finally(() => setLoading(false));
   }, []);
 
   const handleCreateWallet = async (assetId: string) => {
     const wallet = await createWallet(assetId);
-    setBalances(prev =>
+    setAssets(prev =>
       prev.map(b => (b.id === assetId ? { ...b, value: wallet.value } : b)),
     );
   };
@@ -30,7 +30,7 @@ const Balance = () => {
           <p>{t('balance.loading')}</p>
         ) : (
           <div className="space-y-4">
-            {balances.map((b) => (
+            {assets.map((b) => (
               <div
                 key={b.id}
                 className="p-4 bg-gray-800 rounded-lg flex justify-between items-center"
