@@ -45,10 +45,10 @@ describe("auth api", () => {
         json: async () => ({ access_token: "a", refresh_token: "r" }),
       } as any);
 
-    const tokens = await login("user", "pass");
+    const tokens = await login("user", "pass", "321");
     expect(mockFetch).toHaveBeenCalled();
     const body = JSON.parse(mockFetch.mock.calls[0][1].body);
-    expect(body).toEqual({ username: "user", password: "pass" });
+    expect(body).toEqual({ username: "user", password: "pass", code: "321" });
     expect(tokens).toEqual({ access: "a", refresh: "r" });
   });
 

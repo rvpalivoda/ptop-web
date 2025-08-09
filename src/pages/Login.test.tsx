@@ -27,6 +27,6 @@ describe('Login page', () => {
     fireEvent.click(screen.getByRole('button', { name: /Sign In/i }));
 
     await screen.findByText(/Forgot password\?/i);
-    expect(loginMock).toHaveBeenCalledWith('user', 'pass');
+    expect(loginMock).toHaveBeenCalledWith('user', 'pass', '');
   });
 });

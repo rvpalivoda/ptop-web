@@ -13,7 +13,7 @@ const Login = () => {
     const [formData, setFormData] = useState({
         username: '',
         password: '',
-        code: '',
+        code: ''
     });
     const { t } = useTranslation();
 
@@ -84,19 +84,19 @@ const Login = () => {
                             </div>
                         </div>
 
+
                         <div>
                             <label className="block text-sm font-medium text-gray-300 mb-2">
-                                {t('login.2facode')}
+                                Код 2FA
                             </label>
                             <input
                                 type="text"
                                 value={formData.code}
                                 onChange={(e) => setFormData({...formData, code: e.target.value})}
                                 className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder={t('login.2faCodePlaceholder')}
+                                placeholder="123456"
                             />
                         </div>
-
 
                         <button
                             type="submit"

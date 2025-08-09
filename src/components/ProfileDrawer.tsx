@@ -161,8 +161,6 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
     }
   };
 
-  const verifyPassword = async () => verifyPasswordWith(passwordCheck);
-
   const startTwoFactor = async () => {
     try {
       const res = await enable2fa(passwordCheck);
@@ -194,7 +192,7 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
   };
 
   const handleRegenerateWithVerify = async () => {
-    const ok = await verifyPassword();
+    const ok = await verifyPasswordWith(regeneratePassword);
     if (ok) {
       await handleRegenerate();
     }
