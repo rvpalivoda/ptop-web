@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { Header } from '@/components/Header';
-import { OrderList } from '@/components/OrderList';
+import { OfferList } from '@/components/OfferList';
 
 import { FilterPanel } from '@/components/FilterPanel';
 //import { TradingStats } from '@/components/TradingStats';
