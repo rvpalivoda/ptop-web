@@ -90,7 +90,6 @@
     "twoFactorAuth": "Two-factor authentication",
     "enable2fa": "Enable 2FA",
     "disable2fa": "Disable 2FA",
-    "secret": "Secret:",
     "recoveryWords": "Recovery words",
     "generate": "Generate",
     "copy": "Copy",
