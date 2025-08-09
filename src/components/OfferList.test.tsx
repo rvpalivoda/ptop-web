@@ -1,14 +1,14 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, waitFor } from '@testing-library/react';
 import '../i18n';
-import { OrderList } from './OrderList';
+import { OfferList } from './OfferList';
 import { getOffers } from '@/api/offers';
 
 vi.mock('@/api/offers', () => ({
   getOffers: vi.fn().mockResolvedValue([]),
 }));
 
-describe('OrderList', () => {
+describe('OfferList', () => {
   const baseFilters = {
     fromAsset: 'all',
     toAsset: 'all',
@@ -18,7 +18,7 @@ describe('OrderList', () => {
   };
 
   it('запрашивает офферы при монтировании', async () => {
-    render(<OrderList type="buy" filters={baseFilters} />);
+    render(<OfferList type="buy" filters={baseFilters} />);
     await waitFor(() => {
       expect(getOffers).toHaveBeenCalled();
     });
@@ -26,12 +26,12 @@ describe('OrderList', () => {
 
   it('запрашивает офферы при изменении фильтров', async () => {
     const { rerender } = render(
-      <OrderList type="buy" filters={baseFilters} />,
+      <OfferList type="buy" filters={baseFilters} />,
     );
     await waitFor(() => expect(getOffers).toHaveBeenCalled());
     (getOffers as unknown as ReturnType<typeof vi.fn>).mockClear();
     const newFilters = { ...baseFilters, minAmount: '10' };
-    rerender(<OrderList type="buy" filters={newFilters} />);
+    rerender(<OfferList type="buy" filters={newFilters} />);
     await waitFor(() => expect(getOffers).toHaveBeenCalled());
   });
 });

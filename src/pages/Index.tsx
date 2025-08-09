@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { Header } from '@/components/Header';
-import { OrderList } from '@/components/OrderList';
+import { OfferList } from '@/components/OfferList';
 import { CreateOfferForm } from '@/components/CreateOfferForm';
 import { FilterPanel } from '@/components/FilterPanel';
 //import { TradingStats } from '@/components/TradingStats';
@@ -38,7 +38,7 @@ const Index = () => {
             />
 
             {/* Orders List */}
-            <OrderList type={activeTab} filters={filters} />
+            <OfferList type={activeTab} filters={filters} />
             </div>
           </div>
         </div>
