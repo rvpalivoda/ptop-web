@@ -18,7 +18,7 @@ export interface RegisterResponse {
 }
 
 export interface MnemonicResponse {
-  mnemonic: string;
+  mnemonic: MnemonicWord[];
 }
 
 export async function login(
@@ -83,7 +83,7 @@ export async function recover(
 }
 
 export async function regenerateWords(password: string) {
-  return apiRequest<MnemonicResponse>("/auth/regenerate", {
+  return apiRequest<MnemonicResponse>("/auth/mnemonic/regenerate", {
     method: "POST",
     body: JSON.stringify({ password }),
   });

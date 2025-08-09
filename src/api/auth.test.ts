@@ -9,6 +9,7 @@ import {
   recoverChallenge,
   changePassword,
   verifyPassword,
+  regenerateWords,
   logout,
 } from "./auth";
 
@@ -159,6 +160,25 @@ describe("auth api", () => {
     const body = JSON.parse(opts.body);
     expect(body).toEqual({ password: "pwd" });
     expect(res).toEqual({ verified: true });
+  });
+
+  it("regenerateWords отправляет пароль и возвращает мнемонику", async () => {
+    const mockFetch = vi
+      .spyOn(global, "fetch" as any)
+      .mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          mnemonic: [{ position: 1, word: "one" }],
+        }),
+      } as any);
+
+    const res = await regenerateWords("pwd");
+    const [url, opts] = mockFetch.mock.calls[0];
+    expect((url as string).endsWith("/auth/mnemonic/regenerate")).toBe(true);
+    const body = JSON.parse(opts.body);
+    expect(body).toEqual({ password: "pwd" });
+    expect(res).toEqual({ mnemonic: [{ position: 1, word: "one" }] });
   });
 
   it("logout делает POST без тела", async () => {
