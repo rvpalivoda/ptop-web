@@ -4,10 +4,12 @@ import { Bell, Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/context';
 import { ProfileDrawer } from './ProfileDrawer';
+import { useTranslation } from 'react-i18next';
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isAuthenticated } = useAuth();
+  const { t } = useTranslation();
 
   return (
     <header className="bg-gray-800 border-b border-gray-700">
@@ -23,9 +25,9 @@ export const Header = () => {
           {/* Desktop Navigation
           <nav className="hidden md:flex items-center space-x-8">
             <a href="#" className="text-gray-300 hover:text-white transition-colors">P2P</a>
-            <a href="#" className="text-gray-300 hover:text-white transition-colors">Торговля</a>
-            <a href="#" className="text-gray-300 hover:text-white transition-colors">Кошелек</a>
-            <a href="#" className="text-gray-300 hover:text-white transition-colors">История</a>
+            <a href="#" className="text-gray-300 hover:text-white transition-colors">{t('header.trade')}</a>
+            <a href="#" className="text-gray-300 hover:text-white transition-colors">{t('header.wallet')}</a>
+            <a href="#" className="text-gray-300 hover:text-white transition-colors">{t('header.history')}</a>
           </nav>
 */}
           {/* User Actions */}
@@ -41,13 +43,13 @@ export const Header = () => {
                   to="/login"
                   className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg transition-colors"
                 >
-                  Вход
+                  {t('header.login')}
                 </Link>
                 <Link
                   to="/register"
                   className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg transition-colors"
                 >
-                  Регистрация
+                  {t('header.register')}
                 </Link>
               </>
             )}
@@ -67,9 +69,9 @@ export const Header = () => {
           <div className="md:hidden py-4 border-t border-gray-700">
             <nav className="flex flex-col space-y-2">
               <a href="#" className="text-gray-300 hover:text-white py-2 transition-colors">P2P</a>
-              <a href="#" className="text-gray-300 hover:text-white py-2 transition-colors">Торговля</a>
-              <a href="#" className="text-gray-300 hover:text-white py-2 transition-colors">Кошелек</a>
-              <a href="#" className="text-gray-300 hover:text-white py-2 transition-colors">История</a>
+              <a href="#" className="text-gray-300 hover:text-white py-2 transition-colors">{t('header.trade')}</a>
+              <a href="#" className="text-gray-300 hover:text-white py-2 transition-colors">{t('header.wallet')}</a>
+              <a href="#" className="text-gray-300 hover:text-white py-2 transition-colors">{t('header.history')}</a>
               {isAuthenticated ? (
                 <ProfileDrawer triggerClassName="text-gray-300 hover:text-white py-2 transition-colors text-left flex" />
               ) : (
@@ -78,13 +80,13 @@ export const Header = () => {
                     to="/login"
                     className="text-gray-300 hover:text-white py-2 transition-colors"
                   >
-                    Вход
+                    {t('header.login')}
                   </Link>
                   <Link
                     to="/register"
                     className="text-gray-300 hover:text-white py-2 transition-colors"
                   >
-                    Регистрация
+                    {t('header.register')}
                   </Link>
                 </>
               )}

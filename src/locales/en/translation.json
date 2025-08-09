@@ -1,0 +1,71 @@
+{
+  "header": {
+    "login": "Login",
+    "register": "Register",
+    "trade": "Trade",
+    "wallet": "Wallet",
+    "history": "History"
+  },
+  "login": {
+    "back": "Back",
+    "title": "Sign In",
+    "subtitle": "Sign in to your account to access trading",
+    "username": "Username",
+    "password": "Password",
+    "usernamePlaceholder": "username",
+    "passwordPlaceholder": "Enter password",
+    "submit": "Sign In",
+    "register": "Register",
+    "forgot": "Forgot password?",
+    "toastSuccess": "You have successfully signed in",
+    "toastErrorPrefix": "Login error: {{message}}",
+    "toastErrorGeneric": "Login error"
+  },
+  "register": {
+    "back": "Back",
+    "title": "Register",
+    "subtitle": "Create an account to start trading",
+    "username": "Username",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "passwordPlaceholder": "Minimum 8 characters",
+    "confirmPasswordPlaceholder": "Repeat password",
+    "submit": "Create account",
+    "seedTitle": "Your seed phrase:",
+    "copy": "Copy",
+    "download": "Download",
+    "toLogin": "Go to login",
+    "login": "Login",
+    "forgot": "Forgot password?",
+    "toastShortPassword": "Password is too short. Minimum 8 characters",
+    "toastPasswordsMismatch": "Passwords do not match",
+    "toastSuccess": "Registration successful",
+    "toastErrorPrefix": "Registration error: {{message}}",
+    "toastErrorGeneric": "Registration failed"
+  },
+  "recover": {
+    "back": "Back to login",
+    "title": "Recover access",
+    "subtitle": "Enter requested words from seed",
+    "successTitle": "Access restored",
+    "successSubtitle": "You have successfully authorized",
+    "username": "Username",
+    "enterWords": "Enter words No {{one}}, {{two}}, {{three}}",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "submit": "Recover",
+    "welcome": "Welcome, {{username}}",
+    "register": "Register",
+    "login": "Login",
+    "toastPositionsError": "Failed to get positions",
+    "toastShortPassword": "Password is too short. Minimum 8 characters",
+    "toastPasswordsMismatch": "Passwords do not match",
+    "toastSuccess": "Password updated and access restored",
+    "toastErrorPrefix": "Recover access error: {{message}}",
+    "toastErrorGeneric": "Recover access error"
+  },
+  "notFound": {
+    "oops": "Oops! Page not found",
+    "returnHome": "Return to Home"
+  }
+}

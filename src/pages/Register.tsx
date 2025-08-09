@@ -1,29 +1,31 @@
-import {useState} from 'react';
-import {Link} from 'react-router-dom';
-import {Eye, EyeOff, ArrowLeft, Copy, Download} from 'lucide-react';
-import {toast} from '@/components/ui/sonner';
-import {useAuth} from '@/context';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Eye, EyeOff, ArrowLeft, Copy, Download } from 'lucide-react';
+import { toast } from '@/components/ui/sonner';
+import { useAuth } from '@/context';
+import { useTranslation } from 'react-i18next';
 
 const Register = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const {register} = useAuth();
+    const { register } = useAuth();
     const [formData, setFormData] = useState({
         username: '',
         password: '',
         confirmPassword: '',
     });
     const [mnemonic, setMnemonic] = useState<string | null>(null);
+    const { t } = useTranslation();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         if (formData.password.length < 8) {
-            toast('Пароль слишком короткий. Минимум 8 символов');
+            toast(t('register.toastShortPassword'));
             return;
         }
         if (formData.password !== formData.confirmPassword) {
-            toast('Пароли не совпадают');
+            toast(t('register.toastPasswordsMismatch'));
             return;
         }
 
@@ -40,13 +42,13 @@ const Register = () => {
                         .join(' ')
                     : mnemonic,
             );
-            toast('Успешная регистрация');
+            toast(t('register.toastSuccess'));
         } catch (err) {
             console.error('Registration error:', err);
             toast(
                 err instanceof Error
-                    ? `Ошибка регистрации: ${err.message}`
-                    : 'Не удалось завершить регистрацию',
+                    ? t('register.toastErrorPrefix', { message: err.message })
+                    : t('register.toastErrorGeneric'),
             );
         }
     };
@@ -61,17 +63,18 @@ const Register = () => {
                             className="inline-flex items-center text-gray-400 hover:text-white mb-4"
                         >
                             <ArrowLeft className="w-4 h-4 mr-2"/>
-                            Назад
+                            {t('register.back')}
                         </Link>
-                        <h1 className="text-2xl font-semibold mb-2">Регистрация</h1>
-                        <p className="text-gray-300">Создайте аккаунт для начала торговли</p>
+        
+                        <h1 className="text-2xl font-semibold mb-2">{t('register.title')}</h1>
+                        <p className="text-gray-300">{t('register.subtitle')}</p>
                     </div>
 
                     {!mnemonic ? (
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div>
                                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                                    Имя пользователя
+                                    {t('register.username')}
                                 </label>
                                 <input
                                     type="text"
@@ -81,13 +84,13 @@ const Register = () => {
                                         setFormData({...formData, username: e.target.value})
                                     }
                                     className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    placeholder="Username"
+                                    placeholder={t('register.username')}
                                 />
                             </div>
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                                    Пароль
+                                    {t('register.password')}
                                 </label>
                                 <div className="relative">
                                     <input
@@ -98,7 +101,7 @@ const Register = () => {
                                             setFormData({...formData, password: e.target.value})
                                         }
                                         className="w-full px-3 py-2 pr-10 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                        placeholder="Минимум 8 символов"
+                                        placeholder={t('register.passwordPlaceholder')}
                                     />
                                     <button
                                         type="button"
@@ -112,7 +115,7 @@ const Register = () => {
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                                    Подтвердите пароль
+                                    {t('register.confirmPassword')}
                                 </label>
                                 <div className="relative">
                                     <input
@@ -123,7 +126,7 @@ const Register = () => {
                                             setFormData({...formData, confirmPassword: e.target.value})
                                         }
                                         className="w-full px-3 py-2 pr-10 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                        placeholder="Повторите пароль"
+                                        placeholder={t('register.confirmPasswordPlaceholder')}
                                     />
                                     <button
                                         type="button"
@@ -141,14 +144,14 @@ const Register = () => {
                                 type="submit"
                                 className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
                             >
-                                Создать аккаунт
+                                {t('register.submit')}
                             </button>
                             
                         </form>
                     ) : (
                         <div className="space-y-4">
                             <div className="p-4 bg-gray-700 border border-gray-600 rounded-md text-center">
-                                <p className="mb-2 text-sm text-gray-300">Ваша seed-фраза:</p>
+                                <p className="mb-2 text-sm text-gray-300">{t('register.seedTitle')}</p>
                                 <div className="grid grid-cols-2 gap-2 mb-4">
                                     {mnemonic.split(' ').map((word, idx) => (
                                         <div
@@ -165,7 +168,7 @@ const Register = () => {
                                         onClick={() => navigator.clipboard.writeText(mnemonic)}
                                         className="flex items-center text-blue-400 hover:text-blue-300"
                                     >
-                                        <Copy className="w-4 h-4 mr-1"/> Скопировать
+                                        <Copy className="w-4 h-4 mr-1"/> {t('register.copy')}
                                     </button>
                                     <button
                                         type="button"
@@ -180,13 +183,13 @@ const Register = () => {
                                         }}
                                         className="flex items-center text-blue-400 hover:text-blue-300"
                                     >
-                                        <Download className="w-4 h-4 mr-1"/> Скачать
+                                        <Download className="w-4 h-4 mr-1"/> {t('register.download')}
                                     </button>
                                 </div>
                             </div>
                             <div className="text-center">
                                 <Link to="/login" className="text-blue-400 hover:text-blue-300 font-medium">
-                                    Перейти к входу
+                                    {t('register.toLogin')}
                                 </Link>
                             </div>
                         </div>
@@ -195,10 +198,10 @@ const Register = () => {
 
                     <div className="mt-10 flex justify-between text-sm text-gray-300">
                         <Link to="/login" className="text-blue-400 hover:text-blue-300 font-medium">
-                            Войти
+                            {t('register.login')}
                         </Link>
                         <Link to="/recover" className="text-blue-400 hover:text-blue-300 font-medium">
-                            Забыли пароль?
+                            {t('register.forgot')}
                         </Link>
                     </div>
 
