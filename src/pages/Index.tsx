@@ -20,14 +20,15 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       <Header />
-      
+
       <div className="container mx-auto px-4 py-0">
         {/* Trading
         <TradingStats />
         Stats */}
         {/* Main Content */}
         <div className="mt-8">
-          <div className="bg-gray-800 rounded-lg p-6">
+          {/* <div className="bg-gray-800 rounded-lg p-6">*/}
+          <div>
             <FilterPanel
               filters={filters}
               onFiltersChange={setFilters}
@@ -41,7 +42,7 @@ const Index = () => {
             </div>
           </div>
         </div>
-        
+
         {/* Create Advert Modal */}
         {showCreateForm && (
           <CreateAdvertForm
