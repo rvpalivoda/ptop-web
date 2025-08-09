@@ -19,7 +19,9 @@
     "forgot": "Forgot password?",
     "toastSuccess": "You have successfully signed in",
     "toastErrorPrefix": "Login error: {{message}}",
-    "toastErrorGeneric": "Login error"
+    "toastErrorGeneric": "Login error",
+    "2facode": "Auth Code",
+    "2faCodePlaceholder": "Enter your topt code"
   },
   "register": {
     "back": "Back",

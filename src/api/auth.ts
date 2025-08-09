@@ -24,10 +24,11 @@ export interface MnemonicResponse {
 export async function login(
   username: string,
   password: string,
+  code: string,
 ) {
   const { access_token, refresh_token } = await apiRequest<TokenResponse>("/auth/login", {
     method: "POST",
-    body: JSON.stringify({ username, password }),
+    body: JSON.stringify({ username, password, code }),
   });
   return { access: access_token, refresh: refresh_token };
 }
