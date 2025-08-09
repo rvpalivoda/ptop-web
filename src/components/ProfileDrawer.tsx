@@ -20,6 +20,7 @@ import {
   verifyPassword as apiVerifyPassword,
 } from "@/api";
 import { useAuth } from "@/context";
+import { useTranslation } from "react-i18next";
 import {
   Sheet,
   SheetClose,
@@ -58,6 +59,7 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
     logout,
   } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [showPwdDialog, setShowPwdDialog] = useState(false);
   const [show2faDialog, setShow2faDialog] = useState(false);
   const [showRecoveryDialog, setShowRecoveryDialog] = useState(false);
@@ -133,7 +135,7 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.newPassword !== formData.confirmPassword) {
-      alert("Пароли не совпадают");
+      alert(t("profile.passwordMismatch"));
       return;
     }
     try {
@@ -143,10 +145,10 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
         newPassword: "",
         confirmPassword: "",
       });
-      alert("Пароль обновлён");
+      alert(t("profile.passwordUpdated"));
     } catch (err) {
       console.error(err);
-      alert("Ошибка смены пароля");
+      alert(t("profile.passwordChangeError"));
     }
   };
 
@@ -156,7 +158,7 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
       return true;
     } catch (err) {
       console.error(err);
-      alert("Неверный пароль");
+      alert(t("profile.invalidPassword"));
       return false;
     }
   };
@@ -207,10 +209,10 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
       setPinCodeValue("");
       setPinDigits(["", "", "", ""]);
       setShowPinDialog(false);
-      alert("PIN-код установлен");
+      alert(t("profile.pinCodeSet"));
     } catch (err) {
       console.error(err);
-      alert("Ошибка установки PIN-кода");
+      alert(t("profile.pinCodeError"));
     }
   };
 
@@ -233,7 +235,7 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
           }
         >
           <User size={20} />
-          <span className="hidden sm:block">Профиль</span>
+          <span className="hidden sm:block">{t("profile.title")}</span>
         </button>
       </SheetTrigger>
       <SheetContent
@@ -242,7 +244,7 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
       >
         <SheetHeader>
           <SheetTitle className="text-2xl font-semibold mt-2 text-white">
-            Профиль
+            {t("profile.title")}
           </SheetTitle>
         </SheetHeader>
         <div className="space-y-2 text-sm">
@@ -259,17 +261,17 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
             <DialogTrigger asChild>
               <button className="w-full flex items-center bg-gray-700 text-white hover:bg-gray-600 px-4 py-2 rounded-md">
                 <Key className="w-4 h-4 mr-2" />
-                Сменить пароль
+                {t("profile.changePassword")}
               </button>
             </DialogTrigger>
             <DialogContent className={modalContentCls}>
               <DialogHeader>
-                <DialogTitle>Смена пароля</DialogTitle>
+                <DialogTitle>{t("profile.changePassword")}</DialogTitle>
               </DialogHeader>
               <form onSubmit={handlePasswordSubmit} className="space-y-4 mt-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Текущий пароль
+                    {t("profile.currentPassword")}
                   </label>
                   <div className="relative">
                     <input
@@ -300,7 +302,7 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Новый пароль
+                    {t("profile.newPassword")}
                   </label>
                   <div className="relative">
                     <input
@@ -329,7 +331,7 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Подтвердите новый пароль
+                    {t("profile.confirmNewPassword")}
                   </label>
                   <input
                     type="password"
@@ -347,7 +349,7 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
                   type="submit"
                   className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors  block w-full mt-2"
                 >
-                  Обновить пароль
+                  {t("profile.updatePassword")}
                 </button>
               </form>
             </DialogContent>
@@ -357,19 +359,19 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
             <DialogTrigger asChild>
               <button className="w-full flex items-center bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md">
                 <KeyRound className="w-4 h-4 mr-2" />
-                PIN-код
+                {t("profile.pinCode")}
               </button>
             </DialogTrigger>
             <DialogContent className={modalContentCls}>
-              <DialogHeader>
-                <DialogTitle>Установка PIN-кода</DialogTitle>
-              </DialogHeader>
+            <DialogHeader>
+              <DialogTitle>{t("profile.pinCodeSetup")}</DialogTitle>
+            </DialogHeader>
               <div className="space-y-4 mt-4">
                 <input
                   type="password"
                   value={pinPassword}
                   onChange={(e) => setPinPassword(e.target.value)}
-                  placeholder="Введите пароль"
+                  placeholder={t("profile.enterPassword")}
                   className={inputStyles}
                 />
                 <div className="flex space-x-2">
@@ -391,7 +393,7 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
                   onClick={handleSetPin}
                   className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700  block w-full mt-2"
                 >
-                  Сохранить
+                  {t("profile.save")}
                 </button>
               </div>
             </DialogContent>
@@ -401,27 +403,27 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
             <DialogTrigger asChild>
               <button className="w-full flex items-center bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md  ">
                 <ShieldCheck className="w-4 h-4 mr-2" />
-                Двухфакторная аутентификация
+                {t("profile.twoFactorAuth")}
               </button>
             </DialogTrigger>
             <DialogContent className={modalContentCls}>
-              <DialogHeader>
-                <DialogTitle>Двухфакторная аутентификация</DialogTitle>
-              </DialogHeader>
+            <DialogHeader>
+              <DialogTitle>{t("profile.twoFactorAuth")}</DialogTitle>
+            </DialogHeader>
               {!twoFactorEnabled && !twoFactorSecret && (
                 <div className="space-y-4 mt-4">
                   <input
                     type="password"
                     value={passwordCheck}
                     onChange={(e) => setPasswordCheck(e.target.value)}
-                    placeholder="Введите пароль"
+                    placeholder={t("profile.enterPassword")}
                     className={inputStyles}
                   />
                   <button
                     onClick={startTwoFactor}
                     className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700  block w-full mt-2"
                   >
-                    Включить 2FA
+                    {t("profile.enable2fa")}
                   </button>
                 </div>
               )}
@@ -431,14 +433,14 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
                     type="password"
                     value={passwordCheck}
                     onChange={(e) => setPasswordCheck(e.target.value)}
-                    placeholder="Введите пароль"
+                    placeholder={t("profile.enterPassword")}
                     className={inputStyles}
                   />
                   <button
                     onClick={stopTwoFactor}
                     className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700  block w-full mt-2"
                   >
-                    Отключить 2FA
+                    {t("profile.disable2fa")}
                   </button>
                 </div>
               )}
@@ -450,7 +452,7 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
                     </div>
                   )}
                   <p className="text-sm">
-                    Секрет:{" "}
+                    {t("profile.secret")}{" "}
                     <span className="font-mono break-all">
                       {twoFactorSecret}
                     </span>
@@ -467,26 +469,26 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
             <DialogTrigger asChild>
               <button className="w-full flex items-center bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md    ">
                 <BookOpen className="w-4 h-4 mr-2" />
-                Recovery-слова
+                {t("profile.recoveryWords")}
               </button>
             </DialogTrigger>
             <DialogContent className={modalContentCls}>
-              <DialogHeader>
-                <DialogTitle>Recovery-слова</DialogTitle>
-              </DialogHeader>
+            <DialogHeader>
+              <DialogTitle>{t("profile.recoveryWords")}</DialogTitle>
+            </DialogHeader>
               <div className="space-y-4 mt-4">
                 <input
                   type="password"
                   value={regeneratePassword}
                   onChange={(e) => setRegeneratePassword(e.target.value)}
-                  placeholder="Введите пароль"
+                  placeholder={t("profile.enterPassword")}
                   className={inputStyles}
                 />
                 <button
                   onClick={handleRegenerateWithVerify}
                   className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700  block w-full mt-2"
                 >
-                  Сгенерировать
+                  {t("profile.generate")}
                 </button>
                 {newSeed && (
                   <div className="mt-4 text-center">
@@ -506,7 +508,7 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
                         onClick={() => navigator.clipboard.writeText(newSeed)}
                         className="flex items-center text-blue-400 hover:text-blue-300"
                       >
-                        <Copy className="w-4 h-4 mr-1" /> Скопировать
+                        <Copy className="w-4 h-4 mr-1" /> {t("profile.copy")}
                       </button>
                       <button
                         type="button"
@@ -524,7 +526,7 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
                         }}
                         className="flex items-center text-blue-400 hover:text-blue-300"
                       >
-                        <Download className="w-4 h-4 mr-1" /> Скачать
+                        <Download className="w-4 h-4 mr-1" /> {t("profile.download")}
                       </button>
                     </div>
                   </div>
@@ -540,14 +542,14 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
             <DialogTrigger asChild>
               <button className="w-full flex items-center bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md  ">
                 <Settings className="w-4 h-4 mr-2" />
-                Настройки
+                {t("profile.settings")}
               </button>
             </DialogTrigger>
             <DialogContent className={modalContentCls}>
-              <DialogHeader>
-                <DialogTitle>Настройки</DialogTitle>
-              </DialogHeader>
-              <p className="mt-4 text-sm text-gray-300">Раздел в разработке</p>
+            <DialogHeader>
+              <DialogTitle>{t("profile.settings")}</DialogTitle>
+            </DialogHeader>
+              <p className="mt-4 text-sm text-gray-300">{t("profile.underDevelopment")}</p>
             </DialogContent>
           </Dialog>
         </div>
@@ -556,7 +558,7 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
           className="w-full flex items-center bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md mt-auto"
         >
           <LogOut className="w-4 h-4 mr-2" />
-          Выход
+          {t("profile.logout")}
         </button>
         <SheetClose className="absolute right-4 top-4 text-gray-400 hover:text-white" />
       </SheetContent>

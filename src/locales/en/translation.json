@@ -69,5 +69,43 @@
   "notFound": {
     "oops": "Oops! Page not found",
     "returnHome": "Return to Home"
+  },
+  "profile": {
+    "title": "Profile",
+    "changePassword": "Change password",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "confirmNewPassword": "Confirm new password",
+    "updatePassword": "Update password",
+    "passwordMismatch": "Passwords do not match",
+    "passwordUpdated": "Password updated",
+    "passwordChangeError": "Password change error",
+    "invalidPassword": "Invalid password",
+    "pinCode": "PIN code",
+    "pinCodeSetup": "PIN code setup",
+    "pinCodeSet": "PIN code set",
+    "pinCodeError": "PIN code setup error",
+    "enterPassword": "Enter password",
+    "save": "Save",
+    "twoFactorAuth": "Two-factor authentication",
+    "enable2fa": "Enable 2FA",
+    "disable2fa": "Disable 2FA",
+    "secret": "Secret:",
+    "recoveryWords": "Recovery words",
+    "generate": "Generate",
+    "copy": "Copy",
+    "download": "Download",
+    "settings": "Settings",
+    "underDevelopment": "Section under development",
+    "logout": "Logout"
+  },
+  "filters": {
+    "all": "All",
+    "allMethods": "All methods",
+    "min": "Min",
+    "max": "Max",
+    "buy": "Buy",
+    "sell": "Sell",
+    "createAdvert": "Create advert"
   }
 }
