@@ -11,6 +11,10 @@
     "transactions": "Transactions",
     "escrow": "Escrow"
   },
+  "balance": {
+    "getAddress": "Get address",
+    "loading": "Loading..."
+  },
   "login": {
     "back": "Back",
     "title": "Sign In",
