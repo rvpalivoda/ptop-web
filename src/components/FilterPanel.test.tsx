@@ -5,13 +5,19 @@ import '../i18n';
 
 vi.mock('@/api/dictionaries', () => ({
   getAssets: vi.fn().mockResolvedValue([
-    { ID: 'BTC', Name: 'BTC' },
-    { ID: 'ETH', Name: 'ETH' },
+    { id: 'BTC', name: 'BTC' },
+    { id: 'ETH', name: 'ETH' },
   ]),
   getPaymentMethods: vi.fn().mockResolvedValue([
-    { ID: 'pm1', Name: 'Сбербанк' },
-    { ID: 'pm2', Name: 'Тинькофф' },
+    { id: 'pm1', name: 'Сбербанк' },
+    { id: 'pm2', name: 'Тинькофф' },
   ]),
+  getCountries: vi.fn().mockResolvedValue([]),
+}));
+
+vi.mock('@/api/clientPaymentMethods', () => ({
+  getClientPaymentMethods: vi.fn().mockResolvedValue([]),
+  createClientPaymentMethod: vi.fn(),
 }));
 
 import { FilterPanel } from './FilterPanel';
@@ -33,7 +39,6 @@ describe('FilterPanel', () => {
         onFiltersChange={onFiltersChange}
         activeTab="buy"
         onTabChange={() => {}}
-        onCreate={() => {}}
       />
     );
 
@@ -56,7 +61,6 @@ describe('FilterPanel', () => {
         onFiltersChange={onFiltersChange}
         activeTab="buy"
         onTabChange={() => {}}
-        onCreate={() => {}}
       />
     );
 
@@ -79,7 +83,6 @@ describe('FilterPanel', () => {
         onFiltersChange={() => {}}
         activeTab="buy"
         onTabChange={onTabChange}
-        onCreate={() => {}}
       />
     );
 
@@ -89,5 +92,22 @@ describe('FilterPanel', () => {
       fireEvent.click(sellBtn);
     }
     expect(onTabChange).toHaveBeenCalledWith('sell');
+  });
+
+  it('открывает форму создания объявления', async () => {
+    render(
+      <FilterPanel
+        filters={baseFilters}
+        onFiltersChange={() => {}}
+        activeTab="buy"
+        onTabChange={() => {}}
+      />
+    );
+
+    await screen.findAllByTestId('from-asset');
+    const btns = screen.getAllByTestId('create-advert');
+    fireEvent.click(btns[btns.length - 1]);
+
+    expect(await screen.findByText('Создать объявление')).toBeInTheDocument();
   });
 });

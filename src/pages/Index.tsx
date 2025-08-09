@@ -1,14 +1,13 @@
 
 import { useState } from 'react';
 import { Header } from '@/components/Header';
-import { OfferList } from '@/components/OfferList';
-import { CreateOfferForm } from '@/components/CreateOfferForm';
+import { OrderList } from '@/components/OrderList';
+
 import { FilterPanel } from '@/components/FilterPanel';
 //import { TradingStats } from '@/components/TradingStats';
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState<'buy' | 'sell'>('buy');
-  const [showCreateForm, setShowCreateForm] = useState(false);
   const [filters, setFilters] = useState({
     fromAsset: 'all',
     toAsset: 'all',
@@ -34,7 +33,6 @@ const Index = () => {
               onFiltersChange={setFilters}
               activeTab={activeTab}
               onTabChange={setActiveTab}
-              onCreate={() => setShowCreateForm(true)}
             />
 
             {/* Orders List */}
@@ -42,11 +40,6 @@ const Index = () => {
             </div>
           </div>
         </div>
-
-        {/* Create Offer Modal */}
-        {showCreateForm && (
-          <CreateOfferForm onClose={() => setShowCreateForm(false)} />
-        )}
       </div>
   );
 };
