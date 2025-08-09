@@ -69,7 +69,12 @@ export const CreateOfferForm = ({ onClose }: CreateOfferFormProps) => {
           }));
         }
         const methods = await getClientPaymentMethods();
-        const mappedMethods = methods.map((m) => ({ id: m.id, name: m.name }));
+        const mappedMethods = methods
+          .map((m: any) => ({
+            id: m.id ?? m.ID ?? '',
+            name: m.name ?? m.Name ?? '',
+          }))
+          .filter((m) => m.id && m.name);
         setPaymentMethods(mappedMethods);
         const c = await getCountries();
         setCountries(c.map((x: any) => ({ id: x.id ?? x.name ?? x, name: x.name ?? x.id ?? x })));
@@ -111,7 +116,7 @@ export const CreateOfferForm = ({ onClose }: CreateOfferFormProps) => {
     if (formData.orderExpirationTimeout < 15)
       e.orderExpirationTimeout = 'Минимум 15 минут';
     if (!formData.conditions.trim()) e.conditions = 'Обязательное поле';
-    if (formData.paymentMethodIds.length === 0)
+    if (formData.paymentMethodIds.filter(Boolean).length === 0)
       e.paymentMethodIds = 'Выберите хотя бы один метод оплаты';
     return e;
   };
@@ -156,12 +161,17 @@ export const CreateOfferForm = ({ onClose }: CreateOfferFormProps) => {
     }
     try {
       const created = await createClientPaymentMethod(newMethod);
-      const opt = { id: created.id, name: created.name };
-      setPaymentMethods((p) => [...p, opt]);
-      setFormData((f) => ({
-        ...f,
-        paymentMethodIds: [...f.paymentMethodIds, created.id],
-      }));
+      const opt = {
+        id: created.id ?? (created as any).ID ?? '',
+        name: created.name ?? (created as any).Name ?? '',
+      };
+      if (opt.id && opt.name) {
+        setPaymentMethods((p) => [...p, opt]);
+        setFormData((f) => ({
+          ...f,
+          paymentMethodIds: [...f.paymentMethodIds, opt.id],
+        }));
+      }
       setShowAddMethod(false);
       setNewMethod({ city: '', country_id: '', name: '', payment_method_id: '', post_code: '' });
     } catch (err) {
