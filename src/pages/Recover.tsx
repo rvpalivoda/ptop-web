@@ -4,6 +4,7 @@ import { ArrowLeft, Key, Check, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/context";
 import { toast } from "@/components/ui/sonner";
 import { recoverChallenge } from "@/api/auth";
+import { useTranslation } from 'react-i18next';
 
 const Recover = () => {
     const [username, setUsername] = useState("");
@@ -15,7 +16,8 @@ const Recover = () => {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
-    const {recover} = useAuth();
+    const { recover } = useAuth();
+    const { t } = useTranslation();
 
     const handleUsernameBlur = async () => {
         if (!username) return;
@@ -25,18 +27,18 @@ const Recover = () => {
             setWords(["", "", ""]);
             setChallengeLoaded(true);
         } catch (err) {
-            toast("Не удалось получить позиции");
+            toast(t('recover.toastPositionsError'));
         }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (newPassword.length < 8) {
-            toast("Пароль слишком короткий. Минимум 8 символов");
+            toast(t('recover.toastShortPassword'));
             return;
         }
         if (newPassword !== confirmPassword) {
-            toast("Пароли не совпадают");
+            toast(t('recover.toastPasswordsMismatch'));
             return;
         }
         try {
@@ -46,13 +48,13 @@ const Recover = () => {
             }));
             await recover(username, phrases, newPassword, confirmPassword);
             setIsSubmitted(true);
-            toast("Пароль обновлён и доступ восстановлен");
+            toast(t('recover.toastSuccess'));
         } catch (err) {
             console.error("Recover error:", err);
             toast(
                 err instanceof Error
-                    ? `Ошибка восстановления доступа: ${err.message}`
-                    : "Ошибка восстановления доступа",
+                    ? t('recover.toastErrorPrefix', { message: err.message })
+                    : t('recover.toastErrorGeneric'),
             );
         }
     };
@@ -67,7 +69,7 @@ const Recover = () => {
                             className="inline-flex items-center text-gray-400 hover:text-white mb-4"
                         >
                             <ArrowLeft className="w-4 h-4 mr-2"/>
-                            Назад к входу
+                            {t('recover.back')}
                         </Link>
                         {!isSubmitted ? (
                             <>
@@ -75,10 +77,10 @@ const Recover = () => {
                                     <Key className="w-6 h-6 text-blue-500"/>
                                 </div>
                                 <h1 className="text-2xl font-semibold mb-2">
-                                    Восстановление доступа
+                                    {t('recover.title')}
                                 </h1>
                                 <p className="text-gray-300">
-                                    Введите запрошенные слова из seed
+                                    {t('recover.subtitle')}
                                 </p>
                             </>
                         ) : (
@@ -88,9 +90,9 @@ const Recover = () => {
                                     <Check className="w-6 h-6 text-white"/>
                                 </div>
                                 <h1 className="text-2xl font-semibold mb-2">
-                                    Доступ восстановлен
+                                    {t('recover.successTitle')}
                                 </h1>
-                                <p className="text-gray-300">Вы успешно авторизованы</p>
+                                <p className="text-gray-300">{t('recover.successSubtitle')}</p>
                             </>
                         )}
                     </div>
@@ -98,7 +100,7 @@ const Recover = () => {
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div>
                                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                                    Username
+                                    {t('recover.username')}
                                 </label>
                                 <input
                                     type="text"
@@ -113,7 +115,7 @@ const Recover = () => {
                             {challengeLoaded && (
                                 <div>
                                     <label className="block text-sm font-medium text-gray-300 mb-2">
-                                        Введите слова № {indices[0]}, {indices[1]}, {indices[2]}
+                                        {t('recover.enterWords', { one: indices[0], two: indices[1], three: indices[2] })}
                                     </label>
                                     <div className="grid grid-cols-3 gap-2">
                                         {words.map((w, idx) => (
@@ -139,7 +141,7 @@ const Recover = () => {
                                 <>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-300 mb-2">
-                                            Новый пароль
+                                            {t('recover.newPassword')}
                                         </label>
                                         <div className="relative">
                                             <input
@@ -164,7 +166,7 @@ const Recover = () => {
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-300 mb-2">
-                                            Подтвердите пароль
+                                            {t('recover.confirmPassword')}
                                         </label>
                                         <div className="relative">
                                             <input
@@ -193,14 +195,14 @@ const Recover = () => {
                                 type="submit"
                                 className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
                             >
-                                Восстановить
+                                {t('recover.submit')}
                             </button>
                         </form>
                     ) : (
                         <div className="space-y-4">
                             <div className="p-4 bg-green-700 border border-green-600 rounded-md">
                                 <p className="text-sm text-white">
-                                    Добро пожаловать, {username}
+                                    {t('recover.welcome', { username })}
                                 </p>
                             </div>
                         </div>
@@ -208,10 +210,10 @@ const Recover = () => {
 
                     <div className="mt-10 flex justify-between text-sm text-gray-300">
                         <Link to="/register" className="text-blue-400 hover:text-blue-300 font-medium">
-                            Зарегистрироваться
+                            {t('recover.register')}
                         </Link>
                         <Link to="/login" className="text-blue-400 hover:text-blue-300 font-medium">
-                            Войти
+                            {t('recover.login')}
                         </Link>
                     </div>
 
