@@ -1,7 +1,7 @@
 
 import { Star, Circle, MessageCircle } from 'lucide-react';
 
-interface OrderCardProps {
+interface OfferCardProps {
   order: {
     id: string;
     trader: {
@@ -19,7 +19,7 @@ interface OrderCardProps {
   };
 }
 
-export const OrderCard = ({ order }: OrderCardProps) => {
+export const OfferCard = ({ order }: OfferCardProps) => {
   const { trader, currency, amount, price, paymentMethods, limits, type } = order;
 
   return (

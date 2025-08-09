@@ -1,9 +1,9 @@
 
 import { useEffect, useState } from 'react';
 import { getOffers } from '@/api/offers';
-import { OrderCard } from './OrderCard';
+import { OfferCard } from './OfferCard';
 
-interface OrderListProps {
+interface OfferListProps {
   type: 'buy' | 'sell';
   filters: {
     fromAsset: string;
@@ -30,7 +30,7 @@ interface OrderItem {
   type: 'buy' | 'sell';
 }
 
-export const OrderList = ({ type, filters }: OrderListProps) => {
+export const OfferList = ({ type, filters }: OfferListProps) => {
   const [orders, setOrders] = useState<OrderItem[]>([]);
 
   useEffect(() => {
@@ -84,7 +84,7 @@ export const OrderList = ({ type, filters }: OrderListProps) => {
       </div>
 
       {orders.map((order) => (
-        <OrderCard key={order.id} order={order} />
+        <OfferCard key={order.id} order={order} />
       ))}
     </div>
   );
