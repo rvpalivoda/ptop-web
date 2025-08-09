@@ -1,12 +1,14 @@
 import { apiRequest } from './client';
 
 export interface ClientPaymentMethod {
-  id: string;
-  name: string;
-  paymentMethodID: string;
-  countryID: string;
-  city: string;
-  postCode: string;
+  id?: string;
+  ID?: string;
+  name?: string;
+  Name?: string;
+  paymentMethodID?: string;
+  countryID?: string;
+  city?: string;
+  postCode?: string;
 }
 
 export interface CreateClientPaymentMethodPayload {
