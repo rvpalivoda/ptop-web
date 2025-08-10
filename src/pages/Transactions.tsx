@@ -66,10 +66,10 @@ const Pill = ({ status }: { status: string }) => {
   );
 };
 
-const SmartTabsTrigger = ({ value, children, icon: Icon }: { value: TabKey; children: React.ReactNode; icon: any }) => (
+const SmartTabsTrigger = ({ value, children, icon: Icon, className = '' }: { value: TabKey; children: React.ReactNode; icon: any; className?: string }) => (
     <TabsTrigger
         value={value}
-        className="group relative overflow-hidden rounded-2xl px-4 py-2.5 text-sm font-medium text-white/80 ring-1 ring-white/10 transition-all data-[state=active]:text-white data-[state=active]:shadow data-[state=active]:ring-white/20 data-[state=active]:bg-white/10 hover:text-white hover:ring-white/20"
+        className={`group relative overflow-hidden rounded-2xl px-4 py-2.5 text-sm font-medium text-white/80 ring-1 ring-white/10 transition-all data-[state=active]:text-white data-[state=active]:shadow data-[state=active]:ring-white/20 data-[state=active]:bg-white/10 hover:text-white hover:ring-white/20 ${className}`}
     >
     <span className="inline-flex items-center gap-2">
       <Icon className="h-4 w-4 opacity-80" />
@@ -230,16 +230,17 @@ const Transactions = () => {
               className="w-full"
           >
             <TabsList className="mb-5 inline-flex rounded-2xl bg-white/5 p-1 ring-1 ring-white/10 backdrop-blur">
-              <SmartTabsTrigger value="in" icon={ArrowDownRight}>
+              <SmartTabsTrigger value="in" icon={ArrowDownRight} className="mr-[10px]">
                 {t('transactions.incoming')}
               </SmartTabsTrigger>
-              <SmartTabsTrigger value="internal" icon={Shuffle}>
+              <SmartTabsTrigger value="internal" icon={Shuffle} className="mr-[10px]">
                 {t('transactions.internal')}
               </SmartTabsTrigger>
-              <SmartTabsTrigger value="out" icon={ArrowUpRight}>
+              <SmartTabsTrigger value="out" icon={ArrowUpRight} className="mr-[10px]">
                 {t('transactions.outgoing')}
               </SmartTabsTrigger>
             </TabsList>
+
 
             <TabsContent value="in" className="mt-0 focus:outline-none">{table}</TabsContent>
             <TabsContent value="internal" className="mt-0 focus:outline-none">{table}</TabsContent>
