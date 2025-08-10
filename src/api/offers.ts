@@ -21,6 +21,8 @@ export interface Offer {
   fromAssetID: string;
   toAssetID: string;
   clientID: string;
+  createdAt: string;
+  isEnabled?: boolean;
 }
 
 export interface OfferFilters {
@@ -48,4 +50,8 @@ export function createOffer(data: CreateOfferPayload) {
     method: "POST",
     body: JSON.stringify(data),
   });
+}
+
+export function getClientOffers() {
+  return apiRequest<Offer[]>("/client/offers");
 }
