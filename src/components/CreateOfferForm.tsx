@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
 import { toast } from '@/components/ui/sonner';
-import { createOffer } from '@/api/offers';
+import { createOffer, updateOffer, Offer } from '@/api/offers';
 import { getAssets, getCountries, getPaymentMethods } from '@/api/dictionaries';
 import {
   getClientPaymentMethods,
@@ -11,6 +11,7 @@ import {
 
 interface CreateOfferFormProps {
   onClose: () => void;
+  offer?: Offer;
 }
 
 interface AssetOption {
@@ -23,21 +24,21 @@ interface ClientPaymentMethodOption {
   name: string;
 }
 
-export const CreateOfferForm = ({ onClose }: CreateOfferFormProps) => {
+export const CreateOfferForm = ({ onClose, offer }: CreateOfferFormProps) => {
   const [assets, setAssets] = useState<AssetOption[]>([]);
   const [paymentMethods, setPaymentMethods] = useState<ClientPaymentMethodOption[]>([]);
 
   const [formData, setFormData] = useState({
-    type: 'buy',
-    fromAssetId: '',
-    toAssetId: '',
-    price: '',
-    amount: '',
-    minAmount: '',
-    maxAmount: '',
-    orderExpirationTimeout: 15,
-    conditions: '',
-    paymentMethodIds: [] as string[],
+    type: (offer?.type ?? 'buy') as 'buy' | 'sell',
+    fromAssetId: offer?.fromAssetID ?? '',
+    toAssetId: offer?.toAssetID ?? '',
+    price: offer ? String(offer.price) : '',
+    amount: offer ? String(offer.amount) : '',
+    minAmount: offer ? String(offer.minAmount) : '',
+    maxAmount: offer ? String(offer.maxAmount) : '',
+    orderExpirationTimeout: offer?.orderExpirationTimeout ?? 15,
+    conditions: offer?.conditions ?? '',
+    paymentMethodIds: offer?.clientPaymentMethodIDs ?? ([] as string[]),
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -65,8 +66,8 @@ export const CreateOfferForm = ({ onClose }: CreateOfferFormProps) => {
         if (mapped.length >= 2) {
           setFormData((f) => ({
             ...f,
-            fromAssetId: mapped[0].id,
-            toAssetId: mapped[1].id,
+            fromAssetId: f.fromAssetId || mapped[0].id,
+            toAssetId: f.toAssetId || mapped[1].id,
           }));
         }
         const methods = await getClientPaymentMethods();
@@ -132,7 +133,7 @@ export const CreateOfferForm = ({ onClose }: CreateOfferFormProps) => {
       return;
     }
     try {
-      await createOffer({
+      const payload = {
         amount: formData.amount,
         client_payment_method_ids: formData.paymentMethodIds,
         conditions: formData.conditions,
@@ -143,8 +144,14 @@ export const CreateOfferForm = ({ onClose }: CreateOfferFormProps) => {
         order_expiration_timeout: formData.orderExpirationTimeout,
         price: formData.price,
         to_asset_id: formData.toAssetId,
-      });
-      toast('Объявление создано');
+      };
+      if (offer) {
+        await updateOffer(offer.id, payload);
+        toast('Объявление обновлено');
+      } else {
+        await createOffer(payload);
+        toast('Объявление создано');
+      }
       onClose();
     } catch (err) {
       console.error('Create offer error:', err);
