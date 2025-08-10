@@ -15,11 +15,12 @@ export const Header = () => {
           to={to}
           onClick={onClick}
           className={({ isActive }) =>
-              `inline-flex items-center text-sm font-medium transition-colors ${
-                  isActive
-                      ? 'text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.6)]'
-                      : 'text-white/70 hover:text-white'
-              }`
+              [
+                // pill как у фильтров/формы
+                'inline-flex items-center rounded-xl h-9 px-3 text-sm font-medium transition',
+                'bg-white/5 ring-1 ring-white/10 text-white/80 hover:bg-white/10 hover:text-white',
+                isActive ? 'bg-white/15 text-white shadow-sm' : ''
+              ].join(' ')
           }
       >
         {label}
@@ -28,8 +29,8 @@ export const Header = () => {
 
   return (
       <header className="fixed inset-x-0 top-0 z-50">
-        {/* Glass / water style bar */}
-        <div className="border-b border-white/10 bg-gradient-to-b from-gray-950/80 to-gray-900/60 backdrop-blur supports-[backdrop-filter]:bg-gray-900/40">
+        {/* стекло/градиент — ближе к стилю offers */}
+        <div className="border-b border-white/10 bg-gradient-to-b from-gray-950/80 via-gray-900/60 to-gray-950/70 backdrop-blur supports-[backdrop-filter]:bg-gray-900/40">
           <div className="container mx-auto px-4">
             <div className="flex h-16 items-center justify-between">
               {/* Logo */}
@@ -46,8 +47,8 @@ export const Header = () => {
               </span>
               </div>
 
-              {/* Desktop navigation */}
-              <nav className="hidden md:flex items-center gap-6">
+              {/* Desktop navigation — пилюли как в фильтрах */}
+              <nav className="hidden md:flex items-center gap-2">
                 <NavItem to="/balance" label={t('header.balance')} />
                 <NavItem to="/adverts" label={t('header.adverts')} />
                 <NavItem to="/orders" label={t('header.orders')} />
@@ -56,30 +57,31 @@ export const Header = () => {
               </nav>
 
               {/* Actions */}
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 <button
-                    className="group rounded-xl bg-white/5 p-2 text-white/80 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white"
+                    className="group rounded-xl h-9 w-9 grid place-items-center bg-white/5 text-white/80 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white"
                     aria-label="Notifications"
                 >
                 <span className="relative inline-block">
                   <Bell size={18} />
-                  {/* Example unread badge */}
                   <span className="absolute -right-1 -top-1 inline-flex h-2.5 w-2.5 items-center justify-center rounded-full bg-emerald-400" />
                 </span>
                 </button>
 
                 {isAuthenticated ? (
                     <ProfileDrawer
-                        triggerClassName="hidden md:inline-flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 text-sm font-medium text-white/80 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white"
+                        triggerClassName="hidden md:inline-flex items-center gap-2 rounded-xl h-9 px-3 text-sm font-medium bg-white/5 text-white/80 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white"
                     />
                 ) : (
                     <div className="hidden md:flex items-center gap-2">
                       <NavLink
                           to="/login"
                           className={({ isActive }) =>
-                              `rounded-xl px-3 py-2 text-sm font-medium ring-1 ring-white/10 transition ${
-                                  isActive ? 'bg-white/15 text-white' : 'bg-white/5 text-white/80 hover:bg-white/10 hover:text-white'
-                              }`
+                              [
+                                'rounded-xl h-9 px-3 text-sm font-medium ring-1 ring-white/10 transition',
+                                'bg-white/5 text-white/80 hover:bg-white/10 hover:text-white',
+                                isActive ? 'bg-white/15 text-white' : ''
+                              ].join(' ')
                           }
                       >
                         {t('header.login')}
@@ -87,9 +89,11 @@ export const Header = () => {
                       <NavLink
                           to="/register"
                           className={({ isActive }) =>
-                              `rounded-xl px-3 py-2 text-sm font-semibold ring-1 ring-white/10 transition ${
-                                  isActive ? 'bg-white/20 text-white' : 'bg-white/10 text-white hover:bg-white/20'
-                              }`
+                              [
+                                'rounded-xl h-9 px-3 text-sm font-semibold ring-1 ring-white/10 transition',
+                                'bg-white/10 text-white hover:bg-white/20',
+                                isActive ? 'bg-white/20 text-white' : ''
+                              ].join(' ')
                           }
                       >
                         {t('header.register')}
@@ -97,10 +101,10 @@ export const Header = () => {
                     </div>
                 )}
 
-                {/* Mobile menu button */}
+                {/* Mobile menu button — тот же капсульный стиль */}
                 <button
                     onClick={() => setIsMenuOpen((v) => !v)}
-                    className="md:hidden rounded-xl bg-white/5 p-2 text-white/80 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white"
+                    className="md:hidden rounded-xl h-9 w-9 grid place-items-center bg-white/5 text-white/80 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white"
                     aria-label="Toggle menu"
                 >
                   {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -109,7 +113,7 @@ export const Header = () => {
             </div>
           </div>
 
-          {/* Mobile menu */}
+          {/* Mobile menu — те же пилюли, компактно */}
           {isMenuOpen && (
               <div className="md:hidden border-t border-white/10">
                 <div className="container mx-auto px-4 py-3">
@@ -123,14 +127,11 @@ export const Header = () => {
                     {isAuthenticated ? (
                         <div className="mt-2 flex flex-col gap-2">
                           <ProfileDrawer
-                              triggerClassName="inline-flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 text-sm font-medium text-white/80 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white"
+                              triggerClassName="inline-flex items-center gap-2 rounded-xl h-9 px-3 text-sm font-medium bg-white/5 text-white/80 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white"
                           />
                           <button
-                              onClick={() => {
-                                logout();
-                                setIsMenuOpen(false);
-                              }}
-                              className="text-left rounded-xl bg-white/5 px-3 py-2 text-sm font-medium text-white/80 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white"
+                              onClick={() => { logout(); setIsMenuOpen(false); }}
+                              className="text-left rounded-xl h-9 px-3 text-sm font-medium bg-white/5 text-white/80 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white"
                           >
                             {t('profile.logout')}
                           </button>
@@ -140,14 +141,14 @@ export const Header = () => {
                           <Link
                               to="/login"
                               onClick={() => setIsMenuOpen(false)}
-                              className="rounded-xl bg-white/5 px-3 py-2 text-sm font-medium text-white/80 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white"
+                              className="rounded-xl h-9 px-3 text-sm font-medium bg-white/5 text-white/80 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white"
                           >
                             {t('header.login')}
                           </Link>
                           <Link
                               to="/register"
                               onClick={() => setIsMenuOpen(false)}
-                              className="rounded-xl bg-white/10 px-3 py-2 text-sm font-semibold text-white ring-1 ring-white/10 transition hover:bg-white/20"
+                              className="rounded-xl h-9 px-3 text-sm font-semibold bg-white/10 text-white ring-1 ring-white/10 transition hover:bg-white/20"
                           >
                             {t('header.register')}
                           </Link>
