@@ -122,5 +122,20 @@
   "common": {
     "copy": "Copy",
     "copied": "Copied"
+  },
+  "transactions": {
+    "incoming": "Incoming",
+    "internal": "Internal",
+    "outgoing": "Outgoing",
+    "id": "ID",
+    "asset": "Asset",
+    "status": "Status",
+    "createdAt": "Created",
+    "updatedAt": "Updated",
+    "amount": "Amount",
+    "prev": "Previous",
+    "next": "Next",
+    "noData": "No transactions",
+    "loading": "Loading..."
   }
 }
