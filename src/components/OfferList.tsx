@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import { getOffers } from '@/api/offers';
+import type { ClientPaymentMethod } from '@/api/clientPaymentMethods';
 import { OfferCard } from './OfferCard';
 
 interface OfferListProps {
@@ -28,6 +29,9 @@ interface OrderItem {
   paymentMethods: string[];
   limits: { min: string; max: string };
   type: 'buy' | 'sell';
+  isEnabled?: boolean;
+  conditions?: string;
+  orderExpirationTimeout?: number;
 }
 
 export const OfferList = ({ type, filters }: OfferListProps) => {
@@ -49,17 +53,25 @@ export const OfferList = ({ type, filters }: OfferListProps) => {
         const mapped = offers.map((o) => ({
           id: o.id,
           trader: {
-            name: o.clientID ?? 'Трейдер',
-            rating: 0,
-            completedTrades: 0,
+            name: o.client?.username ?? 'Трейдер',
+            rating: o.client?.rating ?? 0,
+            completedTrades: o.client?.ordersCount ?? 0,
             online: true,
           },
-          currency: o.fromAssetID,
+          currency: o.fromAsset?.name || o.toAsset?.name || '',
           amount: String(o.amount),
           price: String(o.price),
-          paymentMethods: [] as string[],
+          paymentMethods:
+            o.clientPaymentMethods?.map(
+              (m: ClientPaymentMethod) =>
+                m.paymentMethod?.name ?? m.name ?? '',
+            )
+              .filter(Boolean) ?? [],
           limits: { min: String(o.minAmount), max: String(o.maxAmount) },
           type,
+          isEnabled: o.isEnabled,
+          conditions: o.conditions,
+          orderExpirationTimeout: o.orderExpirationTimeout,
         }));
         setOrders(mapped);
       } catch (err) {

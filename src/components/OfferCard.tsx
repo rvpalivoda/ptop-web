@@ -17,6 +17,8 @@ interface OfferCardProps {
     limits: { min: string; max: string };
     type: 'buy' | 'sell';
     isEnabled?: boolean;
+    conditions?: string;
+    orderExpirationTimeout?: number;
   };
   isClientOffer?: boolean;
   onToggle?: () => void;
