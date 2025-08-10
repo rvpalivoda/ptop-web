@@ -46,13 +46,25 @@ const Balance = () => {
                         className="p-4 bg-gray-800/80 rounded-xl ring-1 ring-white/5"
                     >
                       <div className="flex flex-col gap-3 sm:grid sm:grid-cols-12 sm:items-center">
-                        {/* name + amount */}
+                        {/* name + amount + amountEscrow */}
                         <div className="sm:col-span-7 flex flex-wrap items-center gap-x-3 gap-y-1">
                           <div className="font-semibold text-base">{b.name}</div>
+
+                          {/* amount */}
                           <div className="text-sm text-gray-400">
                             <span className="text-xs">{t('balance.amount')}:{' '}</span>
                             <span className="text-gray-200">{b.amount}</span>
                           </div>
+
+                          {/* amountEscrow */}
+                          {'amountEscrow' in b && (
+                              <div className="text-sm text-gray-400">
+                                <span className="text-xs">{t('balance.amountEscrow')}:{' '}</span>
+                                <span className="text-gray-200">
+                          {(b as any).amountEscrow}
+                        </span>
+                              </div>
+                          )}
                         </div>
 
                         {/* value / кнопка */}

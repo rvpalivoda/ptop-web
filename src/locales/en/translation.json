@@ -15,7 +15,8 @@
     "getAddress": "Get address",
     "loading": "Loading...",
     "amount": "Amount",
-    "address": "Address:"
+    "address": "Address:",
+    "amountEscrow": "Amount Escrow"
   },
   "login": {
     "back": "Back",

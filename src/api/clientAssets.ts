@@ -2,6 +2,7 @@ import { apiRequest } from './client';
 
 export interface ClientAsset {
   amount: number;
+  amountEscrow: number;
   id: string;
   isActive: boolean;
   isConvertible: boolean;
