@@ -8,3 +8,4 @@ export * from './offers';
 export * from './clientPaymentMethods';
 export * from './clientAssets';
 export * from './wallets';
+export * from './transactions';
