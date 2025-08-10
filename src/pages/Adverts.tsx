@@ -64,7 +64,8 @@ const Adverts = () => {
                     completedTrades: 0,
                     online: true,
                   },
-                  currency: offer.fromAsset?.name || offer.toAsset?.name || offer.fromAssetID,
+                  fromAsset: { name: offer.fromAsset?.name || offer.fromAssetID },
+                  toAsset: { name: offer.toAsset?.name || offer.toAssetID },
                   amount: String(offer.amount),
                   price: String(offer.price),
                   paymentMethods:
@@ -81,6 +82,7 @@ const Adverts = () => {
                   isEnabled: offer.isEnabled,
                   conditions: offer.conditions,
                   orderExpirationTimeout: offer.orderExpirationTimeout,
+                  TTL: offer.TTL,
                 }}
                 isClientOffer
                 onToggle={() => toggleOffer(offer)}

@@ -23,7 +23,8 @@ interface OrderItem {
     completedTrades: number;
     online: boolean;
   };
-  currency: string;
+  fromAsset: { name: string };
+  toAsset: { name: string };
   amount: string;
   price: string;
   paymentMethods: string[];
@@ -32,6 +33,7 @@ interface OrderItem {
   isEnabled?: boolean;
   conditions?: string;
   orderExpirationTimeout?: number;
+  TTL?: string;
 }
 
 export const OfferList = ({ type, filters }: OfferListProps) => {
@@ -58,7 +60,8 @@ export const OfferList = ({ type, filters }: OfferListProps) => {
             completedTrades: o.client?.ordersCount ?? 0,
             online: true,
           },
-          currency: o.fromAsset?.name || o.toAsset?.name || '',
+          fromAsset: o.fromAsset ?? { name: o.fromAssetID },
+          toAsset: o.toAsset ?? { name: o.toAssetID },
           amount: String(o.amount),
           price: String(o.price),
           paymentMethods:
@@ -72,6 +75,7 @@ export const OfferList = ({ type, filters }: OfferListProps) => {
           isEnabled: o.isEnabled,
           conditions: o.conditions,
           orderExpirationTimeout: o.orderExpirationTimeout,
+          TTL: o.TTL,
         }));
         setOrders(mapped);
       } catch (err) {
