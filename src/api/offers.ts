@@ -1,4 +1,23 @@
 import { apiRequest } from './client';
+import type { ClientPaymentMethod } from './clientPaymentMethods';
+
+export interface Client {
+  id: string;
+  ordersCount: number;
+  rating: number;
+  registredAt: string;
+  twoFAEnabled: boolean;
+  username: string;
+}
+
+export interface Asset {
+  description: string;
+  id: string;
+  isActive: boolean;
+  isConvertible: boolean;
+  name: string;
+  type: string;
+}
 
 export interface CreateOfferPayload {
   amount: string;
@@ -14,6 +33,7 @@ export interface CreateOfferPayload {
 }
 
 export interface Offer {
+  TTL?: string;
   id: string;
   amount: number;
   price: number;
@@ -22,11 +42,17 @@ export interface Offer {
   fromAssetID: string;
   toAssetID: string;
   clientID: string;
+  client?: Client;
+  clientPaymentMethods?: ClientPaymentMethod[];
+  conditions: string;
   createdAt: string;
-  isEnabled?: boolean;
-  type?: 'buy' | 'sell';
-  conditions?: string;
+  disabledAt?: string;
+  enabledAt?: string;
+  fromAsset?: Asset;
+  toAsset?: Asset;
   orderExpirationTimeout?: number;
+  type: 'buy' | 'sell';
+  isEnabled?: boolean;
   clientPaymentMethodIDs?: string[];
 }
 
