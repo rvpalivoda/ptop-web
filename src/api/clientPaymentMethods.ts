@@ -9,6 +9,8 @@ export interface ClientPaymentMethod {
   countryID?: string;
   city?: string;
   postCode?: string;
+  paymentMethod?: { id?: string; name?: string };
+  country?: { id?: string; name?: string };
 }
 
 export interface CreateClientPaymentMethodPayload {
