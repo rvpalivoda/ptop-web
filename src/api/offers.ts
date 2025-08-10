@@ -24,6 +24,10 @@ export interface Offer {
   clientID: string;
   createdAt: string;
   isEnabled?: boolean;
+  type?: 'buy' | 'sell';
+  conditions?: string;
+  orderExpirationTimeout?: number;
+  clientPaymentMethodIDs?: string[];
 }
 
 export interface OfferFilters {
@@ -55,4 +59,23 @@ export function createOffer(data: CreateOfferPayload) {
 
 export function getClientOffers() {
   return apiRequest<Offer[]>("/client/offers");
+}
+
+export function updateOffer(id: string, data: CreateOfferPayload) {
+  return apiRequest<Offer>(`/client/offers/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  });
+}
+
+export function enableOffer(id: string) {
+  return apiRequest<Offer>(`/client/offers/${id}/enable`, {
+    method: 'POST',
+  });
+}
+
+export function disableOffer(id: string) {
+  return apiRequest<Offer>(`/client/offers/${id}/disable`, {
+    method: 'POST',
+  });
 }

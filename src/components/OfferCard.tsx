@@ -1,5 +1,5 @@
 
-import { Star, Circle, MessageCircle } from 'lucide-react';
+import { Star, Circle, MessageCircle, Pencil, PowerOff } from 'lucide-react';
 
 interface OfferCardProps {
   order: {
@@ -16,11 +16,15 @@ interface OfferCardProps {
     paymentMethods: string[];
     limits: { min: string; max: string };
     type: 'buy' | 'sell';
+    isEnabled?: boolean;
   };
+  isClientOffer?: boolean;
+  onToggle?: () => void;
+  onEdit?: () => void;
 }
 
-export const OfferCard = ({ order }: OfferCardProps) => {
-  const { trader, currency, amount, price, paymentMethods, limits, type } = order;
+export const OfferCard = ({ order, isClientOffer, onToggle, onEdit }: OfferCardProps) => {
+  const { trader, currency, amount, price, paymentMethods, limits, type, isEnabled } = order;
 
   return (
     <div className="bg-gray-700 rounded-lg p-6 border border-gray-600 hover:border-gray-500 transition-colors">
@@ -88,17 +92,44 @@ export const OfferCard = ({ order }: OfferCardProps) => {
 
         {/* Action Buttons */}
         <div className="flex space-x-3">
-          <button className="flex items-center space-x-2 px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition-colors">
-            <MessageCircle className="w-4 h-4" />
-            <span>Чат</span>
-          </button>
-          <button className={`px-6 py-2 rounded-lg font-medium transition-colors ${
-            type === 'buy'
-              ? 'bg-green-600 hover:bg-green-700 text-white'
-              : 'bg-red-600 hover:bg-red-700 text-white'
-          }`}>
-            {type === 'buy' ? 'Продать' : 'Купить'}
-          </button>
+          {isClientOffer ? (
+            <>
+              <button
+                className="flex items-center space-x-2 px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition-colors"
+                onClick={onEdit}
+              >
+                <Pencil className="w-4 h-4" />
+                <span>Изменить</span>
+              </button>
+              <button
+                className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+                  isEnabled
+                    ? 'bg-red-600 hover:bg-red-700 text-white'
+                    : 'bg-green-600 hover:bg-green-700 text-white'
+                }`}
+                onClick={onToggle}
+              >
+                <PowerOff className="w-4 h-4" />
+                <span>{isEnabled ? 'Отключить' : 'Включить'}</span>
+              </button>
+            </>
+          ) : (
+            <>
+              <button className="flex items-center space-x-2 px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition-colors">
+                <MessageCircle className="w-4 h-4" />
+                <span>Чат</span>
+              </button>
+              <button
+                className={`px-6 py-2 rounded-lg font-medium transition-colors ${
+                  type === 'buy'
+                    ? 'bg-green-600 hover:bg-green-700 text-white'
+                    : 'bg-red-600 hover:bg-red-700 text-white'
+                }`}
+              >
+                {type === 'buy' ? 'Продать' : 'Купить'}
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>
