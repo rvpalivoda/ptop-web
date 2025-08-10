@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Header } from '@/components/Header';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { useTranslation } from 'react-i18next';
@@ -8,166 +8,270 @@ import {
   getOutgoingTransactions,
   BaseTransaction,
 } from '@/api';
+import { ArrowDownRight, ArrowUpRight, Shuffle } from 'lucide-react';
 
 const LIMIT = 10;
 
 type TabKey = 'in' | 'internal' | 'out';
 
+type StatusTone = {
+  bg: string;
+  text: string;
+  ring: string;
+};
+
+const statusTones: Record<string, StatusTone> = {
+  pending: { bg: 'bg-amber-500/10', text: 'text-amber-300', ring: 'ring-amber-500/30' },
+  processing: { bg: 'bg-sky-500/10', text: 'text-sky-300', ring: 'ring-sky-500/30' },
+  success: { bg: 'bg-emerald-500/10', text: 'text-emerald-300', ring: 'ring-emerald-500/30' },
+  failed: { bg: 'bg-rose-500/10', text: 'text-rose-300', ring: 'ring-rose-500/30' },
+  canceled: { bg: 'bg-gray-500/10', text: 'text-gray-300', ring: 'ring-gray-500/30' },
+};
+
+const formatDate = (d: string | number | Date, locale?: string) =>
+    new Intl.DateTimeFormat(locale ?? undefined, {
+      year: 'numeric', month: 'short', day: '2-digit',
+      hour: '2-digit', minute: '2-digit',
+    }).format(new Date(d));
+
+const formatAmount = (n: number | string, locale?: string) => {
+  const val = typeof n === 'string' ? Number(n) : n;
+  if (Number.isNaN(val)) return String(n);
+  return new Intl.NumberFormat(locale ?? undefined, { maximumFractionDigits: 8 }).format(val);
+};
+
+const SkeletonRow = () => (
+    <tr className="animate-pulse">
+      {Array.from({ length: 6 }).map((_, i) => (
+          <td key={i} className="px-4 py-3">
+            <div className="h-4 w-full max-w-[12rem] rounded bg-white/10" />
+          </td>
+      ))}
+    </tr>
+);
+
+const EmptyState = ({ title, subtitle }: { title: string; subtitle?: string }) => (
+    <div className="flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-gradient-to-b from-white/5 to-transparent py-16 text-center">
+      <div className="mb-2 text-lg font-semibold text-white/90">{title}</div>
+      {subtitle ? <div className="max-w-md text-sm text-white/60">{subtitle}</div> : null}
+    </div>
+);
+
+const Pill = ({ status }: { status: string }) => {
+  const tone = statusTones[status?.toLowerCase()] ?? { bg: 'bg-white/10', text: 'text-white/80', ring: 'ring-white/10' };
+  return (
+      <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${tone.bg} ${tone.text} ring-1 ${tone.ring} capitalize`}>
+      {status}
+    </span>
+  );
+};
+
+const SmartTabsTrigger = ({ value, children, icon: Icon }: { value: TabKey; children: React.ReactNode; icon: any }) => (
+    <TabsTrigger
+        value={value}
+        className="group relative overflow-hidden rounded-2xl px-4 py-2.5 text-sm font-medium text-white/80 ring-1 ring-white/10 transition-all data-[state=active]:text-white data-[state=active]:shadow data-[state=active]:ring-white/20 data-[state=active]:bg-white/10 hover:text-white hover:ring-white/20"
+    >
+    <span className="inline-flex items-center gap-2">
+      <Icon className="h-4 w-4 opacity-80" />
+      {children}
+    </span>
+    </TabsTrigger>
+);
+
 const Transactions = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [tab, setTab] = useState<TabKey>('in');
   const [offset, setOffset] = useState(0);
   const [items, setItems] = useState<BaseTransaction[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetcher =
-      tab === 'in'
-        ? getIncomingTransactions
-        : tab === 'internal'
-          ? getInternalTransactions
-          : getOutgoingTransactions;
+        tab === 'in'
+            ? getIncomingTransactions
+            : tab === 'internal'
+                ? getInternalTransactions
+                : getOutgoingTransactions;
     setLoading(true);
+    setError(null);
     fetcher(LIMIT, offset)
-      .then(setItems)
-      .finally(() => setLoading(false));
+        .then(setItems)
+        .catch((e: any) => setError(e?.message ?? 'Failed to load'))
+        .finally(() => setLoading(false));
   }, [tab, offset]);
 
-  const nextPage = () => {
-    if (items.length === LIMIT) {
-      setOffset((o) => o + LIMIT);
+  const canPrev = offset > 0;
+  const canNext = items.length === LIMIT;
+
+  const locale = i18n.language;
+
+  const table = useMemo(() => {
+    if (error) {
+      return <EmptyState title={t('common.error')} subtitle={error} />;
     }
-  };
-
-  const prevPage = () => {
-    setOffset((o) => Math.max(0, o - LIMIT));
-  };
-
-  const renderList = () => {
     if (loading) {
-      return <p>{t('transactions.loading')}</p>;
+      return (
+          <div className="overflow-hidden rounded-2xl border border-white/10 bg-gray-900/60">
+            <div className="hidden md:block overflow-x-auto">
+              <table className="min-w-full text-sm text-left">
+                <thead className="sticky top-0 z-10 bg-gray-900/80 backdrop-blur supports-[backdrop-filter]:bg-gray-900/60">
+                <tr className="text-xs uppercase text-gray-400">
+                  <th className="px-4 py-3">{t('transactions.id')}</th>
+                  <th className="px-4 py-3">{t('transactions.asset')}</th>
+                  <th className="px-4 py-3">{t('transactions.status')}</th>
+                  <th className="px-4 py-3">{t('transactions.createdAt')}</th>
+                  <th className="px-4 py-3">{t('transactions.updatedAt')}</th>
+                  <th className="px-4 py-3 text-right">{t('transactions.amount')}</th>
+                </tr>
+                </thead>
+                <tbody className="divide-y divide-white/10">
+                {Array.from({ length: 6 }).map((_, i) => (
+                    <SkeletonRow key={i} />
+                ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+      );
     }
     if (!items.length) {
-      return <p>{t('transactions.noData')}</p>;
+      return (
+          <EmptyState
+              title={t('transactions.noData')}
+              subtitle={t('transactions.noDataHelp')}
+          />
+      );
     }
+
     return (
-      <>
-        <div className="hidden md:block overflow-x-auto">
-          <table className="min-w-full text-sm text-left">
-            <thead className="text-xs uppercase text-gray-400">
-              <tr>
-                <th className="px-4 py-2">{t('transactions.id')}</th>
-                <th className="px-4 py-2">{t('transactions.asset')}</th>
-                <th className="px-4 py-2">{t('transactions.status')}</th>
-                <th className="px-4 py-2">{t('transactions.createdAt')}</th>
-                <th className="px-4 py-2">{t('transactions.updatedAt')}</th>
-                <th className="px-4 py-2 text-right">{t('transactions.amount')}</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-700">
-              {items.map((tx) => (
-                <tr key={tx.id} className="hover:bg-gray-800">
-                  <td className="px-4 py-2 break-all">{tx.id}</td>
-                  <td className="px-4 py-2">{tx.assetName}</td>
-                  <td className="px-4 py-2 capitalize">{tx.status}</td>
-                  <td className="px-4 py-2">{new Date(tx.createdAt).toLocaleString()}</td>
-                  <td className="px-4 py-2">{new Date(tx.updatedAt).toLocaleString()}</td>
-                  <td className="px-4 py-2 text-right">{tx.amount}</td>
+        <>
+          {/* Desktop table */}
+          <div className="hidden md:block overflow-hidden rounded-2xl border border-white/10 bg-gray-900/60">
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-sm text-left">
+                <thead className="sticky top-0 z-10 bg-gray-900/80 backdrop-blur supports-[backdrop-filter]:bg-gray-900/60">
+                <tr className="text-xs uppercase text-gray-400">
+                  <th className="px-4 py-3">{t('transactions.id')}</th>
+                  <th className="px-4 py-3">{t('transactions.asset')}</th>
+                  <th className="px-4 py-3">{t('transactions.status')}</th>
+                  <th className="px-4 py-3">{t('transactions.createdAt')}</th>
+                  <th className="px-4 py-3">{t('transactions.updatedAt')}</th>
+                  <th className="px-4 py-3 text-right">{t('transactions.amount')}</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <div className="md:hidden space-y-4">
-          {items.map((tx) => (
-            <div
-              key={tx.id}
-              className="p-4 bg-gray-800/80 rounded-xl ring-1 ring-white/5"
-            >
-              <div className="text-xs text-gray-400">
-                {t('transactions.id')}: <span className="text-gray-200">{tx.id}</span>
-              </div>
-              <div className="mt-1 text-sm flex justify-between">
-                <span className="text-gray-400">
-                  {t('transactions.asset')}
-                </span>
-                <span className="text-gray-200">{tx.assetName}</span>
-              </div>
-              <div className="mt-1 text-sm flex justify-between">
-                <span className="text-gray-400">
-                  {t('transactions.status')}
-                </span>
-                <span className="text-gray-200 capitalize">{tx.status}</span>
-              </div>
-              <div className="mt-1 text-sm flex justify-between">
-                <span className="text-gray-400">
-                  {t('transactions.createdAt')}
-                </span>
-                <span className="text-gray-200">
-                  {new Date(tx.createdAt).toLocaleString()}
-                </span>
-              </div>
-              <div className="mt-1 text-sm flex justify-between">
-                <span className="text-gray-400">
-                  {t('transactions.updatedAt')}
-                </span>
-                <span className="text-gray-200">
-                  {new Date(tx.updatedAt).toLocaleString()}
-                </span>
-              </div>
-              <div className="mt-1 text-sm flex justify-between">
-                <span className="text-gray-400">
-                  {t('transactions.amount')}
-                </span>
-                <span className="text-gray-200">{tx.amount}</span>
-              </div>
+                </thead>
+                <tbody className="divide-y divide-white/10">
+                {items.map((tx) => (
+                    <tr key={tx.id} className="hover:bg-white/5">
+                      <td className="px-4 py-3 font-mono text-xs text-white/80 break-all">{tx.id}</td>
+                      <td className="px-4 py-3">{tx.assetName}</td>
+                      <td className="px-4 py-3"><Pill status={tx.status} /></td>
+                      <td className="px-4 py-3 text-white/80">{formatDate(tx.createdAt, locale)}</td>
+                      <td className="px-4 py-3 text-white/80">{formatDate(tx.updatedAt, locale)}</td>
+                      <td className="px-4 py-3 text-right font-medium">{formatAmount(tx.amount as any, locale)}</td>
+                    </tr>
+                ))}
+                </tbody>
+              </table>
             </div>
-          ))}
-        </div>
-      </>
+          </div>
+
+          {/* Mobile cards */}
+          <div className="md:hidden space-y-4">
+            {items.map((tx) => (
+                <div key={tx.id} className="p-4 rounded-2xl border border-white/10 bg-gray-900/60 shadow-sm">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="text-[10px] uppercase tracking-wide text-white/50">{t('transactions.id')}</div>
+                      <div className="font-mono text-xs text-white/80 break-all">{tx.id}</div>
+                    </div>
+                    <Pill status={tx.status} />
+                  </div>
+                  <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
+                    <div className="text-white/60">{t('transactions.asset')}</div>
+                    <div className="text-white/90 text-right">{tx.assetName}</div>
+                    <div className="text-white/60">{t('transactions.createdAt')}</div>
+                    <div className="text-white/90 text-right">{formatDate(tx.createdAt, locale)}</div>
+                    <div className="text-white/60">{t('transactions.updatedAt')}</div>
+                    <div className="text-white/90 text-right">{formatDate(tx.updatedAt, locale)}</div>
+                    <div className="text-white/60">{t('transactions.amount')}</div>
+                    <div className="text-white/90 text-right">{formatAmount(tx.amount as any, locale)}</div>
+                  </div>
+                </div>
+            ))}
+          </div>
+        </>
     );
+  }, [items, loading, error, locale, t]);
+
+  const nextPage = () => {
+    if (items.length === LIMIT) setOffset((o) => o + LIMIT);
   };
+  const prevPage = () => setOffset((o) => Math.max(0, o - LIMIT));
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      <Header />
-      <div className="container mx-auto px-4 pt-24 pb-8">
-        <h1 className="text-2xl font-bold mb-4">{t('header.transactions')}</h1>
-        <Tabs
-          value={tab}
-          onValueChange={(v) => {
-            setTab(v as TabKey);
-            setOffset(0);
-          }}
-          className="w-full"
-        >
-          <TabsList className="mb-4">
-            <TabsTrigger value="in">{t('transactions.incoming')}</TabsTrigger>
-            <TabsTrigger value="internal">{t('transactions.internal')}</TabsTrigger>
-            <TabsTrigger value="out">{t('transactions.outgoing')}</TabsTrigger>
-          </TabsList>
-          <TabsContent value="in">{renderList()}</TabsContent>
-          <TabsContent value="internal">{renderList()}</TabsContent>
-          <TabsContent value="out">{renderList()}</TabsContent>
-        </Tabs>
-        <div className="flex justify-between mt-4">
-          <button
-            onClick={prevPage}
-            disabled={offset === 0}
-            className="px-4 py-2 bg-gray-700 rounded disabled:opacity-50"
+      <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 text-white">
+        <Header />
+        <div className="container mx-auto px-4 pt-24 pb-10">
+          <div className="mb-6 flex items-end justify-between gap-4">
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{t('header.transactions')}</h1>
+              <p className="mt-1 text-sm text-white/60">{t('transactions.subtitle', { defaultValue: 'Review your incoming, internal, and outgoing transactions.' })}</p>
+            </div>
+          </div>
+
+          {/* Tabs */}
+          <Tabs
+              value={tab}
+              onValueChange={(v) => {
+                setTab(v as TabKey);
+                setOffset(0);
+              }}
+              className="w-full"
           >
-            {t('transactions.prev')}
-          </button>
-          <button
-            onClick={nextPage}
-            disabled={items.length < LIMIT}
-            className="px-4 py-2 bg-gray-700 rounded disabled:opacity-50"
-          >
-            {t('transactions.next')}
-          </button>
+            <TabsList className="mb-5 inline-flex rounded-2xl bg-white/5 p-1 ring-1 ring-white/10 backdrop-blur">
+              <SmartTabsTrigger value="in" icon={ArrowDownRight}>
+                {t('transactions.incoming')}
+              </SmartTabsTrigger>
+              <SmartTabsTrigger value="internal" icon={Shuffle}>
+                {t('transactions.internal')}
+              </SmartTabsTrigger>
+              <SmartTabsTrigger value="out" icon={ArrowUpRight}>
+                {t('transactions.outgoing')}
+              </SmartTabsTrigger>
+            </TabsList>
+
+            <TabsContent value="in" className="mt-0 focus:outline-none">{table}</TabsContent>
+            <TabsContent value="internal" className="mt-0 focus:outline-none">{table}</TabsContent>
+            <TabsContent value="out" className="mt-0 focus:outline-none">{table}</TabsContent>
+          </Tabs>
+
+          {/* Pagination */}
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+            <div className="text-xs text-white/60">
+              {offset + 1}
+              {' – '}
+              {offset + (items.length ? items.length : 0)}
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                  onClick={prevPage}
+                  disabled={!canPrev || loading}
+                  className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium ring-1 ring-white/10 hover:ring-white/20 disabled:opacity-50 disabled:hover:ring-white/10 bg-white/5"
+              >
+                {t('transactions.prev')}
+              </button>
+              <button
+                  onClick={nextPage}
+                  disabled={!canNext || loading}
+                  className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium ring-1 ring-white/10 hover:ring-white/20 disabled:opacity-50 disabled:hover:ring-white/10 bg-white/5"
+              >
+                {t('transactions.next')}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
   );
 };
 
