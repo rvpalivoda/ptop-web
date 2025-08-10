@@ -230,13 +230,13 @@ const Transactions = () => {
               className="w-full"
           >
             <TabsList className="mb-5 inline-flex rounded-2xl bg-white/5 p-1 ring-1 ring-white/10 backdrop-blur">
-              <SmartTabsTrigger value="in" icon={ArrowDownRight} className="mr-[10px]">
+              <SmartTabsTrigger value="in" icon={ArrowDownRight} className="mr-[10px] ml-[-4px]">
                 {t('transactions.incoming')}
               </SmartTabsTrigger>
               <SmartTabsTrigger value="internal" icon={Shuffle} className="mr-[10px]">
                 {t('transactions.internal')}
               </SmartTabsTrigger>
-              <SmartTabsTrigger value="out" icon={ArrowUpRight} className="mr-[10px]">
+              <SmartTabsTrigger value="out" icon={ArrowUpRight} className="mr-[-4px]">
                 {t('transactions.outgoing')}
               </SmartTabsTrigger>
             </TabsList>
