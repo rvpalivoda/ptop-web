@@ -1,7 +1,6 @@
-
 import { useState } from 'react';
 import { Bell, Menu, X } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { useAuth } from '@/context';
 import { ProfileDrawer } from './ProfileDrawer';
 import { useTranslation } from 'react-i18next';
@@ -11,117 +10,154 @@ export const Header = () => {
   const { isAuthenticated, logout } = useAuth();
   const { t } = useTranslation();
 
+  const NavItem = ({ to, label, onClick }: { to: string; label: string; onClick?: () => void }) => (
+      <NavLink
+          to={to}
+          onClick={onClick}
+          className={({ isActive }) =>
+              `inline-flex items-center text-sm font-medium transition-colors ${
+                  isActive
+                      ? 'text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.6)]'
+                      : 'text-white/70 hover:text-white'
+              }`
+          }
+      >
+        {label}
+      </NavLink>
+  );
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-gray-800 border-b border-gray-700">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <div className="flex items-center space-x-4">
-            <div className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              <Link to="/"> Peerex P2P</Link>
+      <header className="fixed inset-x-0 top-0 z-50">
+        {/* Glass / water style bar */}
+        <div className="border-b border-white/10 bg-gradient-to-b from-gray-950/80 to-gray-900/60 backdrop-blur supports-[backdrop-filter]:bg-gray-900/40">
+          <div className="container mx-auto px-4">
+            <div className="flex h-16 items-center justify-between">
+              {/* Logo */}
+              <div className="flex items-center gap-3">
+                <Link
+                    to="/"
+                    className="select-none text-2xl font-bold tracking-tight bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent drop-shadow-[0_0_6px_rgba(147,197,253,0.45)] hover:drop-shadow-[0_0_12px_rgba(147,197,253,0.75)] transition-all duration-300"
+                    aria-label="Peerex P2P"
+                >
+                  Peerex P2P
+                </Link>
+                <span className="hidden sm:inline-block rounded-full bg-white/5 px-2 py-0.5 text-[11px] font-semibold tracking-wide text-white/70 ring-1 ring-white/10">
+                beta
+              </span>
+              </div>
+
+              {/* Desktop navigation */}
+              <nav className="hidden md:flex items-center gap-6">
+                <NavItem to="/balance" label={t('header.balance')} />
+                <NavItem to="/adverts" label={t('header.adverts')} />
+                <NavItem to="/orders" label={t('header.orders')} />
+                <NavItem to="/transactions" label={t('header.transactions')} />
+                <NavItem to="/escrow" label={t('header.escrow')} />
+              </nav>
+
+              {/* Actions */}
+              <div className="flex items-center gap-3">
+                <button
+                    className="group rounded-xl bg-white/5 p-2 text-white/80 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white"
+                    aria-label="Notifications"
+                >
+                <span className="relative inline-block">
+                  <Bell size={18} />
+                  {/* Example unread badge */}
+                  <span className="absolute -right-1 -top-1 inline-flex h-2.5 w-2.5 items-center justify-center rounded-full bg-emerald-400" />
+                </span>
+                </button>
+
+                {isAuthenticated ? (
+                    <ProfileDrawer
+                        triggerClassName="hidden md:inline-flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 text-sm font-medium text-white/80 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white"
+                    />
+                ) : (
+                    <div className="hidden md:flex items-center gap-2">
+                      <NavLink
+                          to="/login"
+                          className={({ isActive }) =>
+                              `rounded-xl px-3 py-2 text-sm font-medium ring-1 ring-white/10 transition ${
+                                  isActive ? 'bg-white/15 text-white' : 'bg-white/5 text-white/80 hover:bg-white/10 hover:text-white'
+                              }`
+                          }
+                      >
+                        {t('header.login')}
+                      </NavLink>
+                      <NavLink
+                          to="/register"
+                          className={({ isActive }) =>
+                              `rounded-xl px-3 py-2 text-sm font-semibold ring-1 ring-white/10 transition ${
+                                  isActive ? 'bg-white/20 text-white' : 'bg-white/10 text-white hover:bg-white/20'
+                              }`
+                          }
+                      >
+                        {t('header.register')}
+                      </NavLink>
+                    </div>
+                )}
+
+                {/* Mobile menu button */}
+                <button
+                    onClick={() => setIsMenuOpen((v) => !v)}
+                    className="md:hidden rounded-xl bg-white/5 p-2 text-white/80 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white"
+                    aria-label="Toggle menu"
+                >
+                  {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
+                </button>
+              </div>
             </div>
           </div>
 
-          <nav className="hidden md:flex items-center space-x-8">
-            <Link to="/balance" className="text-gray-300 hover:text-white transition-colors">
-              {t('header.balance')}
-            </Link>
-            <Link to="/adverts" className="text-gray-300 hover:text-white transition-colors">
-              {t('header.adverts')}
-            </Link>
-            <Link to="/orders" className="text-gray-300 hover:text-white transition-colors">
-              {t('header.orders')}
-            </Link>
-            <Link to="/transactions" className="text-gray-300 hover:text-white transition-colors">
-              {t('header.transactions')}
-            </Link>
-            <Link to="/escrow" className="text-gray-300 hover:text-white transition-colors">
-              {t('header.escrow')}
-            </Link>
-          </nav>
-          {/* User Actions */}
-          <div className="flex items-center space-x-4">
-            <button className="text-gray-300 hover:text-white transition-colors">
-              <Bell size={20} />
-            </button>
-            {isAuthenticated ? (
-              <ProfileDrawer triggerClassName="hidden md:flex items-center space-x-2 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg transition-colors" />
-            ) : (
-              <>
-                <Link
-                  to="/login"
-                  className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg transition-colors"
-                >
-                  {t('header.login')}
-                </Link>
-                <Link
-                  to="/register"
-                  className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg transition-colors"
-                >
-                  {t('header.register')}
-                </Link>
-              </>
-            )}
+          {/* Mobile menu */}
+          {isMenuOpen && (
+              <div className="md:hidden border-t border-white/10">
+                <div className="container mx-auto px-4 py-3">
+                  <nav className="flex flex-col gap-2">
+                    <NavItem to="/balance" label={t('header.balance')} onClick={() => setIsMenuOpen(false)} />
+                    <NavItem to="/adverts" label={t('header.adverts')} onClick={() => setIsMenuOpen(false)} />
+                    <NavItem to="/orders" label={t('header.orders')} onClick={() => setIsMenuOpen(false)} />
+                    <NavItem to="/transactions" label={t('header.transactions')} onClick={() => setIsMenuOpen(false)} />
+                    <NavItem to="/escrow" label={t('header.escrow')} onClick={() => setIsMenuOpen(false)} />
 
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden text-gray-300 hover:text-white"
-            >
-              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
+                    {isAuthenticated ? (
+                        <div className="mt-2 flex flex-col gap-2">
+                          <ProfileDrawer
+                              triggerClassName="inline-flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 text-sm font-medium text-white/80 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white"
+                          />
+                          <button
+                              onClick={() => {
+                                logout();
+                                setIsMenuOpen(false);
+                              }}
+                              className="text-left rounded-xl bg-white/5 px-3 py-2 text-sm font-medium text-white/80 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white"
+                          >
+                            {t('profile.logout')}
+                          </button>
+                        </div>
+                    ) : (
+                        <div className="mt-2 flex flex-col gap-2">
+                          <Link
+                              to="/login"
+                              onClick={() => setIsMenuOpen(false)}
+                              className="rounded-xl bg-white/5 px-3 py-2 text-sm font-medium text-white/80 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white"
+                          >
+                            {t('header.login')}
+                          </Link>
+                          <Link
+                              to="/register"
+                              onClick={() => setIsMenuOpen(false)}
+                              className="rounded-xl bg-white/10 px-3 py-2 text-sm font-semibold text-white ring-1 ring-white/10 transition hover:bg-white/20"
+                          >
+                            {t('header.register')}
+                          </Link>
+                        </div>
+                    )}
+                  </nav>
+                </div>
+              </div>
+          )}
         </div>
-
-        {/* Mobile Menu */}
-        {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-700">
-            <nav className="flex flex-col space-y-2">
-              <Link to="/balance" className="text-gray-300 hover:text-white py-2 transition-colors">
-                {t('header.balance')}
-              </Link>
-              <Link to="/adverts" className="text-gray-300 hover:text-white py-2 transition-colors">
-                {t('header.adverts')}
-              </Link>
-              <Link to="/orders" className="text-gray-300 hover:text-white py-2 transition-colors">
-                {t('header.orders')}
-              </Link>
-              <Link to="/transactions" className="text-gray-300 hover:text-white py-2 transition-colors">
-                {t('header.transactions')}
-              </Link>
-              <Link to="/escrow" className="text-gray-300 hover:text-white py-2 transition-colors">
-                {t('header.escrow')}
-              </Link>
-              {isAuthenticated ? (
-                <>
-                  <ProfileDrawer triggerClassName="text-gray-300 hover:text-white py-2 transition-colors text-left flex" />
-                  <button
-                    onClick={logout}
-                    className="text-gray-300 hover:text-white py-2 transition-colors text-left"
-                  >
-                    {t('profile.logout')}
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link
-                    to="/login"
-                    className="text-gray-300 hover:text-white py-2 transition-colors"
-                  >
-                    {t('header.login')}
-                  </Link>
-                  <Link
-                    to="/register"
-                    className="text-gray-300 hover:text-white py-2 transition-colors"
-                  >
-                    {t('header.register')}
-                  </Link>
-                </>
-              )}
-            </nav>
-          </div>
-        )}
-      </div>
-    </header>
+      </header>
   );
 };
