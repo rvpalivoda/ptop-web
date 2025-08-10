@@ -28,6 +28,7 @@ export const CreateOfferForm = ({ onClose }: CreateOfferFormProps) => {
   const [paymentMethods, setPaymentMethods] = useState<ClientPaymentMethodOption[]>([]);
 
   const [formData, setFormData] = useState({
+    type: 'buy',
     fromAssetId: '',
     toAssetId: '',
     price: '',
@@ -105,6 +106,8 @@ export const CreateOfferForm = ({ onClose }: CreateOfferFormProps) => {
     if (!formData.toAssetId) e.toAssetId = 'Обязательное поле';
     if (formData.fromAssetId && formData.fromAssetId === formData.toAssetId)
       e.toAssetId = 'Активы должны различаться';
+    if (formData.type !== 'buy' && formData.type !== 'sell')
+      e.type = 'Обязательное поле';
     if (!formData.price) e.price = 'Обязательное поле';
     if (!formData.amount) e.amount = 'Обязательное поле';
     if (!formData.minAmount) e.minAmount = 'Обязательное поле';
@@ -133,6 +136,7 @@ export const CreateOfferForm = ({ onClose }: CreateOfferFormProps) => {
         amount: formData.amount,
         client_payment_method_ids: formData.paymentMethodIds,
         conditions: formData.conditions,
+        type: formData.type,
         from_asset_id: formData.fromAssetId,
         max_amount: formData.maxAmount,
         min_amount: formData.minAmount,
@@ -194,6 +198,24 @@ export const CreateOfferForm = ({ onClose }: CreateOfferFormProps) => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Тип
+            </label>
+            <select
+              value={formData.type}
+              onChange={(e) =>
+                setFormData({ ...formData, type: e.target.value as 'buy' | 'sell' })
+              }
+              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="buy">Купить</option>
+              <option value="sell">Продать</option>
+            </select>
+            {errors.type && (
+              <p className="text-sm text-red-500 mt-1">{errors.type}</p>
+            )}
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">

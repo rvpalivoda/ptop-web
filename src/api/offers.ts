@@ -4,6 +4,7 @@ export interface CreateOfferPayload {
   amount: string;
   client_payment_method_ids: string[];
   conditions: string;
+  type: 'buy' | 'sell';
   from_asset_id: string;
   max_amount: string;
   min_amount: string;
