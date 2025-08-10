@@ -45,29 +45,24 @@ const Balance = () => {
                         key={b.id}
                         className="p-4 bg-gray-800/80 rounded-xl ring-1 ring-white/5"
                     >
-                      {/* Первая строка на десктопе: name + amount слева, value/кнопка справа.
-                    На мобиле это первая и вторая строки соответственно */}
                       <div className="flex flex-col gap-3 sm:grid sm:grid-cols-12 sm:items-center">
                         {/* name + amount */}
                         <div className="sm:col-span-7 flex flex-wrap items-center gap-x-3 gap-y-1">
                           <div className="font-semibold text-base">{b.name}</div>
                           <div className="text-sm text-gray-400">
-                            {t('balance.amount')}:{' '}
+                            <span className="text-xs">{t('balance.amount')}:{' '}</span>
                             <span className="text-gray-200">{b.amount}</span>
                           </div>
                         </div>
 
-                        {/* value / получить адрес (справа на десктопе, 2-я строка на мобиле) */}
+                        {/* value / кнопка */}
                         <div className="sm:col-span-5 sm:justify-self-end">
                           {b.value ? (
-                              <div className="flex items-center gap-2">
-                        <span className="text-xs uppercase text-gray-400">
+                              <div className="flex flex-wrap items-center gap-2 break-all">
+                        <span className="text-xs text-gray-400">
                           {t('balance.address')}
                         </span>
-                                <span
-                                    className="font-mono text-sm max-w-[48ch] truncate"
-                                    title={b.value}
-                                >
+                                <span className="font-mono text-sm">
                           {b.value}
                         </span>
                                 <button
@@ -87,7 +82,7 @@ const Balance = () => {
                           )}
                         </div>
 
-                        {/* Вторая строка на десктопе / третья на мобиле: description */}
+                        {/* description */}
                         {(b as any).description ? (
                             <div className="sm:col-span-12 mt-1 text-sm text-gray-300 leading-snug">
                               {(b as any).description}
