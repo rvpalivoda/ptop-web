@@ -5,14 +5,14 @@ export const TradingStats = () => {
   const stats = [
     {
       title: 'BTC/RUB',
-      value: '₽2,845,000',
+      value: '2,845,000',
       change: '+2.5%',
       isPositive: true,
       icon: TrendingUp
     },
     {
       title: 'ETH/RUB',
-      value: '₽185,000',
+      value: '185,000',
       change: '-1.2%',
       isPositive: false,
       icon: TrendingDown

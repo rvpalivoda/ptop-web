@@ -87,11 +87,11 @@ export const OfferCard = ({ order, isClientOffer, onToggle, onEdit }: OfferCardP
               </div>
               <div>
                 <p className="text-xs text-white/60">{t('offerCard.price')}</p>
-                <p className="font-medium">₽{price}</p>
+                <p className="font-medium">{price}</p>
               </div>
               <div>
                 <p className="text-xs text-white/60">{t('offerCard.limits')}</p>
-                <p className="font-medium">₽{limits.min} - ₽{limits.max}</p>
+                <p className="font-medium">{limits.min} - {limits.max}</p>
               </div>
             </div>
 
