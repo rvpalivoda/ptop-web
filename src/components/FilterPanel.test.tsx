@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import i18n from '../i18n';
@@ -20,6 +20,14 @@ vi.mock('@/api/clientPaymentMethods', () => ({
   createClientPaymentMethod: vi.fn(),
 }));
 
+const authState = { isAuthenticated: false };
+const navigate = vi.fn();
+vi.mock('@/context', () => ({ useAuth: () => authState }));
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return { ...actual, useNavigate: () => navigate };
+});
+
 import { FilterPanel } from './FilterPanel';
 
 describe('FilterPanel', () => {
@@ -30,6 +38,8 @@ describe('FilterPanel', () => {
     maxAmount: '',
     paymentMethod: 'all'
   };
+
+  beforeEach(() => { navigate.mockClear(); });
 
   it('вызывает onFiltersChange при смене актива', async () => {
     const onFiltersChange = vi.fn();
@@ -94,7 +104,26 @@ describe('FilterPanel', () => {
     expect(onTabChange).toHaveBeenCalledWith('sell');
   });
 
-  it('открывает форму создания объявления', async () => {
+  it('перенаправляет на логин для гостя', async () => {
+    authState.isAuthenticated = false;
+    render(
+      <FilterPanel
+        filters={baseFilters}
+        onFiltersChange={() => {}}
+        activeTab="buy"
+        onTabChange={() => {}}
+      />
+    );
+
+    await screen.findAllByTestId('from-asset');
+    const btns = screen.getAllByTestId('create-advert');
+    fireEvent.click(btns[btns.length - 1]);
+
+    expect(navigate).toHaveBeenCalledWith('/login');
+  });
+
+  it('открывает форму создания объявления для авторизованного пользователя', async () => {
+    authState.isAuthenticated = true;
     render(
       <FilterPanel
         filters={baseFilters}
@@ -109,5 +138,6 @@ describe('FilterPanel', () => {
     fireEvent.click(btns[btns.length - 1]);
 
     expect(await screen.findByText(i18n.t('createOffer.createTitle'))).toBeInTheDocument();
+    expect(navigate).not.toHaveBeenCalled();
   });
 });

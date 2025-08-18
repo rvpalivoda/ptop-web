@@ -1,4 +1,4 @@
-import { Star, MessageCircle, Pencil, PowerOff } from 'lucide-react';
+import { Star, Pencil, PowerOff } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 interface OfferCardProps {
@@ -108,16 +108,21 @@ export const OfferCard = ({ order, isClientOffer, onToggle, onEdit }: OfferCardP
                 ))}
               </div>
             </div>
-            {(conditions || orderExpirationTimeout || TTL || typeof isEnabled === 'boolean') && (
+            {(conditions || TTL || orderExpirationTimeout || typeof isEnabled === 'boolean') && (
               <div className="mt-3 space-y-1">
                 {conditions && (
                   <p className="text-sm text-gray-400">{t('offerCard.conditions')}: {conditions}</p>
                 )}
-                {(TTL || orderExpirationTimeout) && (
-                  <p className="text-sm text-gray-400">
-                    {t('offerCard.expiration')}: {TTL ?? `${orderExpirationTimeout} ${t('offerCard.sec')}`}
-                  </p>
-                )}
+                {(TTL || orderExpirationTimeout) && (() => {
+                  const pad = (n: number) => n.toString().padStart(2, '0');
+                  const format = (d: Date) => `${pad(d.getHours())}.${pad(d.getMinutes())} ${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${pad(d.getFullYear() % 100)}`;
+                  const exp = TTL ? new Date(TTL) : new Date(Date.now() + (orderExpirationTimeout ?? 0) * 1000);
+                  return (
+                    <p className="text-sm text-gray-400">
+                      {t('offerCard.expiration')}: {format(exp)}
+                    </p>
+                  );
+                })()}
                 {typeof isEnabled === 'boolean' && (
                   <p className="text-sm text-gray-400">
                     {t('offerCard.status')}: {isEnabled ? t('offerCard.active') : t('offerCard.inactive')}
@@ -150,9 +155,6 @@ export const OfferCard = ({ order, isClientOffer, onToggle, onEdit }: OfferCardP
                 </>
             ) : (
                 <>
-                  <button className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-sm transition">
-                    <MessageCircle className="w-4 h-4" /> {t('offerCard.chat')}
-                  </button>
                   <button
                       className={`px-6 py-2 rounded-xl font-medium text-sm transition ${
                           type === 'buy'
