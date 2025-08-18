@@ -111,13 +111,18 @@
     "logout": "Logout"
   },
   "filters": {
-    "anyAsset": "Any Asset",
-    "allMethods": "Any Payment Method",
-    "min": "Min Amount",
-    "max": "Max Amount",
+    "title": "Filters",
+    "anyAsset": "Any asset",
+    "allMethods": "Any payment method",
     "buy": "Buy",
     "sell": "Sell",
-    "createAdvert": "Create Advert"
+    "min": "Min",
+    "max": "Max",
+    "createAdvert": "Create Ads",
+    "swap": "Swap assets",
+    "clear": "Clear",
+    "apply": "Apply",
+    "close": "Close"
   },
   "offerCard": {
     "trades": "trades",
@@ -205,8 +210,9 @@
     "create": "Create"
   },
   "offers": {
-    "sell": "Sell Offers",
     "buy": "Buy Offers",
-    "found": "offers found"
+    "sell": "Sell Offers",
+    "found": " offers found",
+    "adsAvailable": "{{count}} ads available"
   }
 }
