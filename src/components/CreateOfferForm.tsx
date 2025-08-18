@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { X, Plus, Info, Check, AlertCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { toast } from '@/components/ui/sonner';
 import { createOffer, updateOffer, Offer } from '@/api/offers';
 import { getAssets, getCountries, getPaymentMethods } from '@/api/dictionaries';
@@ -30,6 +31,7 @@ const btnSoft =
 const sectionCard = 'rounded-2xl border border-white/10 bg-gray-900/60 p-4';
 
 export const CreateOfferForm = ({ onClose, offer }: CreateOfferFormProps) => {
+  const { t } = useTranslation();
   const [assets, setAssets] = useState<AssetOption[]>([]);
   const [paymentMethods, setPaymentMethods] = useState<ClientPaymentMethodOption[]>([]);
 
@@ -90,20 +92,20 @@ export const CreateOfferForm = ({ onClose, offer }: CreateOfferFormProps) => {
 
   const validate = () => {
     const e: Record<string, string> = {};
-    if (!formData.fromAssetId) e.fromAssetId = 'Обязательное поле';
-    if (!formData.toAssetId) e.toAssetId = 'Обязательное поле';
-    if (formData.fromAssetId && formData.fromAssetId === formData.toAssetId) e.toAssetId = 'Активы должны различаться';
-    if (formData.type !== 'buy' && formData.type !== 'sell') e.type = 'Обязательное поле';
-    if (!formData.price) e.price = 'Обязательное поле';
-    if (!formData.amount) e.amount = 'Обязательное поле';
-    if (!formData.minAmount) e.minAmount = 'Обязательное поле';
-    if (!formData.maxAmount) e.maxAmount = 'Обязательное поле';
-    if (Number(formData.minAmount) <= 0) e.minAmount = 'Мин. сумма должна быть > 0';
-    if (Number(formData.maxAmount) <= 0) e.maxAmount = 'Макс. сумма должна быть > 0';
-    if (Number(formData.minAmount) >= Number(formData.maxAmount)) e.maxAmount = 'Макс. сумма должна быть больше мин.';
-    if (formData.orderExpirationTimeout < 15) e.orderExpirationTimeout = 'Минимум 15 минут';
-    if (!formData.conditions.trim()) e.conditions = 'Обязательное поле';
-    if (formData.paymentMethodIds.filter(Boolean).length === 0) e.paymentMethodIds = 'Выберите хотя бы один метод оплаты';
+    if (!formData.fromAssetId) e.fromAssetId = t('createOffer.errors.required');
+    if (!formData.toAssetId) e.toAssetId = t('createOffer.errors.required');
+    if (formData.fromAssetId && formData.fromAssetId === formData.toAssetId) e.toAssetId = t('createOffer.errors.assetsDifferent');
+    if (formData.type !== 'buy' && formData.type !== 'sell') e.type = t('createOffer.errors.required');
+    if (!formData.price) e.price = t('createOffer.errors.required');
+    if (!formData.amount) e.amount = t('createOffer.errors.required');
+    if (!formData.minAmount) e.minAmount = t('createOffer.errors.required');
+    if (!formData.maxAmount) e.maxAmount = t('createOffer.errors.required');
+    if (Number(formData.minAmount) <= 0) e.minAmount = t('createOffer.errors.minAmountPositive');
+    if (Number(formData.maxAmount) <= 0) e.maxAmount = t('createOffer.errors.maxAmountPositive');
+    if (Number(formData.minAmount) >= Number(formData.maxAmount)) e.maxAmount = t('createOffer.errors.maxGreaterMin');
+    if (formData.orderExpirationTimeout < 15) e.orderExpirationTimeout = t('createOffer.errors.minTimeout');
+    if (!formData.conditions.trim()) e.conditions = t('createOffer.errors.required');
+    if (formData.paymentMethodIds.filter(Boolean).length === 0) e.paymentMethodIds = t('createOffer.errors.chooseMethod');
     return e;
   };
 
@@ -124,20 +126,20 @@ export const CreateOfferForm = ({ onClose, offer }: CreateOfferFormProps) => {
         price: formData.price,
         to_asset_id: formData.toAssetId,
       };
-      if (offer) { await updateOffer(offer.id, payload); toast('Объявление обновлено'); }
-      else { await createOffer(payload); toast('Объявление создано'); }
+        if (offer) { await updateOffer(offer.id, payload); toast(t('createOffer.toast.offerUpdated')); }
+        else { await createOffer(payload); toast(t('createOffer.toast.offerCreated')); }
       onClose();
     } catch (err) {
       console.error('Create offer error:', err);
-      toast(err instanceof Error ? err.message : 'Ошибка создания');
+        toast(err instanceof Error ? err.message : t('createOffer.toast.createError'));
     }
   };
 
   const handleAddMethod = async () => {
-    if (!newMethod.city || !newMethod.country_id || !newMethod.name || !newMethod.payment_method_id || !newMethod.post_code) {
-      toast('Заполните все поля платёжного метода');
-      return;
-    }
+      if (!newMethod.city || !newMethod.country_id || !newMethod.name || !newMethod.payment_method_id || !newMethod.post_code) {
+        toast(t('createOffer.toast.fillAllMethodFields'));
+        return;
+      }
     try {
       const created = await createClientPaymentMethod(newMethod);
       const opt = { id: (created as any).id ?? (created as any).ID ?? '', name: (created as any).name ?? (created as any).Name ?? '' };
@@ -149,7 +151,7 @@ export const CreateOfferForm = ({ onClose, offer }: CreateOfferFormProps) => {
       setNewMethod({ city: '', country_id: '', name: '', payment_method_id: '', post_code: '' });
     } catch (err) {
       console.error('create client payment method error:', err);
-      toast(err instanceof Error ? err.message : 'Ошибка создания метода');
+        toast(err instanceof Error ? err.message : t('createOffer.toast.methodCreateError'));
     }
   };
 
@@ -167,7 +169,7 @@ export const CreateOfferForm = ({ onClose, offer }: CreateOfferFormProps) => {
                     } data-[active=true]:text-white`}
                 data-active={formData.type === k}
             >
-              {k === 'buy' ? 'Купить' : 'Продать'}
+              {k === 'buy' ? t('createOffer.buy') : t('createOffer.sell')}
             </button>
         ))}
       </div>
@@ -193,8 +195,8 @@ export const CreateOfferForm = ({ onClose, offer }: CreateOfferFormProps) => {
           {/* Header */}
           <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
             <div>
-              <h2 className="text-xl md:text-2xl font-bold tracking-tight">{offer ? 'Редактировать объявление' : 'Создать объявление'}</h2>
-              <p className="mt-0.5 text-xs text-white/60">Заполните поля ниже. Все значения можно изменить позже.</p>
+                <h2 className="text-xl md:text-2xl font-bold tracking-tight">{offer ? t('createOffer.editTitle') : t('createOffer.createTitle')}</h2>
+                <p className="mt-0.5 text-xs text-white/60">{t('createOffer.subtitle')}</p>
             </div>
             <button onClick={onClose} className={`${btnGhost} !px-2 !py-1`} aria-label="Close">
               <X className="h-4 w-4" />
@@ -204,28 +206,28 @@ export const CreateOfferForm = ({ onClose, offer }: CreateOfferFormProps) => {
           {/* Form body */}
           <form onSubmit={handleSubmit} className="max-h-[75vh] overflow-y-auto px-5 py-5 pb-0">
             <div className="grid grid-cols-1 gap-4">
-              {/* Тип сделки */}
+              {/* Trade type */}
               <div className={sectionCard}>
                 <div className="mb-3 flex items-center justify-between">
-                  <div className="text-sm font-semibold uppercase tracking-wide text-white/60">Тип сделки</div>
+                    <div className="text-sm font-semibold uppercase tracking-wide text-white/60">{t('createOffer.tradeType')}</div>
                   {typeTabs}
                 </div>
                 {errors.type && <p className="text-xs text-rose-300">{errors.type}</p>}
               </div>
 
-              {/* Активы */}
+                {/* Assets */}
               <div className={sectionCard}>
-                <div className="mb-3 text-sm font-semibold uppercase tracking-wide text-white/60">Активы</div>
+                  <div className="mb-3 text-sm font-semibold uppercase tracking-wide text-white/60">{t('createOffer.assets')}</div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="mb-1.5 block text-xs text-white/60">Актив из</label>
+                      <label className="mb-1.5 block text-xs text-white/60">{t('createOffer.fromAsset')}</label>
                     <select value={formData.fromAssetId} onChange={(e) => setFormData({ ...formData, fromAssetId: e.target.value })} className={selectBase}>
                       {assets.map((a) => (<option key={a.id} value={a.id}>{a.name}</option>))}
                     </select>
                     {errors.fromAssetId && <p className="mt-1 text-xs text-rose-300">{errors.fromAssetId}</p>}
                   </div>
                   <div>
-                    <label className="mb-1.5 block text-xs text-white/60">Актив в</label>
+                      <label className="mb-1.5 block text-xs text-white/60">{t('createOffer.toAsset')}</label>
                     <select value={formData.toAssetId} onChange={(e) => setFormData({ ...formData, toAssetId: e.target.value })} className={selectBase}>
                       {assets.filter((a) => a.id !== formData.fromAssetId).map((a) => (<option key={a.id} value={a.id}>{a.name}</option>))}
                     </select>
@@ -234,45 +236,45 @@ export const CreateOfferForm = ({ onClose, offer }: CreateOfferFormProps) => {
                 </div>
               </div>
 
-              {/* Параметры */}
+                {/* Parameters */}
               <div className={sectionCard}>
-                <div className="mb-3 text-sm font-semibold uppercase tracking-wide text-white/60">Параметры</div>
+                  <div className="mb-3 text-sm font-semibold uppercase tracking-wide text-white/60">{t('createOffer.parameters')}</div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="mb-1.5 block text-xs text-white/60">Цена</label>
+                      <label className="mb-1.5 block text-xs text-white/60">{t('createOffer.price')}</label>
                     <input type="number" inputMode="decimal" value={formData.price} onChange={(e) => setFormData({ ...formData, price: e.target.value })} className={inputBase} />
                     {errors.price && <p className="mt-1 text-xs text-rose-300">{errors.price}</p>}
                   </div>
                   <div>
-                    <label className="mb-1.5 block text-xs text-white/60">Объём</label>
+                      <label className="mb-1.5 block text-xs text-white/60">{t('createOffer.amount')}</label>
                     <input type="number" inputMode="decimal" value={formData.amount} onChange={(e) => setFormData({ ...formData, amount: e.target.value })} className={inputBase} />
                     {errors.amount && <p className="mt-1 text-xs text-rose-300">{errors.amount}</p>}
                   </div>
                   <div>
-                    <label className="mb-1.5 block text-xs text-white/60">Мин. сумма</label>
+                      <label className="mb-1.5 block text-xs text-white/60">{t('createOffer.minAmount')}</label>
                     <input type="number" inputMode="decimal" value={formData.minAmount} onChange={(e) => setFormData({ ...formData, minAmount: e.target.value })} className={inputBase} />
                     {errors.minAmount && <p className="mt-1 text-xs text-rose-300">{errors.minAmount}</p>}
                   </div>
                   <div>
-                    <label className="mb-1.5 block text-xs text-white/60">Макс. сумма</label>
+                      <label className="mb-1.5 block text-xs text-white/60">{t('createOffer.maxAmount')}</label>
                     <input type="number" inputMode="decimal" value={formData.maxAmount} onChange={(e) => setFormData({ ...formData, maxAmount: e.target.value })} className={inputBase} />
                     {errors.maxAmount && <p className="mt-1 text-xs text-rose-300">{errors.maxAmount}</p>}
                   </div>
                   <div>
-                    <label className="mb-1.5 block text-xs text-white/60">Тайм-аут сделки (мин)</label>
+                      <label className="mb-1.5 block text-xs text-white/60">{t('createOffer.timeout')}</label>
                     <input type="number" min={15} value={formData.orderExpirationTimeout} onChange={(e) => setFormData({ ...formData, orderExpirationTimeout: Number(e.target.value) })} className={inputBase} />
                     {errors.orderExpirationTimeout && <p className="mt-1 text-xs text-rose-300">{errors.orderExpirationTimeout}</p>}
                     <div className="mt-1.5 flex items-start gap-2 text-xs text-white/60">
                       <Info className="mt-0.5 h-3.5 w-3.5" />
-                      <span>Минимум 15 минут. Время, в течение которого контрагент должен завершить оплату.</span>
+                        <span>{t('createOffer.timeoutHint')}</span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Способы оплаты */}
+                {/* Payment methods */}
               <div className={sectionCard}>
-                <div className="mb-3 text-sm font-semibold uppercase tracking-wide text-white/60">Способы оплаты</div>
+                  <div className="mb-3 text-sm font-semibold uppercase tracking-wide text-white/60">{t('createOffer.paymentMethods')}</div>
                 <div className="grid grid-cols-1 gap-2">
                   {paymentMethods.map((pm) => (
                       <label key={pm.id} className="group flex cursor-pointer items-center gap-2 rounded-xl bg-white/5 px-3 py-2 ring-1 ring-white/10 transition hover:bg-white/10">
@@ -294,13 +296,13 @@ export const CreateOfferForm = ({ onClose, offer }: CreateOfferFormProps) => {
 
                 {!showAddMethod ? (
                     <button type="button" onClick={() => setShowAddMethod(true)} className={`${btnSoft} mt-3`}>
-                      <Plus className="h-4 w-4" /> Добавить платёжный метод
+                        <Plus className="h-4 w-4" /> {t('createOffer.addPaymentMethod')}
                     </button>
                 ) : (
                     <div className="mt-4 grid grid-cols-1 gap-2">
                       <input
                           type="text"
-                          placeholder="Название"
+                            placeholder={t('createOffer.name')}
                           value={newMethod.name}
                           onChange={(e) => setNewMethod({ ...newMethod, name: e.target.value })}
                           className={inputBase}
@@ -310,19 +312,19 @@ export const CreateOfferForm = ({ onClose, offer }: CreateOfferFormProps) => {
                           onChange={(e) => setNewMethod({ ...newMethod, country_id: e.target.value, payment_method_id: '' })}
                           className={selectBase}
                       >
-                        <option value="">Страна</option>
+                          <option value="">{t('createOffer.country')}</option>
                         {countries.map((c) => (<option key={c.id} value={c.id}>{c.name}</option>))}
                       </select>
                       <input
                           type="text"
-                          placeholder="Город"
+                            placeholder={t('createOffer.city')}
                           value={newMethod.city}
                           onChange={(e) => setNewMethod({ ...newMethod, city: e.target.value })}
                           className={inputBase}
                       />
                       <input
                           type="text"
-                          placeholder="Почтовый код"
+                            placeholder={t('createOffer.postalCode')}
                           value={newMethod.post_code}
                           onChange={(e) => setNewMethod({ ...newMethod, post_code: e.target.value })}
                           className={inputBase}
@@ -332,26 +334,26 @@ export const CreateOfferForm = ({ onClose, offer }: CreateOfferFormProps) => {
                           onChange={(e) => setNewMethod({ ...newMethod, payment_method_id: e.target.value })}
                           className={selectBase}
                       >
-                        <option value="">Платёжный метод</option>
+                          <option value="">{t('createOffer.method')}</option>
                         {baseMethods.map((m) => (<option key={m.id} value={m.id}>{m.name}</option>))}
                       </select>
                       <div className="flex gap-2">
-                        <button type="button" onClick={handleAddMethod} className={`${btnPrimary} flex-1`}>Сохранить</button>
+                          <button type="button" onClick={handleAddMethod} className={`${btnPrimary} flex-1`}>{t('createOffer.save')}</button>
                         <button
                             type="button"
                             onClick={() => { setShowAddMethod(false); setNewMethod({ city: '', country_id: '', name: '', payment_method_id: '', post_code: '' }); }}
                             className={`${btnSoft} flex-1`}
-                        >
-                          Отмена
-                        </button>
+                          >
+                            {t('createOffer.cancel')}
+                          </button>
                       </div>
                     </div>
                 )}
               </div>
 
-              {/* Условия */}
+                {/* Conditions */}
               <div className={sectionCard}>
-                <div className="mb-3 text-sm font-semibold uppercase tracking-wide text-white/60">Условия</div>
+                  <div className="mb-3 text-sm font-semibold uppercase tracking-wide text-white/60">{t('createOffer.conditions')}</div>
                 <textarea
                     value={formData.conditions}
                     onChange={(e) => setFormData({ ...formData, conditions: e.target.value })}
@@ -360,15 +362,15 @@ export const CreateOfferForm = ({ onClose, offer }: CreateOfferFormProps) => {
                 {errors.conditions && <p className="mt-1 text-xs text-rose-300">{errors.conditions}</p>}
                 <div className="mt-1.5 flex items-start gap-2 text-xs text-white/60">
                   <AlertCircle className="mt-0.5 h-3.5 w-3.5" />
-                  <span>Опишите требования к платежу, лимиты, комиссию, окно завершения сделки и что делать, если оплата задерживается.</span>
+                    <span>{t('createOffer.conditionsHint')}</span>
                 </div>
               </div>
             </div>
 
             {/* Footer actions */}
             <div className="sticky bottom-0 -mx-5 mt-5 flex items-center justify-end gap-2 border-t border-white/10 bg-gray-900/60 px-5 py-4 backdrop-blur m-0">
-              <button type="button" onClick={onClose} className={btnSoft}>Отмена</button>
-              <button type="submit" className={btnPrimary}>{offer ? 'Сохранить' : 'Создать'}</button>
+                <button type="button" onClick={onClose} className={btnSoft}>{t('createOffer.cancel')}</button>
+                <button type="submit" className={btnPrimary}>{offer ? t('createOffer.save') : t('createOffer.create')}</button>
             </div>
           </form>
         </div>

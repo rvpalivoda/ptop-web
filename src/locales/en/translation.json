@@ -137,5 +137,51 @@
     "next": "Next",
     "noData": "No transactions",
     "loading": "Loading..."
+  },
+  "createOffer": {
+    "errors": {
+      "required": "Required field",
+      "assetsDifferent": "Assets must be different",
+      "minAmountPositive": "Min amount must be > 0",
+      "maxAmountPositive": "Max amount must be > 0",
+      "maxGreaterMin": "Max amount must be greater than min",
+      "minTimeout": "Minimum 15 minutes",
+      "chooseMethod": "Select at least one payment method"
+    },
+    "toast": {
+      "offerUpdated": "Offer updated",
+      "offerCreated": "Offer created",
+      "createError": "Creation error",
+      "fillAllMethodFields": "Fill all payment method fields",
+      "methodCreateError": "Payment method creation error"
+    },
+    "editTitle": "Edit offer",
+    "createTitle": "Create offer",
+    "subtitle": "Fill in the fields below. All values can be changed later.",
+    "buy": "Buy",
+    "sell": "Sell",
+    "tradeType": "Trade type",
+    "assets": "Assets",
+    "fromAsset": "From asset",
+    "toAsset": "To asset",
+    "parameters": "Parameters",
+    "price": "Price",
+    "amount": "Amount",
+    "minAmount": "Min amount",
+    "maxAmount": "Max amount",
+    "timeout": "Trade timeout (min)",
+    "timeoutHint": "At least 15 minutes. Time for the counterparty to complete payment.",
+    "paymentMethods": "Payment methods",
+    "addPaymentMethod": "Add payment method",
+    "name": "Name",
+    "country": "Country",
+    "city": "City",
+    "postalCode": "Postal code",
+    "method": "Payment method",
+    "save": "Save",
+    "cancel": "Cancel",
+    "conditions": "Conditions",
+    "conditionsHint": "Describe payment requirements, limits, fees, settlement window, and what to do if payment is delayed.",
+    "create": "Create"
   }
 }
