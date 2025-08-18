@@ -36,7 +36,7 @@ export const FilterPanel = ({
 
   // ——— Компактные стили под стиль offers ———
   const WRAP =
-      'rounded-2xl border border-white/10 bg-gradient-to-b from-gray-950/80 via-gray-900/70 to-gray-950/80 text-white p-3 sm:p-4 shadow-2xl';
+      '  bg-gradient-to-b from-gray-950/80 via-gray-900/70  text-white  mb-3';
   const FIELD =
       'h-9 px-3 bg-white/5 text-white placeholder-white/40 rounded-xl ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-white/20 transition';
   const SELECT =
@@ -49,10 +49,11 @@ export const FilterPanel = ({
   const TABS_WRAP = 'inline-flex rounded-2xl bg-white/5 p-1 ring-1 ring-white/10';
   const TAB = (active: boolean, kind: 'buy' | 'sell') =>
       `rounded-2xl px-3 h-8 text-sm font-medium ring-1 transition
-     ${kind === 'buy'
-          ? 'ring-emerald-500/30 text-emerald-300 hover:bg-emerald-500/10'
+   ${kind === 'buy'
+          ? 'mr-[7px] ring-emerald-500/30 text-emerald-300 hover:bg-emerald-500/10'
           : 'ring-rose-500/30 text-rose-300 hover:bg-rose-500/10'}
-     ${active ? (kind === 'buy' ? 'bg-emerald-500/20 text-white' : 'bg-rose-500/20 text-white') : ''}`;
+   ${active ? (kind === 'buy' ? 'bg-emerald-500/20 text-white' : 'bg-rose-500/20 text-white') : ''}`;
+
 
   const allOption = useMemo<Option>(() => ({ value: 'all', label: t('filters.all') }), [t]);
   const allMethodsOption = useMemo<Option>(() => ({ value: 'all', label: t('filters.allMethods') }), [t]);

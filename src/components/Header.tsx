@@ -30,8 +30,8 @@ export const Header = () => {
   return (
       <header className="fixed inset-x-0 top-0 z-50">
         {/* стекло/градиент — ближе к стилю offers */}
-        <div className="border-b border-white/10 bg-gradient-to-b from-gray-950/80 via-gray-900/60 to-gray-950/70 backdrop-blur supports-[backdrop-filter]:bg-gray-900/40">
-          <div className="container mx-auto px-4">
+        <div className="border-b border-white/10 bg-gradient-to-b from-gray-950/80   to-gray-950/70 backdrop-blur supports-[backdrop-filter]:bg-gray-900/40">
+          <div className="container mx-auto px-1">
             <div className="flex h-16 items-center justify-between">
               {/* Logo */}
               <div className="flex items-center gap-3">

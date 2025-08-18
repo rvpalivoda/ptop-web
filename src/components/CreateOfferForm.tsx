@@ -189,7 +189,7 @@ export const CreateOfferForm = ({ onClose, offer }: CreateOfferFormProps) => {
 
   return (
       <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4 backdrop-blur">
-        <div className="w-full max-w-lg overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 text-white shadow-2xl">
+         <div className="w-full max-w-2xl h-[85vh] flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 text-white shadow-2xl">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
             <div>
@@ -202,7 +202,7 @@ export const CreateOfferForm = ({ onClose, offer }: CreateOfferFormProps) => {
           </div>
 
           {/* Form body */}
-          <form onSubmit={handleSubmit} className="max-h-[75vh] overflow-y-auto px-5 py-5">
+          <form onSubmit={handleSubmit} className="max-h-[75vh] overflow-y-auto px-5 py-5 pb-0">
             <div className="grid grid-cols-1 gap-4">
               {/* Тип сделки */}
               <div className={sectionCard}>
@@ -366,7 +366,7 @@ export const CreateOfferForm = ({ onClose, offer }: CreateOfferFormProps) => {
             </div>
 
             {/* Footer actions */}
-            <div className="sticky bottom-0 -mx-5 mt-5 flex items-center justify-end gap-2 border-t border-white/10 bg-gray-900/60 px-5 py-4 backdrop-blur">
+            <div className="sticky bottom-0 -mx-5 mt-5 flex items-center justify-end gap-2 border-t border-white/10 bg-gray-900/60 px-5 py-4 backdrop-blur m-0">
               <button type="button" onClick={onClose} className={btnSoft}>Отмена</button>
               <button type="submit" className={btnPrimary}>{offer ? 'Сохранить' : 'Создать'}</button>
             </div>
