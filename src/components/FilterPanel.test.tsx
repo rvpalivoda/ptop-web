@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import '../i18n';
+import i18n from '../i18n';
 
 vi.mock('@/api/dictionaries', () => ({
   getAssets: vi.fn().mockResolvedValue([
@@ -108,6 +108,6 @@ describe('FilterPanel', () => {
     const btns = screen.getAllByTestId('create-advert');
     fireEvent.click(btns[btns.length - 1]);
 
-    expect(await screen.findByText('Создать объявление')).toBeInTheDocument();
+    expect(await screen.findByText(i18n.t('createOffer.createTitle'))).toBeInTheDocument();
   });
 });
