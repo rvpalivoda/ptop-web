@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { CreateOfferForm } from '@/components/CreateOfferForm';
 import { getAssets, getPaymentMethods } from '@/api/dictionaries';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '@/context';
+import { useNavigate } from 'react-router-dom';
 
 type AssetItem = { id?: string; ID?: string; asset_code?: string; name?: string; Name?: string };
 type PaymentMethodItem = { id?: string; ID?: string; name?: string; Name?: string };
@@ -30,6 +32,8 @@ export const FilterPanel = ({
                               onTabChange,
                             }: FilterPanelProps) => {
   const { t } = useTranslation();
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [assets, setAssets] = useState<Option[]>([]);
   const [paymentMethods, setPaymentMethods] = useState<Option[]>([]);
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -130,7 +134,12 @@ export const FilterPanel = ({
 
           {/* 3) Create button */}
           <div className="flex w-full lg:w-auto lg:ml-auto">
-            <button type="button" data-testid="create-advert" onClick={() => setShowCreateForm(true)} className={BTN_PRIMARY}>
+            <button
+                type="button"
+                data-testid="create-advert"
+                onClick={() => (isAuthenticated ? setShowCreateForm(true) : navigate('/login'))}
+                className={BTN_PRIMARY}
+            >
               + {t('filters.createAdvert')}
             </button>
           </div>
