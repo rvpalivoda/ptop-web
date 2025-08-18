@@ -1,4 +1,5 @@
 import { Star, MessageCircle, Pencil, PowerOff } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface OfferCardProps {
   order: {
@@ -27,6 +28,7 @@ interface OfferCardProps {
 }
 
 export const OfferCard = ({ order, isClientOffer, onToggle, onEdit }: OfferCardProps) => {
+  const { t } = useTranslation();
   const {
     trader,
     fromAsset,
@@ -45,7 +47,7 @@ export const OfferCard = ({ order, isClientOffer, onToggle, onEdit }: OfferCardP
   const currency = `${fromAsset?.name}/${toAsset?.name}`;
 
   return (
-      <div className="rounded-2xl border border-white/10 bg-gray-900/60 p-0  transition hover:border-white/20 hover:bg-gray-900/70text-white shadow-lg">
+      <div className="rounded-2xl border border-white/10 bg-gray-900/60 p-0  transition hover:border-white/20 hover:bg-gray-900/70 text-white shadow-lg">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between p-5 gap-6">
           {/* Trader Info */}
           <div className="flex items-center gap-4">
@@ -67,7 +69,7 @@ export const OfferCard = ({ order, isClientOffer, onToggle, onEdit }: OfferCardP
                   <span>{trader.rating}</span>
                 </div>
                 <span>•</span>
-                <span>{trader.completedTrades} сделок</span>
+                <span>{trader.completedTrades} {t('offerCard.trades')}</span>
               </div>
             </div>
           </div>
@@ -76,25 +78,25 @@ export const OfferCard = ({ order, isClientOffer, onToggle, onEdit }: OfferCardP
           <div className="flex-1 lg:mx-8">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
-                <p className="text-xs text-white/60">Валюта</p>
+                <p className="text-xs text-white/60">{t('offerCard.currency')}</p>
                 <p className="font-medium">{currency}</p>
               </div>
               <div>
-                <p className="text-xs text-white/60">Количество</p>
+                <p className="text-xs text-white/60">{t('offerCard.amount')}</p>
                 <p className="font-medium">{amount}</p>
               </div>
               <div>
-                <p className="text-xs text-white/60">Цена</p>
+                <p className="text-xs text-white/60">{t('offerCard.price')}</p>
                 <p className="font-medium">₽{price}</p>
               </div>
               <div>
-                <p className="text-xs text-white/60">Лимиты</p>
+                <p className="text-xs text-white/60">{t('offerCard.limits')}</p>
                 <p className="font-medium">₽{limits.min} - ₽{limits.max}</p>
               </div>
             </div>
 
             <div className="mt-4">
-              <p className="text-xs text-white/60 mb-2">Способы оплаты</p>
+              <p className="text-xs text-white/60 mb-2">{t('offerCard.paymentMethods')}</p>
               <div className="flex flex-wrap gap-2">
                 {paymentMethods.map((method, index) => (
                     <span
@@ -109,16 +111,16 @@ export const OfferCard = ({ order, isClientOffer, onToggle, onEdit }: OfferCardP
             {(conditions || orderExpirationTimeout || TTL || typeof isEnabled === 'boolean') && (
               <div className="mt-3 space-y-1">
                 {conditions && (
-                  <p className="text-sm text-gray-400">Условия: {conditions}</p>
+                  <p className="text-sm text-gray-400">{t('offerCard.conditions')}: {conditions}</p>
                 )}
                 {(TTL || orderExpirationTimeout) && (
                   <p className="text-sm text-gray-400">
-                    Срок действия: {TTL ?? `${orderExpirationTimeout} сек`}
+                    {t('offerCard.expiration')}: {TTL ?? `${orderExpirationTimeout} ${t('offerCard.sec')}`}
                   </p>
                 )}
                 {typeof isEnabled === 'boolean' && (
                   <p className="text-sm text-gray-400">
-                    Статус: {isEnabled ? 'Активно' : 'Неактивно'}
+                    {t('offerCard.status')}: {isEnabled ? t('offerCard.active') : t('offerCard.inactive')}
                   </p>
                 )}
               </div>
@@ -133,7 +135,7 @@ export const OfferCard = ({ order, isClientOffer, onToggle, onEdit }: OfferCardP
                       className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-sm transition"
                       onClick={onEdit}
                   >
-                    <Pencil className="w-4 h-4" /> Изменить
+                    <Pencil className="w-4 h-4" /> {t('offerCard.edit')}
                   </button>
                   <button
                       className={`flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${
@@ -143,13 +145,13 @@ export const OfferCard = ({ order, isClientOffer, onToggle, onEdit }: OfferCardP
                       }`}
                       onClick={onToggle}
                   >
-                    <PowerOff className="w-4 h-4" /> {isEnabled ? 'Отключить' : 'Включить'}
+                    <PowerOff className="w-4 h-4" /> {isEnabled ? t('offerCard.disable') : t('offerCard.enable')}
                   </button>
                 </>
             ) : (
                 <>
                   <button className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-sm transition">
-                    <MessageCircle className="w-4 h-4" /> Чат
+                    <MessageCircle className="w-4 h-4" /> {t('offerCard.chat')}
                   </button>
                   <button
                       className={`px-6 py-2 rounded-xl font-medium text-sm transition ${
@@ -158,7 +160,7 @@ export const OfferCard = ({ order, isClientOffer, onToggle, onEdit }: OfferCardP
                               : 'bg-red-600 hover:bg-red-700'
                       }`}
                   >
-                    {type === 'buy' ? 'Продать' : 'Купить'}
+                    {type === 'buy' ? t('offerCard.sell') : t('offerCard.buy')}
                   </button>
                 </>
             )}

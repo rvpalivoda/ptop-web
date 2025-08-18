@@ -119,6 +119,26 @@
     "sell": "Sell",
     "createAdvert": "Create advert"
   },
+  "offerCard": {
+    "trades": "trades",
+    "currency": "Currency",
+    "amount": "Amount",
+    "price": "Price",
+    "limits": "Limits",
+    "paymentMethods": "Payment methods",
+    "conditions": "Conditions",
+    "expiration": "Expiration",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "edit": "Edit",
+    "disable": "Disable",
+    "enable": "Enable",
+    "chat": "Chat",
+    "sell": "Sell",
+    "buy": "Buy",
+    "sec": "sec"
+  },
   "common": {
     "copy": "Copy",
     "copied": "Copied"
