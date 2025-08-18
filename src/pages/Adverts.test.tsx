@@ -46,7 +46,7 @@ describe('Adverts page', () => {
     await waitFor(() => expect(getClientOffers).toHaveBeenCalled());
     const items = await screen.findAllByTestId('client-offer');
     expect(items).toHaveLength(2);
-    expect(items[0]).toHaveTextContent('EUR');
-    expect(items[1]).toHaveTextContent('USD');
+    expect(items[0]).toHaveTextContent('EUR/RUB');
+    expect(items[1]).toHaveTextContent('USD/RUB');
   });
 });

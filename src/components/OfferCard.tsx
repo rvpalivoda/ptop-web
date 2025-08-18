@@ -9,13 +9,17 @@ interface OfferCardProps {
       completedTrades: number;
       online: boolean;
     };
-    currency: string;
+    fromAsset: { name: string };
+    toAsset: { name: string };
     amount: string;
     price: string;
     paymentMethods: string[];
     limits: { min: string; max: string };
     type: 'buy' | 'sell';
     isEnabled?: boolean;
+    conditions?: string;
+    orderExpirationTimeout?: number;
+    TTL?: string;
   };
   isClientOffer?: boolean;
   onToggle?: () => void;
@@ -23,7 +27,22 @@ interface OfferCardProps {
 }
 
 export const OfferCard = ({ order, isClientOffer, onToggle, onEdit }: OfferCardProps) => {
-  const { trader, currency, amount, price, paymentMethods, limits, type, isEnabled } = order;
+  const {
+    trader,
+    fromAsset,
+    toAsset,
+    amount,
+    price,
+    paymentMethods,
+    limits,
+    type,
+    isEnabled,
+    conditions,
+    orderExpirationTimeout,
+    TTL,
+  } = order;
+
+  const currency = `${fromAsset?.name}/${toAsset?.name}`;
 
   return (
       <div className="rounded-2xl border border-white/10 bg-gray-900/60 p-0  transition hover:border-white/20 hover:bg-gray-900/70text-white shadow-lg">
@@ -87,6 +106,23 @@ export const OfferCard = ({ order, isClientOffer, onToggle, onEdit }: OfferCardP
                 ))}
               </div>
             </div>
+            {(conditions || orderExpirationTimeout || TTL || typeof isEnabled === 'boolean') && (
+              <div className="mt-3 space-y-1">
+                {conditions && (
+                  <p className="text-sm text-gray-400">Условия: {conditions}</p>
+                )}
+                {(TTL || orderExpirationTimeout) && (
+                  <p className="text-sm text-gray-400">
+                    Срок действия: {TTL ?? `${orderExpirationTimeout} сек`}
+                  </p>
+                )}
+                {typeof isEnabled === 'boolean' && (
+                  <p className="text-sm text-gray-400">
+                    Статус: {isEnabled ? 'Активно' : 'Неактивно'}
+                  </p>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Action Buttons */}

@@ -7,6 +7,7 @@ import {
   enableOffer,
   disableOffer,
 } from '@/api/offers';
+import type { ClientPaymentMethod } from '@/api/clientPaymentMethods';
 import { OfferCard } from '@/components/OfferCard';
 import { CreateOfferForm } from '@/components/CreateOfferForm';
 
@@ -63,16 +64,25 @@ const Adverts = () => {
                     completedTrades: 0,
                     online: true,
                   },
-                  currency: offer.fromAssetID,
+                  fromAsset: { name: offer.fromAsset?.name || offer.fromAssetID },
+                  toAsset: { name: offer.toAsset?.name || offer.toAssetID },
                   amount: String(offer.amount),
                   price: String(offer.price),
-                  paymentMethods: [],
+                  paymentMethods:
+                    offer.clientPaymentMethods?.map(
+                      (m: ClientPaymentMethod) =>
+                        m.paymentMethod?.name ?? m.name ?? '',
+                    )
+                      .filter(Boolean) ?? [],
                   limits: {
                     min: String(offer.minAmount),
                     max: String(offer.maxAmount),
                   },
                   type: (offer.type ?? 'buy') as 'buy' | 'sell',
                   isEnabled: offer.isEnabled,
+                  conditions: offer.conditions,
+                  orderExpirationTimeout: offer.orderExpirationTimeout,
+                  TTL: offer.TTL,
                 }}
                 isClientOffer
                 onToggle={() => toggleOffer(offer)}
