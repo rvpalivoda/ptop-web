@@ -3,3 +3,30 @@
 @tailwind utilities;
 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. */
+/* 1) Базовые стили для ВСЕХ select */
+@layer base {
+    :where(select) {
+        @apply bg-gray-900 text-white ring-1 ring-white/10 rounded-xl;
+        color-scheme: dark; /* Подсказывает системе рисовать тёмное нативное меню */
+    }
+
+    /* 2) Стили опций в выпадающем списке */
+    :where(select) > :where(option) {
+        background-color: #111827; /* gray-900 */
+        color: #ffffff;
+    }
+
+    /* 3) Состояния и доступность */
+    :where(select:disabled) {
+        @apply opacity-60 cursor-not-allowed;
+    }
+    :where(select:focus) {
+        @apply outline-none ring-2 ring-white/20;
+    }
+}
+
+/* (Опционально) более высокая специфичность для «упрямых» браузеров */
+select option {
+    background-color: #111827;
+    color: #ffffff;
+}

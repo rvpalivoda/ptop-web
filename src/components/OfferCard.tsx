@@ -1,5 +1,4 @@
-
-import { Star, Circle, MessageCircle, Pencil, PowerOff } from 'lucide-react';
+import { Star, MessageCircle, Pencil, PowerOff } from 'lucide-react';
 
 interface OfferCardProps {
   order: {
@@ -27,111 +26,108 @@ export const OfferCard = ({ order, isClientOffer, onToggle, onEdit }: OfferCardP
   const { trader, currency, amount, price, paymentMethods, limits, type, isEnabled } = order;
 
   return (
-    <div className="bg-gray-700 rounded-lg p-6 border border-gray-600 hover:border-gray-500 transition-colors">
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
-        {/* Trader Info */}
-        <div className="flex items-center space-x-4">
-          <div className="relative">
-            <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">
-              {trader.name.charAt(0)}
-            </div>
-            <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-gray-700 ${
-              trader.online ? 'bg-green-500' : 'bg-gray-500'
-            }`}>
-              <Circle className="w-full h-full" />
-            </div>
-          </div>
-          <div>
-            <h4 className="font-semibold text-white">{trader.name}</h4>
-            <div className="flex items-center space-x-2 text-sm text-gray-400">
-              <div className="flex items-center space-x-1">
-                <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                <span>{trader.rating}</span>
+      <div className="rounded-2xl border border-white/10 bg-gray-900/60 p-0  transition hover:border-white/20 hover:bg-gray-900/70text-white shadow-lg">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between p-5 gap-6">
+          {/* Trader Info */}
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 flex items-center justify-center font-bold">
+                {trader.name.charAt(0)}
               </div>
-              <span>•</span>
-              <span>{trader.completedTrades} сделок</span>
+              <span
+                  className={`absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full border-2 border-gray-900 ${
+                      trader.online ? 'bg-green-500' : 'bg-gray-500'
+                  }`}
+              />
+            </div>
+            <div>
+              <h4 className="font-semibold text-white tracking-tight">{trader.name}</h4>
+              <div className="flex items-center gap-2 text-sm text-white/60">
+                <div className="flex items-center gap-1">
+                  <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                  <span>{trader.rating}</span>
+                </div>
+                <span>•</span>
+                <span>{trader.completedTrades} сделок</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Order Details */}
-        <div className="flex-1 lg:mx-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div>
-              <p className="text-sm text-gray-400">Валюта</p>
-              <p className="font-semibold text-white">{currency}</p>
+          {/* Order Details */}
+          <div className="flex-1 lg:mx-8">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <div>
+                <p className="text-xs text-white/60">Валюта</p>
+                <p className="font-medium">{currency}</p>
+              </div>
+              <div>
+                <p className="text-xs text-white/60">Количество</p>
+                <p className="font-medium">{amount}</p>
+              </div>
+              <div>
+                <p className="text-xs text-white/60">Цена</p>
+                <p className="font-medium">₽{price}</p>
+              </div>
+              <div>
+                <p className="text-xs text-white/60">Лимиты</p>
+                <p className="font-medium">₽{limits.min} - ₽{limits.max}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm text-gray-400">Количество</p>
-              <p className="font-semibold text-white">{amount}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-400">Цена</p>
-              <p className="font-semibold text-white">₽{price}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-400">Лимиты</p>
-              <p className="font-semibold text-white">₽{limits.min} - ₽{limits.max}</p>
-            </div>
-          </div>
-          
-          <div className="mt-3">
-            <p className="text-sm text-gray-400 mb-2">Способы оплаты:</p>
-            <div className="flex flex-wrap gap-2">
-              {paymentMethods.map((method, index) => (
-                <span
-                  key={index}
-                  className="px-2 py-1 bg-gray-600 text-gray-300 text-xs rounded-full"
-                >
+
+            <div className="mt-4">
+              <p className="text-xs text-white/60 mb-2">Способы оплаты</p>
+              <div className="flex flex-wrap gap-2">
+                {paymentMethods.map((method, index) => (
+                    <span
+                        key={index}
+                        className="px-2 py-1 rounded-full bg-white/10 text-white/70 text-xs ring-1 ring-white/10"
+                    >
                   {method}
                 </span>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Action Buttons */}
-        <div className="flex space-x-3">
-          {isClientOffer ? (
-            <>
-              <button
-                className="flex items-center space-x-2 px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition-colors"
-                onClick={onEdit}
-              >
-                <Pencil className="w-4 h-4" />
-                <span>Изменить</span>
-              </button>
-              <button
-                className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-colors ${
-                  isEnabled
-                    ? 'bg-red-600 hover:bg-red-700 text-white'
-                    : 'bg-green-600 hover:bg-green-700 text-white'
-                }`}
-                onClick={onToggle}
-              >
-                <PowerOff className="w-4 h-4" />
-                <span>{isEnabled ? 'Отключить' : 'Включить'}</span>
-              </button>
-            </>
-          ) : (
-            <>
-              <button className="flex items-center space-x-2 px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition-colors">
-                <MessageCircle className="w-4 h-4" />
-                <span>Чат</span>
-              </button>
-              <button
-                className={`px-6 py-2 rounded-lg font-medium transition-colors ${
-                  type === 'buy'
-                    ? 'bg-green-600 hover:bg-green-700 text-white'
-                    : 'bg-red-600 hover:bg-red-700 text-white'
-                }`}
-              >
-                {type === 'buy' ? 'Продать' : 'Купить'}
-              </button>
-            </>
-          )}
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-2">
+            {isClientOffer ? (
+                <>
+                  <button
+                      className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-sm transition"
+                      onClick={onEdit}
+                  >
+                    <Pencil className="w-4 h-4" /> Изменить
+                  </button>
+                  <button
+                      className={`flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${
+                          isEnabled
+                              ? 'bg-red-600 hover:bg-red-700'
+                              : 'bg-green-600 hover:bg-green-700'
+                      }`}
+                      onClick={onToggle}
+                  >
+                    <PowerOff className="w-4 h-4" /> {isEnabled ? 'Отключить' : 'Включить'}
+                  </button>
+                </>
+            ) : (
+                <>
+                  <button className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-sm transition">
+                    <MessageCircle className="w-4 h-4" /> Чат
+                  </button>
+                  <button
+                      className={`px-6 py-2 rounded-xl font-medium text-sm transition ${
+                          type === 'buy'
+                              ? 'bg-green-600 hover:bg-green-700'
+                              : 'bg-red-600 hover:bg-red-700'
+                      }`}
+                  >
+                    {type === 'buy' ? 'Продать' : 'Купить'}
+                  </button>
+                </>
+            )}
+          </div>
         </div>
       </div>
-    </div>
   );
 };
