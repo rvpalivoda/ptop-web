@@ -18,8 +18,8 @@ interface AssetOption { id: string; name: string }
 interface ClientPaymentMethodOption { id: string; name: string }
 
 const inputBase =
-    'w-full px-3.5 py-2.5 bg-white/5 text-white placeholder-white/40 rounded-xl ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-white/20 transition';
-const selectBase = inputBase;
+    'w-full px-3.5 py-2.5 bg-white/5 text-white placeholder-white/40 rounded-xl ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-white/20 transition ';
+const selectBase = inputBase + " bg-gray-900 text-gray";
 const textareaBase = inputBase + ' min-h-[120px]';
 const btnPrimary =
     'inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600/90 hover:bg-blue-600 text-white px-4 py-2.5 text-sm font-semibold shadow transition disabled:opacity-60';
