@@ -115,7 +115,7 @@ export const OfferCard = ({ order, isClientOffer, onToggle, onEdit }: OfferCardP
                 )}
                 {(TTL || orderExpirationTimeout) && (() => {
                   const pad = (n: number) => n.toString().padStart(2, '0');
-                  const format = (d: Date) => `${pad(d.getHours())}.${pad(d.getMinutes())} ${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${pad(d.getFullYear() % 100)}`;
+                  const format = (d: Date) => `${pad(d.getHours())}:${pad(d.getMinutes())} ${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${pad(d.getFullYear() % 100)}`;
                   const exp = TTL ? new Date(TTL) : new Date(Date.now() + (orderExpirationTimeout ?? 0) * 1000);
                   return (
                     <p className="text-sm text-gray-400">
@@ -123,11 +123,12 @@ export const OfferCard = ({ order, isClientOffer, onToggle, onEdit }: OfferCardP
                     </p>
                   );
                 })()}
+                {/*
                 {typeof isEnabled === 'boolean' && (
                   <p className="text-sm text-gray-400">
                     {t('offerCard.status')}: {isEnabled ? t('offerCard.active') : t('offerCard.inactive')}
                   </p>
-                )}
+                )}*/}
               </div>
             )}
           </div>

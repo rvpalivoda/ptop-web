@@ -111,13 +111,13 @@
     "logout": "Logout"
   },
   "filters": {
-    "all": "All",
-    "allMethods": "All methods",
-    "min": "Min",
-    "max": "Max",
+    "anyAsset": "Any Asset",
+    "allMethods": "Any Payment Method",
+    "min": "Min Amount",
+    "max": "Max Amount",
     "buy": "Buy",
     "sell": "Sell",
-    "createAdvert": "Create advert"
+    "createAdvert": "Create Advert"
   },
   "offerCard": {
     "trades": "trades",
@@ -203,5 +203,10 @@
     "conditions": "Conditions",
     "conditionsHint": "Describe payment requirements, limits, fees, settlement window, and what to do if payment is delayed.",
     "create": "Create"
+  },
+  "offers": {
+    "sell": "Sell Offers",
+    "buy": "Buy Offers",
+    "found": "offers found"
   }
 }

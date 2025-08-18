@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { getOffers } from '@/api/offers';
 import type { ClientPaymentMethod } from '@/api/clientPaymentMethods';
 import { OfferCard } from './OfferCard';
+import { useTranslation } from 'react-i18next';
 
 interface OfferListProps {
   type: 'buy' | 'sell';
@@ -88,14 +89,16 @@ export const OfferList = ({ type, filters }: OfferListProps) => {
     };
   }, [type, filters]);
 
+  const { t } = useTranslation();
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-white">
-          {type === 'buy' ? 'Объявления о покупке' : 'Объявления о продаже'}
+          {type === "buy" ? t("offers.buy") : t("offers.sell")}
         </h3>
         <span className="text-sm text-gray-400">
-          Найдено: {orders.length} объявлений
+          {orders.length} {t('offers.found')}
         </span>
       </div>
 

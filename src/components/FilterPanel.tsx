@@ -4,6 +4,8 @@ import { getAssets, getPaymentMethods } from '@/api/dictionaries';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/context';
 import { useNavigate } from 'react-router-dom';
+import { ArrowLeftRight } from "lucide-react";
+
 
 type AssetItem = { id?: string; ID?: string; asset_code?: string; name?: string; Name?: string };
 type PaymentMethodItem = { id?: string; ID?: string; name?: string; Name?: string };
@@ -56,7 +58,7 @@ export const FilterPanel = ({
               ? 'bg-red-600 text-white hover:bg-red-700'
               : 'text-red-500 hover:bg-red-600/20')}`;
 
-  const allOption = useMemo<Option>(() => ({ value: 'all', label: t('filters.all') }), [t]);
+  const allOption = useMemo<Option>(() => ({ value: 'all', label: t('filters.anyAsset') }), [t]);
   const allMethodsOption = useMemo<Option>(() => ({ value: 'all', label: t('filters.allMethods') }), [t]);
 
   useEffect(() => {
@@ -113,7 +115,13 @@ export const FilterPanel = ({
               <select id="from-asset" data-testid="from-asset" value={filters.fromAsset} onChange={(e) => change({ fromAsset: e.target.value })} className={SELECT}>
                 {assets.map((a) => (<option key={a.value} value={a.value}>{a.label}</option>))}
               </select>
-              <select id="to-asset" data-testid="to-asset" value={filters.toAsset} onChange={(e) => change({ toAsset: e.target.value })} className={SELECT}>
+              <button
+                  type="button"
+                  onClick={() => change({ fromAsset: filters.toAsset, toAsset: filters.fromAsset })}
+                  className="p-1 rounded bg-white/5 hover:bg-white/10 transition"
+              >
+                <ArrowLeftRight className="w-5 h-5 text-gray-300" />
+              </button>              <select id="to-asset" data-testid="to-asset" value={filters.toAsset} onChange={(e) => change({ toAsset: e.target.value })} className={SELECT}>
                 {assets.map((a) => (<option key={a.value} value={a.value}>{a.label}</option>))}
               </select>
             </div>
