@@ -38,6 +38,26 @@ const btnDanger =
 
 const card = 'rounded-2xl border border-white/10 bg-gray-900/60 p-4';
 
+interface ModalContentProps {
+  children: React.ReactNode;
+  title: string;
+  error?: string | null;
+}
+
+const ModalContent = ({ children, title, error }: ModalContentProps) => (
+  <DialogContent className="bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 text-white sm:max-w-lg w-[calc(100vw-2rem)] rounded-2xl border border-white/10 shadow-2xl p-0 overflow-hidden">
+    <DialogHeader className="px-5 pt-5">
+      <DialogTitle className="text-lg font-semibold tracking-tight">{title}</DialogTitle>
+    </DialogHeader>
+    <div className="px-5 pb-5">{children}</div>
+    {error && (
+      <div className="px-5 pb-5">
+        <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-sm text-rose-200">{error}</div>
+      </div>
+    )}
+  </DialogContent>
+);
+
 export const ProfileDrawer = ({ triggerClassName }: Props) => {
   const { userInfo, regenerateWords, changePassword, setPinCode, refresh, logout } = useAuth();
   const navigate = useNavigate();
@@ -150,20 +170,6 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
 
   const handleLogout = async () => { await logout(); navigate('/login'); };
 
-  const ModalContent = ({ children, title }: { children: React.ReactNode; title: string }) => (
-      <DialogContent className="bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 text-white sm:max-w-lg w-[calc(100vw-2rem)] rounded-2xl border border-white/10 shadow-2xl p-0 overflow-hidden">
-        <DialogHeader className="px-5 pt-5">
-          <DialogTitle className="text-lg font-semibold tracking-tight">{title}</DialogTitle>
-        </DialogHeader>
-        <div className="px-5 pb-5">{children}</div>
-        {error && (
-            <div className="px-5 pb-5">
-              <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-sm text-rose-200">{error}</div>
-            </div>
-        )}
-      </DialogContent>
-  );
-
   return (
       <Sheet>
         <SheetTrigger asChild>
@@ -223,7 +229,7 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
                   <DialogTrigger asChild>
                     <button className={btnGhost}><Key className="h-4 w-4" />{t('profile.changePassword')}</button>
                   </DialogTrigger>
-                  <ModalContent title={t('profile.changePassword') as string}>
+                  <ModalContent title={t('profile.changePassword') as string} error={error}>
                     <form onSubmit={handlePasswordSubmit} className="space-y-4">
                       <div>
                         <label className="mb-1.5 block text-xs text-white/60">{t('profile.currentPassword')}</label>
@@ -266,7 +272,7 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
                   <DialogTrigger asChild>
                     <button className={btnGhost}><KeyRound className="h-4 w-4" />{t('profile.pinCode')}</button>
                   </DialogTrigger>
-                  <ModalContent title={t('profile.pinCodeSetup') as string}>
+                  <ModalContent title={t('profile.pinCodeSetup') as string} error={error}>
                     <div className="space-y-4">
                       <input type="password" value={pinPassword} onChange={(e) => setPinPassword(e.target.value)} placeholder={t('profile.enterPassword') as string} className={inputBase} />
                       <div className="flex gap-2">
@@ -292,7 +298,7 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
                   <DialogTrigger asChild>
                     <button className={btnGhost}><ShieldCheck className="h-4 w-4" />{t('profile.twoFactorAuth')}</button>
                   </DialogTrigger>
-                  <ModalContent title={t('profile.twoFactorAuth') as string}>
+                  <ModalContent title={t('profile.twoFactorAuth') as string} error={error}>
                     {!twoFactorEnabled && !twoFactorSecret && (
                         <div className="space-y-3">
                           <input type="password" value={passwordCheck} onChange={(e) => setPasswordCheck(e.target.value)} placeholder={t('profile.enterPassword') as string} className={inputBase} />
@@ -324,7 +330,7 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
                   <DialogTrigger asChild>
                     <button className={btnGhost}><BookOpen className="h-4 w-4" />{t('profile.recoveryWords')}</button>
                   </DialogTrigger>
-                  <ModalContent title={t('profile.recoveryWords') as string}>
+                  <ModalContent title={t('profile.recoveryWords') as string} error={error}>
                     <div className="space-y-4">
                       <input type="password" value={regeneratePassword} onChange={(e) => setRegeneratePassword(e.target.value)} placeholder={t('profile.enterPassword') as string} className={inputBase} />
                       <button onClick={handleRegenerateWithVerify} className={`${btnPrimary} w-full`} disabled={busy}>{t('profile.generate')}</button>
@@ -362,7 +368,7 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
                   <DialogTrigger asChild>
                     <button className={btnGhost}><Settings className="h-4 w-4" />{t('profile.settings')}</button>
                   </DialogTrigger>
-                  <ModalContent title={t('profile.settings') as string}>
+                  <ModalContent title={t('profile.settings') as string} error={error}>
                     <p className="text-sm text-white/70">{t('profile.underDevelopment')}</p>
                   </ModalContent>
                 </Dialog>*/}
