@@ -56,7 +56,7 @@ const Adverts = () => {
           {offers.map((offer) => (
             <li key={offer.id} data-testid="client-offer">
               <OfferCard
-                order={{
+                offer={{
                   id: offer.id,
                   trader: {
                     name: 'Вы',
