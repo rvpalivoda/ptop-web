@@ -145,6 +145,18 @@
     "buy": "Buy",
     "sec": "sec"
   },
+  "orderCard": {
+    "status": "Status",
+    "created": "Created",
+    "counterparty": "Counterparty"
+  },
+  "orderStatus": {
+    "OrderStatusWaitPayment": "Waiting payment",
+    "OrderStatusPaid": "Paid",
+    "OrderStatusReleased": "Released",
+    "OrderStatusCancelled": "Cancelled",
+    "OrderStatusDispute": "Dispute"
+  },
   "common": {
     "copy": "Copy",
     "copied": "Copied"

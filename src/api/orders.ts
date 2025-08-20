@@ -18,6 +18,32 @@ export interface Order {
   isEscrow?: boolean;
 }
 
+export interface OrderFull {
+  id: string;
+  amount: number;
+  price: number;
+  authorID: string;
+  buyerID: string;
+  sellerID: string;
+  offerOwnerID: string;
+  offerOwner?: {
+    username?: string;
+    rating?: number;
+    ordersCount?: number;
+  };
+  fromAssetID: string;
+  toAssetID: string;
+  fromAsset?: { name?: string };
+  toAsset?: { name?: string };
+  clientPaymentMethodID: string;
+  clientPaymentMethod?: {
+    name?: string;
+    paymentMethod?: { name?: string };
+  };
+  status: string;
+  createdAt: string;
+}
+
 export interface CreateOrderPayload {
   amount: string;
   client_payment_method_id: string;
@@ -30,4 +56,8 @@ export function createOrder(data: CreateOrderPayload) {
     method: 'POST',
     body: JSON.stringify(data),
   });
+}
+
+export function getClientOrders(role: 'author' | 'offerOwner' = 'author') {
+  return apiRequest<OrderFull[]>(`/client/orders?role=${role}`);
 }
