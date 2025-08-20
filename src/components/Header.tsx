@@ -52,9 +52,10 @@ export const Header = () => {
                         {/* Desktop navigation — пилюли как в фильтрах (только для авторизованных) */}
                         {isAuthenticated && (
                             <nav className="hidden md:flex items-center gap-2">
-                                <NavItem to="/adverts" label={t('header.adverts')}/>
-                                <NavItem to="/orders" label={t('header.orders')}/>
-                                <NavItem to="/transactions" label={t('header.transactions')}/>
+                                <NavItem to="/adverts" label={t('header.adverts')} />
+                                <NavItem to="/my-deals" label={t('header.myDeals')} />
+                                <NavItem to="/ad-deals" label={t('header.adDeals')} />
+                                <NavItem to="/transactions" label={t('header.transactions')} />
                                 <NavItem to="/balance" label={t('header.balance')}/>
                                 <NavItem to="/escrow" label={t('header.escrow')}/>
                             </nav>
@@ -130,15 +131,17 @@ export const Header = () => {
                                 {isAuthenticated && (
                                     <>
                                         <NavItem to="/adverts" label={t('header.adverts')}
-                                                 onClick={() => setIsMenuOpen(false)}/>
-                                        <NavItem to="/orders" label={t('header.orders')}
-                                                 onClick={() => setIsMenuOpen(false)}/>
+                                                 onClick={() => setIsMenuOpen(false)} />
+                                        <NavItem to="/my-deals" label={t('header.myDeals')}
+                                                 onClick={() => setIsMenuOpen(false)} />
+                                        <NavItem to="/ad-deals" label={t('header.adDeals')}
+                                                 onClick={() => setIsMenuOpen(false)} />
                                         <NavItem to="/transactions" label={t('header.transactions')}
-                                                 onClick={() => setIsMenuOpen(false)}/>
+                                                 onClick={() => setIsMenuOpen(false)} />
                                         <NavItem to="/balance" label={t('header.balance')}
-                                                 onClick={() => setIsMenuOpen(false)}/>
+                                                 onClick={() => setIsMenuOpen(false)} />
                                         <NavItem to="/escrow" label={t('header.escrow')}
-                                                 onClick={() => setIsMenuOpen(false)}/>
+                                                 onClick={() => setIsMenuOpen(false)} />
                                     </>
                                 )}
 

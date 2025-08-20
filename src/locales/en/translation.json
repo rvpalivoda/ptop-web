@@ -7,7 +7,8 @@
     "history": "History",
     "balance": "Balance",
     "adverts": "Adverts",
-    "orders": "Orders",
+    "myDeals": "My Deals",
+    "adDeals": "Ad Deals",
     "transactions": "Transactions",
     "escrow": "Escrow"
   },
