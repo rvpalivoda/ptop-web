@@ -1,5 +1,7 @@
 import { Star, Pencil, PowerOff } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
+import { CreateOrderForm } from './CreateOrderForm';
 
 interface OfferCardProps {
   offer: {
@@ -29,6 +31,7 @@ interface OfferCardProps {
 
 export const OfferCard = ({ offer, isClientOffer, onToggle, onEdit }: OfferCardProps) => {
   const { t } = useTranslation();
+  const [showOrder, setShowOrder] = useState(false);
   const {
     id,
     trader,
@@ -48,6 +51,7 @@ export const OfferCard = ({ offer, isClientOffer, onToggle, onEdit }: OfferCardP
   const currency = `${fromAsset?.name}/${toAsset?.name}`;
 
   return (
+    <>
       <div className="rounded-2xl border border-white/10 bg-gray-900/60 p-0  transition hover:border-white/20 hover:bg-gray-900/70 text-white shadow-lg">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between p-5 gap-6">
           {/* Trader Info */}
@@ -163,6 +167,7 @@ export const OfferCard = ({ offer, isClientOffer, onToggle, onEdit }: OfferCardP
                               ? 'bg-green-600 hover:bg-green-700'
                               : 'bg-red-600 hover:bg-red-700'
                       }`}
+                      onClick={() => setShowOrder(true)}
                   >
                     {type === 'buy' ? t('offerCard.sell') : t('offerCard.buy')}
                   </button>
@@ -171,5 +176,13 @@ export const OfferCard = ({ offer, isClientOffer, onToggle, onEdit }: OfferCardP
           </div>
         </div>
       </div>
+      {showOrder && (
+        <CreateOrderForm
+          offerId={id}
+          limits={limits}
+          onClose={() => setShowOrder(false)}
+        />
+      )}
+    </>
   );
 };

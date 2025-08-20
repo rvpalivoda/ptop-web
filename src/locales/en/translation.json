@@ -210,6 +210,22 @@
     "conditionsHint": "Describe payment requirements, limits, fees, settlement window, and what to do if payment is delayed.",
     "create": "Create"
   },
+  "createOrder": {
+    "title": "Create order",
+    "amount": "Amount",
+    "paymentMethod": "Payment method",
+    "pinCode": "PIN code",
+    "cancel": "Cancel",
+    "create": "Create",
+    "errors": {
+      "required": "Required field",
+      "amountLimits": "Amount must be within limits"
+    },
+    "toast": {
+      "success": "Order created",
+      "error": "Order creation error"
+    }
+  },
   "offers": {
     "buy": "Buy Offers",
     "sell": "Sell Offers",
