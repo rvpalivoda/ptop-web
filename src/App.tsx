@@ -12,7 +12,8 @@ import Recover from "./pages/Recover";
 import NotFound from "./pages/NotFound";
 import Balance from "./pages/Balance";
 import Adverts from "./pages/Adverts";
-import Orders from "./pages/Orders";
+import AdDeals from "./pages/AdDeals";
+import MyDeals from "./pages/MyDeals";
 import Transactions from "./pages/Transactions";
 import Escrow from "./pages/Escrow";
 import { ScrollToTopButton } from "./components/ScrollToTopButton";
@@ -33,7 +34,8 @@ const App = () => (
             <Route path="/recover" element={<Recover />} />
             <Route path="/balance" element={<Balance />} />
             <Route path="/adverts" element={<Adverts />} />
-            <Route path="/orders" element={<Orders />} />
+            <Route path="/my-deals" element={<MyDeals />} />
+            <Route path="/ad-deals" element={<AdDeals />} />
             <Route path="/transactions" element={<Transactions />} />
             <Route path="/escrow" element={<Escrow />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
