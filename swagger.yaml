@@ -43,6 +43,8 @@ definitions:
         type: string
       country_id:
         type: string
+      detailed_information:
+        type: string
       name:
         type: string
       payment_method_id:
@@ -331,6 +333,8 @@ definitions:
         $ref: '#/definitions/models.Country'
       countryID:
         type: string
+      detailedInformation:
+        type: string
       id:
         type: string
       name:
@@ -486,6 +490,8 @@ definitions:
     properties:
       amount:
         type: number
+      authorID:
+        type: string
       buyerID:
         type: string
       clientPaymentMethodID:
@@ -502,6 +508,8 @@ definitions:
         type: boolean
       offerID:
         type: string
+      offerOwnerID:
+        type: string
       price:
         type: number
       releasedAt:
@@ -510,6 +518,59 @@ definitions:
         type: string
       status:
         $ref: '#/definitions/models.OrderStatus'
+      toAssetID:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  models.OrderFull:
+    properties:
+      amount:
+        type: number
+      author:
+        $ref: '#/definitions/models.Client'
+      authorID:
+        type: string
+      buyer:
+        $ref: '#/definitions/models.Client'
+      buyerID:
+        type: string
+      clientPaymentMethod:
+        $ref: '#/definitions/models.ClientPaymentMethod'
+      clientPaymentMethodID:
+        type: string
+      createdAt:
+        type: string
+      expiresAt:
+        type: string
+      fromAsset:
+        $ref: '#/definitions/models.Asset'
+      fromAssetID:
+        type: string
+      id:
+        type: string
+      isEscrow:
+        type: boolean
+      offer:
+        $ref: '#/definitions/models.Offer'
+      offerID:
+        type: string
+      offerOwner:
+        $ref: '#/definitions/models.Client'
+      offerOwnerID:
+        type: string
+      price:
+        type: number
+      releasedAt:
+        type: string
+      seller:
+        $ref: '#/definitions/models.Client'
+      sellerID:
+        type: string
+      status:
+        $ref: '#/definitions/models.OrderStatus'
+      toAsset:
+        $ref: '#/definitions/models.Asset'
       toAssetID:
         type: string
       updatedAt:
@@ -1261,6 +1322,27 @@ paths:
       tags:
       - offers
   /client/offers/{id}:
+    delete:
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.StatusResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Удалить объявление
+      tags:
+      - offers
     put:
       consumes:
       - application/json
@@ -1346,6 +1428,19 @@ paths:
       - offers
   /client/orders:
     get:
+      parameters:
+      - description: роль клиента (author или offerOwner)
+        in: query
+        name: role
+        type: string
+      - description: лимит
+        in: query
+        name: limit
+        type: integer
+      - description: смещение
+        in: query
+        name: offset
+        type: integer
       produces:
       - application/json
       responses:
@@ -1353,7 +1448,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.Order'
+              $ref: '#/definitions/models.OrderFull'
             type: array
       security:
       - BearerAuth: []
@@ -1456,6 +1551,41 @@ paths:
       security:
       - BearerAuth: []
       summary: Удалить платёжный метод клиента
+      tags:
+      - client-payment-methods
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: данные
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.CreateClientPaymentMethodRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ClientPaymentMethod'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Изменить платёжный метод клиента
       tags:
       - client-payment-methods
   /client/transactions/in:

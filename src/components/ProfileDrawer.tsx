@@ -137,13 +137,13 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
       setOtpAuthUrl(res.url);
       setTwoFactorEnabled(true);
     } catch (err) {
-      setError('2FA: ' + (err as any)?.message ?? 'failed');
+      setError(`2FA: ${(err as any)?.message}` ?? 'failed');
     } finally { setBusy(false); }
   };
 
   const stopTwoFactor = async () => {
     try { setBusy(true); await disable2fa(passwordCheck); setTwoFactorEnabled(false); }
-    catch (err) { setError('2FA: ' + (err as any)?.message ?? 'failed'); }
+    catch (err) { setError(`2FA: ${(err as any)?.message}` ?? 'failed'); }
     finally { setBusy(false); }
   };
 
