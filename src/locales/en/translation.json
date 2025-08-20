@@ -125,6 +125,7 @@
     "close": "Close"
   },
   "offerCard": {
+    "id": "UUID",
     "trades": "trades",
     "currency": "Currency",
     "amount": "Amount",

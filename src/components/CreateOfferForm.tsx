@@ -162,12 +162,15 @@ export const CreateOfferForm = ({ onClose, offer }: CreateOfferFormProps) => {
                 key={k}
                 type="button"
                 onClick={() => setFormData({ ...formData, type: k })}
-                   className={`mr-[5px] last:mr-0 rounded-2xl px-4 py-2.5 text-sm font-medium ring-1 transition 
-           ${k === 'buy'
-                     ? 'ring-emerald-500/30 text-emerald-300 hover:bg-emerald-500/10 data-[active=true]:bg-emerald-500/20'
-                       : 'ring-rose-500/30 text-rose-300 hover:bg-rose-500/10 data-[active=true]:bg-rose-500/20'
-                    } data-[active=true]:text-white`}
-                data-active={formData.type === k}
+                className={`mr-[5px] last:mr-0 rounded-2xl px-4 h-10 text-sm font-medium transition 
+          ${k === 'buy'
+                    ? formData.type === 'buy'
+                        ? 'bg-green-600 text-white hover:bg-green-700'
+                        : 'text-green-500 hover:bg-green-600/20'
+                    : formData.type === 'sell'
+                        ? 'bg-red-600 text-white hover:bg-red-700'
+                        : 'text-red-500 hover:bg-red-600/20'
+                }`}
             >
               {k === 'buy' ? t('createOffer.buy') : t('createOffer.sell')}
             </button>

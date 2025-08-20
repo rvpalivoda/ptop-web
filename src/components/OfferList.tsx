@@ -16,7 +16,7 @@ interface OfferListProps {
   };
 }
 
-interface OrderItem {
+interface OfferItem {
   id: string;
   trader: {
     name: string;
@@ -38,7 +38,7 @@ interface OrderItem {
 }
 
 export const OfferList = ({ type, filters }: OfferListProps) => {
-  const [orders, setOrders] = useState<OrderItem[]>([]);
+  const [offers, setOffers] = useState<OfferItem[]>([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -78,10 +78,10 @@ export const OfferList = ({ type, filters }: OfferListProps) => {
           orderExpirationTimeout: o.orderExpirationTimeout,
           TTL: o.TTL,
         }));
-        setOrders(mapped);
+        setOffers(mapped);
       } catch (err) {
         console.error('load offers error:', err);
-        if (!cancelled) setOrders([]);
+        if (!cancelled) setOffers([]);
       }
     })();
     return () => {
@@ -98,12 +98,12 @@ export const OfferList = ({ type, filters }: OfferListProps) => {
           {type === "buy" ? t("offers.buy") : t("offers.sell")}
         </h3>
         <span className="text-sm text-gray-400">
-          {orders.length} {t('offers.found')}
+          {offers.length} {t('offers.found')}
         </span>
       </div>
 
-      {orders.map((order) => (
-        <OfferCard key={order.id} order={order} />
+      {offers.map((offer) => (
+        <OfferCard key={offer.id} offer={offer} />
       ))}
     </div>
   );
