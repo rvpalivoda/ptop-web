@@ -108,7 +108,12 @@
     "download": "Download",
     "settings": "Settings",
     "underDevelopment": "Section under development",
-    "logout": "Logout"
+    "logout": "Logout",
+    "personalSettings": "Personal settings",
+    "paymentMethods": "Payment methods",
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete"
   },
   "filters": {
     "title": "Filters",

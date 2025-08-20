@@ -12,10 +12,26 @@ import {
   ShieldCheck,
   User,
   Check,
+  CreditCard,
+  Trash2,
+  Pencil,
+  Plus,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import QRCode from 'react-qr-code';
-import { enable2fa, disable2fa, verifyPassword as apiVerifyPassword } from '@/api';
+import {
+  enable2fa,
+  disable2fa,
+  verifyPassword as apiVerifyPassword,
+  getClientPaymentMethods,
+  createClientPaymentMethod,
+  updateClientPaymentMethod,
+  deleteClientPaymentMethod,
+  getCountries,
+  getPaymentMethods,
+  ClientPaymentMethod,
+  CreateClientPaymentMethodPayload,
+} from '@/api';
 import { useAuth } from '@/context';
 import { useTranslation } from 'react-i18next';
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
@@ -37,6 +53,7 @@ const btnDanger =
     'inline-flex items-center justify-center gap-2 rounded-xl bg-rose-600/90 hover:bg-rose-600 text-white px-4 py-2 text-sm font-medium shadow';
 
 const card = 'rounded-2xl border border-white/10 bg-gray-900/60 p-4';
+const selectBase = inputBase + ' bg-gray-900 text-gray';
 
 interface ModalContentProps {
   children: React.ReactNode;
@@ -67,6 +84,7 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
   const [show2faDialog, setShow2faDialog] = useState(false);
   const [showRecoveryDialog, setShowRecoveryDialog] = useState(false);
   const [showSettingsDialog, setShowSettingsDialog] = useState(false);
+  const [showPaymentMethodsDialog, setShowPaymentMethodsDialog] = useState(false);
 
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -88,6 +106,21 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [clientPaymentMethods, setClientPaymentMethods] = useState<ClientPaymentMethod[]>([]);
+  const [pmForm, setPmForm] = useState<CreateClientPaymentMethodPayload>({
+    city: '',
+    country_id: '',
+    name: '',
+    payment_method_id: '',
+    post_code: '',
+  });
+  const [pmEditing, setPmEditing] = useState<ClientPaymentMethod | null>(null);
+  const [pmShowForm, setPmShowForm] = useState(false);
+  const [pmCountries, setPmCountries] = useState<{ id: string; name: string }[]>([]);
+  const [pmBaseMethods, setPmBaseMethods] = useState<{ id: string; name: string }[]>([]);
+  const [pmError, setPmError] = useState<string | null>(null);
+  const [pmBusy, setPmBusy] = useState(false);
+
   const handleDigitChange = (index: number, val: string) => {
     if (!/^\d?$/.test(val)) return;
     const next = [...pinDigits];
@@ -106,6 +139,104 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
   useEffect(() => { if (userInfo) setTwoFactorEnabled(userInfo.twofaEnabled); }, [userInfo]);
   useEffect(() => { if (!show2faDialog) { setTwoFactorSecret(null); setOtpAuthUrl(null); setPasswordCheck(''); } }, [show2faDialog]);
   useEffect(() => { refresh().catch(console.error); }, []);
+
+  useEffect(() => {
+    if (showPaymentMethodsDialog) {
+      (async () => {
+        try {
+          const [methods, countries] = await Promise.all([
+            getClientPaymentMethods(),
+            getCountries(),
+          ]);
+          setClientPaymentMethods(methods);
+          setPmCountries(
+            countries.map((c: any) => ({
+              id: c.id ?? c.name ?? c,
+              name: c.name ?? c.id ?? c,
+            })),
+          );
+          setPmShowForm(false);
+          setPmEditing(null);
+          setPmForm({ city: '', country_id: '', name: '', payment_method_id: '', post_code: '' });
+          setPmError(null);
+        } catch (err) {
+          setPmError((err as Error).message);
+        }
+      })();
+    }
+  }, [showPaymentMethodsDialog]);
+
+  useEffect(() => {
+    if (pmForm.country_id) {
+      const countryName = pmCountries.find((c) => c.id === pmForm.country_id)?.name;
+      if (countryName) {
+        getPaymentMethods(countryName)
+          .then((list) =>
+            setPmBaseMethods(
+              list.map((x: any) => ({ id: x.id ?? x.name ?? x, name: x.name ?? x.id ?? x })),
+            ),
+          )
+          .catch((err) => setPmError((err as Error).message));
+      }
+    } else {
+      setPmBaseMethods([]);
+    }
+  }, [pmForm.country_id, pmCountries]);
+
+  const handlePmSave = async () => {
+    setPmBusy(true);
+    setPmError(null);
+    try {
+      if (pmEditing && (pmEditing.id || pmEditing.ID)) {
+        await updateClientPaymentMethod(pmEditing.id ?? pmEditing.ID ?? '', pmForm);
+      } else {
+        await createClientPaymentMethod(pmForm);
+      }
+      const list = await getClientPaymentMethods();
+      setClientPaymentMethods(list);
+      setPmShowForm(false);
+      setPmEditing(null);
+      setPmForm({ city: '', country_id: '', name: '', payment_method_id: '', post_code: '' });
+    } catch (err) {
+      setPmError((err as Error).message);
+    } finally {
+      setPmBusy(false);
+    }
+  };
+
+  const handlePmEdit = (m: ClientPaymentMethod) => {
+    setPmEditing(m);
+    setPmForm({
+      name: m.name ?? m.Name ?? '',
+      country_id: m.countryID ?? '',
+      city: m.city ?? '',
+      post_code: m.postCode ?? '',
+      payment_method_id: m.paymentMethodID ?? '',
+    });
+    setPmShowForm(true);
+  };
+
+  const handlePmDelete = async (m: ClientPaymentMethod) => {
+    if (!(m.id || m.ID)) return;
+    if (!window.confirm(`${t('profile.delete')}?`)) return;
+    setPmBusy(true);
+    setPmError(null);
+    try {
+      await deleteClientPaymentMethod(m.id ?? m.ID ?? '');
+      const list = await getClientPaymentMethods();
+      setClientPaymentMethods(list);
+    } catch (err) {
+      setPmError((err as Error).message);
+    } finally {
+      setPmBusy(false);
+    }
+  };
+
+  const handlePmAdd = () => {
+    setPmEditing(null);
+    setPmForm({ city: '', country_id: '', name: '', payment_method_id: '', post_code: '' });
+    setPmShowForm(true);
+  };
 
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -221,6 +352,50 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
 
           {/* Body */}
           <div className="flex h-[calc(100%-152px)] flex-col overflow-y-auto px-5 py-5 gap-4">
+            <div>
+              <div className="mb-3 text-sm font-semibold uppercase tracking-wide text-white/60">{t('profile.personalSettings', { defaultValue: 'Personal Settings' })}</div>
+              <div className="grid gap-2">
+                <Dialog open={showPaymentMethodsDialog} onOpenChange={setShowPaymentMethodsDialog}>
+                  <DialogTrigger asChild>
+                    <button className={btnGhost}><CreditCard className="h-4 w-4" />{t('profile.paymentMethods')}</button>
+                  </DialogTrigger>
+                  <ModalContent title={t('profile.paymentMethods') as string} error={pmError}>
+                    {!pmShowForm ? (
+                      <div className="space-y-3">
+                        {clientPaymentMethods.map((pm) => (
+                          <div key={pm.id ?? pm.ID} className="flex items-center justify-between rounded-xl bg-white/5 px-3 py-2 ring-1 ring-white/10">
+                            <span className="text-sm text-white/80">{pm.name ?? pm.Name}</span>
+                            <div className="flex gap-2">
+                              <button type="button" onClick={() => handlePmEdit(pm)} className="text-blue-300 hover:text-blue-200"><Pencil className="h-4 w-4" /></button>
+                              <button type="button" onClick={() => handlePmDelete(pm)} className="text-rose-300 hover:text-rose-200"><Trash2 className="h-4 w-4" /></button>
+                            </div>
+                          </div>
+                        ))}
+                        <button type="button" onClick={handlePmAdd} className={`${btnGhost} w-full justify-center`}><Plus className="h-4 w-4" />{t('profile.add')}</button>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        <input type="text" placeholder={t('createOffer.name')} value={pmForm.name} onChange={(e) => setPmForm({ ...pmForm, name: e.target.value })} className={inputBase} />
+                        <select value={pmForm.country_id} onChange={(e) => setPmForm({ ...pmForm, country_id: e.target.value, payment_method_id: '' })} className={selectBase}>
+                          <option value="">{t('createOffer.country')}</option>
+                          {pmCountries.map((c) => (<option key={c.id} value={c.id}>{c.name}</option>))}
+                        </select>
+                        <input type="text" placeholder={t('createOffer.city')} value={pmForm.city} onChange={(e) => setPmForm({ ...pmForm, city: e.target.value })} className={inputBase} />
+                        <input type="text" placeholder={t('createOffer.postalCode')} value={pmForm.post_code} onChange={(e) => setPmForm({ ...pmForm, post_code: e.target.value })} className={inputBase} />
+                        <select value={pmForm.payment_method_id} onChange={(e) => setPmForm({ ...pmForm, payment_method_id: e.target.value })} className={selectBase}>
+                          <option value="">{t('createOffer.method')}</option>
+                          {pmBaseMethods.map((m) => (<option key={m.id} value={m.id}>{m.name}</option>))}
+                        </select>
+                        <div className="flex gap-2">
+                          <button type="button" onClick={handlePmSave} className={`${btnPrimary} flex-1`} disabled={pmBusy}>{t('profile.save')}</button>
+                          <button type="button" onClick={() => { setPmShowForm(false); setPmEditing(null); }} className={`${btnGhost} flex-1`}>{t('createOffer.cancel')}</button>
+                        </div>
+                      </div>
+                    )}
+                  </ModalContent>
+                </Dialog>
+              </div>
+            </div>
             {/* Security actions  <div className={card}> */}
             <div>
               <div className="mb-3 text-sm font-semibold uppercase tracking-wide text-white/60">{t('profile.security', { defaultValue: 'Security' })}</div>
