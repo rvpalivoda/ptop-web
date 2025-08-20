@@ -2,6 +2,7 @@ import { Star, Pencil, PowerOff } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import { CreateOrderForm } from './CreateOrderForm';
+import { useAuth } from '@/context';
 
 interface OfferCardProps {
   offer: {
@@ -32,6 +33,7 @@ interface OfferCardProps {
 export const OfferCard = ({ offer, isClientOffer, onToggle, onEdit }: OfferCardProps) => {
   const { t } = useTranslation();
   const [showOrder, setShowOrder] = useState(false);
+  const { userInfo } = useAuth();
   const {
     id,
     trader,
@@ -48,6 +50,7 @@ export const OfferCard = ({ offer, isClientOffer, onToggle, onEdit }: OfferCardP
     TTL,
   } = offer;
 
+  const isOwnOffer = userInfo?.username === trader.name;
   const currency = `${fromAsset?.name}/${toAsset?.name}`;
 
   return (
@@ -166,8 +169,9 @@ export const OfferCard = ({ offer, isClientOffer, onToggle, onEdit }: OfferCardP
                           type === 'buy'
                               ? 'bg-green-600 hover:bg-green-700'
                               : 'bg-red-600 hover:bg-red-700'
-                      }`}
+                      } disabled:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed`}
                       onClick={() => setShowOrder(true)}
+                      disabled={isOwnOffer}
                   >
                     {type === 'buy' ? t('offerCard.sell') : t('offerCard.buy')}
                   </button>
