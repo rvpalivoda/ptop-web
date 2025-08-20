@@ -31,3 +31,16 @@ export function createClientPaymentMethod(data: CreateClientPaymentMethodPayload
     body: JSON.stringify(data),
   });
 }
+
+export function updateClientPaymentMethod(id: string, data: CreateClientPaymentMethodPayload) {
+  return apiRequest<ClientPaymentMethod>(`/client/payment-methods/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+}
+
+export function deleteClientPaymentMethod(id: string) {
+  return apiRequest<{ status: string }>(`/client/payment-methods/${id}`, {
+    method: "DELETE",
+  });
+}
