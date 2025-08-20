@@ -19,7 +19,7 @@ interface OfferCardProps {
     type: 'buy' | 'sell';
     isEnabled?: boolean;
     conditions?: string;
-    orderExpirationTimeout?: number;
+    offerExpirationTimeout?: number;
     TTL?: string;
   };
   isClientOffer?: boolean;

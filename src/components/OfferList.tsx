@@ -75,7 +75,7 @@ export const OfferList = ({ type, filters }: OfferListProps) => {
           type,
           isEnabled: o.isEnabled,
           conditions: o.conditions,
-          orderExpirationTimeout: o.orderExpirationTimeout,
+          offerExpirationTimeout: o.orderExpirationTimeout,
           TTL: o.TTL,
         }));
         setOffers(mapped);
