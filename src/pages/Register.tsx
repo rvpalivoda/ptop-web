@@ -47,11 +47,11 @@ const Register = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 text-white flex items-center justify-center px-4 py-8">
+        <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 text-white flex  pt-16  justify-center px-4 py-8">
             <div className="w-full max-w-md">
-                <div className="overflow-hidden rounded-2xl border border-white/10 bg-gray-900/60 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.6)] backdrop-blur">
+                <div className="overflow-hidden rounded-2xl  ">
                     {/* Top bar */}
-                    <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
+                    <div className="flex items-center justify-between  px-5 py-4">
                         <Link to="/" className={`${btnGhost} !px-2 !py-1 text-white/70`}>
                             <ArrowLeft className="h-4 w-4" />
                             <span className="text-sm">{t('register.back')}</span>
