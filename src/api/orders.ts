@@ -26,7 +26,7 @@ export interface CreateOrderPayload {
 }
 
 export function createOrder(data: CreateOrderPayload) {
-  return apiRequest<Order>('/client/orders', {
+  return apiRequest<Order>('/client/order', {
     method: 'POST',
     body: JSON.stringify(data),
   });
