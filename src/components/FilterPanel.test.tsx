@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
+import { useState } from 'react';
 import userEvent from '@testing-library/user-event';
 import i18n from '../i18n';
 
@@ -61,6 +62,30 @@ describe('FilterPanel', () => {
       ...baseFilters,
       fromAsset: 'BTC'
     });
+  });
+
+  it('сбрасывает выбор при одинаковых активах', async () => {
+    const Wrapper = () => {
+      const [filters, setFilters] = useState(baseFilters);
+      return (
+        <FilterPanel
+          filters={filters}
+          onFiltersChange={setFilters}
+          activeTab="buy"
+          onTabChange={() => {}}
+        />
+      );
+    };
+
+    render(<Wrapper />);
+
+    const fromSelect = (await screen.findAllByTestId('from-asset'))[0];
+    const toSelect = (await screen.findAllByTestId('to-asset'))[0];
+
+    fireEvent.change(fromSelect, { target: { value: 'BTC' } });
+    fireEvent.change(toSelect, { target: { value: 'BTC' } });
+
+    expect(toSelect).toHaveValue('all');
   });
 
   it('вызывает onFiltersChange при смене метода оплаты', async () => {

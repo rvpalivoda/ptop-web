@@ -89,7 +89,17 @@ export const FilterPanel = ({
     };
   }, [allOption, allMethodsOption]);
 
-  const change = (patch: Partial<FilterPanelProps['filters']>) => onFiltersChange({ ...filters, ...patch });
+  const change = (patch: Partial<FilterPanelProps['filters']>) => {
+    const next = { ...filters, ...patch };
+    if (next.fromAsset !== 'all' && next.fromAsset === next.toAsset) {
+      if (patch.fromAsset && !patch.toAsset) {
+        next.fromAsset = 'all';
+      } else {
+        next.toAsset = 'all';
+      }
+    }
+    onFiltersChange(next);
+  };
 
   // NEW: счётчик активных фильтров для бейджа
   const activeFiltersCount = useMemo(() => {
