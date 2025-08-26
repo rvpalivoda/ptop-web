@@ -34,7 +34,7 @@ const AdDeals = () => {
         <ul className="space-y-4">
           {orders.map((order) => (
             <li key={order.id} data-testid="client-order">
-              <OrderCard order={order} />
+              <OrderCard order={order} currentUserID={order.authorID} />
             </li>
           ))}
         </ul>
