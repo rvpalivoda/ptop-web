@@ -45,7 +45,13 @@ export const CreateOfferForm = ({ onClose, offer }: CreateOfferFormProps) => {
     maxAmount: offer ? String(offer.maxAmount) : '',
     orderExpirationTimeout: offer?.orderExpirationTimeout ?? 15,
     conditions: offer?.conditions ?? '',
-    paymentMethodIds: offer?.clientPaymentMethodIDs ?? ([] as string[]),
+    paymentMethodIds: offer?.clientPaymentMethodIDs
+      ? [...offer.clientPaymentMethodIDs]
+      : offer?.clientPaymentMethods
+        ? (offer.clientPaymentMethods
+            .map((m: any) => m.id ?? m.ID ?? '')
+            .filter(Boolean) as string[])
+        : ([] as string[]),
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -53,7 +59,12 @@ export const CreateOfferForm = ({ onClose, offer }: CreateOfferFormProps) => {
   const [countries, setCountries] = useState<{ id: string; name: string }[]>([]);
   const [baseMethods, setBaseMethods] = useState<{ id: string; name: string }[]>([]);
   const [newMethod, setNewMethod] = useState<CreateClientPaymentMethodPayload>({
-    city: '', country_id: '', name: '', payment_method_id: '', post_code: '',
+    city: '',
+    country_id: '',
+    name: '',
+    payment_method_id: '',
+    post_code: '',
+    detailed_information: '',
   });
 
   useEffect(() => {
@@ -136,10 +147,17 @@ export const CreateOfferForm = ({ onClose, offer }: CreateOfferFormProps) => {
   };
 
   const handleAddMethod = async () => {
-      if (!newMethod.city || !newMethod.country_id || !newMethod.name || !newMethod.payment_method_id || !newMethod.post_code) {
-        toast(t('createOffer.toast.fillAllMethodFields'));
-        return;
-      }
+    if (
+      !newMethod.city ||
+      !newMethod.country_id ||
+      !newMethod.name ||
+      !newMethod.payment_method_id ||
+      !newMethod.post_code ||
+      !newMethod.detailed_information
+    ) {
+      toast(t('createOffer.toast.fillAllMethodFields'));
+      return;
+    }
     try {
       const created = await createClientPaymentMethod(newMethod);
       const opt = { id: (created as any).id ?? (created as any).ID ?? '', name: (created as any).name ?? (created as any).Name ?? '' };
@@ -148,7 +166,14 @@ export const CreateOfferForm = ({ onClose, offer }: CreateOfferFormProps) => {
         setFormData((f) => ({ ...f, paymentMethodIds: [...f.paymentMethodIds, opt.id] }));
       }
       setShowAddMethod(false);
-      setNewMethod({ city: '', country_id: '', name: '', payment_method_id: '', post_code: '' });
+      setNewMethod({
+        city: '',
+        country_id: '',
+        name: '',
+        payment_method_id: '',
+        post_code: '',
+        detailed_information: '',
+      });
     } catch (err) {
       console.error('create client payment method error:', err);
         toast(err instanceof Error ? err.message : t('createOffer.toast.methodCreateError'));
@@ -340,11 +365,17 @@ export const CreateOfferForm = ({ onClose, offer }: CreateOfferFormProps) => {
                           <option value="">{t('createOffer.method')}</option>
                         {baseMethods.map((m) => (<option key={m.id} value={m.id}>{m.name}</option>))}
                       </select>
+                      <textarea
+                          placeholder={t('createOffer.detailedInformation')}
+                          value={newMethod.detailed_information}
+                          onChange={(e) => setNewMethod({ ...newMethod, detailed_information: e.target.value })}
+                          className={textareaBase}
+                      />
                       <div className="flex gap-2">
                           <button type="button" onClick={handleAddMethod} className={`${btnPrimary} flex-1`}>{t('createOffer.save')}</button>
                         <button
                             type="button"
-                            onClick={() => { setShowAddMethod(false); setNewMethod({ city: '', country_id: '', name: '', payment_method_id: '', post_code: '' }); }}
+                            onClick={() => { setShowAddMethod(false); setNewMethod({ city: '', country_id: '', name: '', payment_method_id: '', post_code: '', detailed_information: '' }); }}
                             className={`${btnSoft} flex-1`}
                           >
                             {t('createOffer.cancel')}

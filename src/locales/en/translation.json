@@ -222,6 +222,7 @@
     "city": "City",
     "postalCode": "Postal code",
     "method": "Payment method",
+    "detailedInformation": "Detailed information",
     "save": "Save",
     "cancel": "Cancel",
     "conditions": "Conditions",
