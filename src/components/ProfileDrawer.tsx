@@ -54,6 +54,7 @@ const btnDanger =
 
 const card = 'rounded-2xl border border-white/10 bg-gray-900/60 p-4';
 const selectBase = inputBase + ' bg-gray-900 text-gray';
+const textareaBase = inputBase + ' min-h-[120px]';
 
 interface ModalContentProps {
   children: React.ReactNode;
@@ -117,6 +118,7 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
     name: '',
     payment_method_id: '',
     post_code: '',
+    detailed_information: '',
   });
   const [pmEditing, setPmEditing] = useState<ClientPaymentMethod | null>(null);
   const [pmShowForm, setPmShowForm] = useState(false);
@@ -161,7 +163,7 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
           );
           setPmShowForm(false);
           setPmEditing(null);
-          setPmForm({ city: '', country_id: '', name: '', payment_method_id: '', post_code: '' });
+          setPmForm({ city: '', country_id: '', name: '', payment_method_id: '', post_code: '', detailed_information: '' });
           setPmError(null);
         } catch (err) {
           setPmError((err as Error).message);
@@ -188,6 +190,17 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
   }, [pmForm.country_id, pmCountries]);
 
   const handlePmSave = async () => {
+    if (
+      !pmForm.city ||
+      !pmForm.country_id ||
+      !pmForm.name ||
+      !pmForm.payment_method_id ||
+      !pmForm.post_code ||
+      !pmForm.detailed_information
+    ) {
+      setPmError(t('createOffer.toast.fillAllMethodFields'));
+      return;
+    }
     setPmBusy(true);
     setPmError(null);
     try {
@@ -200,7 +213,7 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
       setClientPaymentMethods(list);
       setPmShowForm(false);
       setPmEditing(null);
-      setPmForm({ city: '', country_id: '', name: '', payment_method_id: '', post_code: '' });
+      setPmForm({ city: '', country_id: '', name: '', payment_method_id: '', post_code: '', detailed_information: '' });
     } catch (err) {
       setPmError((err as Error).message);
     } finally {
@@ -216,6 +229,7 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
       city: m.city ?? '',
       post_code: m.postCode ?? '',
       payment_method_id: m.paymentMethodID ?? '',
+      detailed_information: m.detailedInformation ?? m.detailed_information ?? '',
     });
     setPmShowForm(true);
   };
@@ -238,7 +252,7 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
 
   const handlePmAdd = () => {
     setPmEditing(null);
-    setPmForm({ city: '', country_id: '', name: '', payment_method_id: '', post_code: '' });
+    setPmForm({ city: '', country_id: '', name: '', payment_method_id: '', post_code: '', detailed_information: '' });
     setPmShowForm(true);
   };
 
@@ -391,6 +405,12 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
                           <option value="">{t('createOffer.method')}</option>
                           {pmBaseMethods.map((m) => (<option key={m.id} value={m.id}>{m.name}</option>))}
                         </select>
+                        <textarea
+                          placeholder={t('createOffer.detailedInformation')}
+                          value={pmForm.detailed_information}
+                          onChange={(e) => setPmForm({ ...pmForm, detailed_information: e.target.value })}
+                          className={textareaBase}
+                        />
                         <div className="flex gap-2">
                           <button type="button" onClick={handlePmSave} className={`${btnPrimary} flex-1`} disabled={pmBusy}>{t('profile.save')}</button>
                           <button type="button" onClick={() => { setPmShowForm(false); setPmEditing(null); }} className={`${btnGhost} flex-1`}>{t('createOffer.cancel')}</button>
