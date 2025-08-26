@@ -20,7 +20,9 @@ describe('OfferList', () => {
   it('запрашивает офферы при монтировании', async () => {
     render(<OfferList type="buy" filters={baseFilters} />);
     await waitFor(() => {
-      expect(getOffers).toHaveBeenCalled();
+      expect(getOffers).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'sell' }),
+      );
     });
   });
 
@@ -28,10 +30,18 @@ describe('OfferList', () => {
     const { rerender } = render(
       <OfferList type="buy" filters={baseFilters} />,
     );
-    await waitFor(() => expect(getOffers).toHaveBeenCalled());
+    await waitFor(() =>
+      expect(getOffers).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'sell' }),
+      ),
+    );
     (getOffers as unknown as ReturnType<typeof vi.fn>).mockClear();
     const newFilters = { ...baseFilters, minAmount: '10' };
     rerender(<OfferList type="buy" filters={newFilters} />);
-    await waitFor(() => expect(getOffers).toHaveBeenCalled());
+    await waitFor(() =>
+      expect(getOffers).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'sell' }),
+      ),
+    );
   });
 });

@@ -40,6 +40,8 @@ interface OfferItem {
 export const OfferList = ({ type, filters }: OfferListProps) => {
   const [offers, setOffers] = useState<OfferItem[]>([]);
 
+  const queryType = type === 'buy' ? 'sell' : 'buy';
+
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -50,7 +52,7 @@ export const OfferList = ({ type, filters }: OfferListProps) => {
           min_amount: filters.minAmount,
           max_amount: filters.maxAmount,
           payment_method: filters.paymentMethod,
-          type,
+          type: queryType,
         });
         if (cancelled) return;
         const mapped = offers.map((o) => ({
@@ -67,7 +69,7 @@ export const OfferList = ({ type, filters }: OfferListProps) => {
           price: String(o.price),
           paymentMethods: o.clientPaymentMethods ?? [],
           limits: { min: String(o.minAmount), max: String(o.maxAmount) },
-          type,
+          type: o.type as 'buy' | 'sell',
           isEnabled: o.isEnabled,
           conditions: o.conditions,
           offerExpirationTimeout: o.orderExpirationTimeout,
@@ -82,7 +84,7 @@ export const OfferList = ({ type, filters }: OfferListProps) => {
     return () => {
       cancelled = true;
     };
-  }, [type, filters]);
+  }, [queryType, filters]);
 
   const { t } = useTranslation();
 
@@ -90,7 +92,7 @@ export const OfferList = ({ type, filters }: OfferListProps) => {
     <div className="space-y-4">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-white">
-          {type === "buy" ? t("offers.buy") : t("offers.sell")}
+          {queryType === "buy" ? t("offers.buy") : t("offers.sell")}
         </h3>
         <span className="text-sm text-gray-400">
           {offers.length} {t('offers.found')}
