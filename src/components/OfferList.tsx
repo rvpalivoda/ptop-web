@@ -1,9 +1,11 @@
 
-import { useEffect, useState } from 'react';
-import { getOffers } from '@/api/offers';
+import { useEffect, useState, useCallback } from 'react';
+import { getOffers, type Offer } from '@/api/offers';
 import type { ClientPaymentMethod } from '@/api/clientPaymentMethods';
 import { OfferCard } from './OfferCard';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '@/context/AuthContext';
+import { useOffersWS, type OfferEvent } from '@/hooks/use-offers-ws';
 
 interface OfferListProps {
   type: 'buy' | 'sell';
@@ -37,8 +39,32 @@ interface OfferItem {
   TTL?: string;
 }
 
+function mapOffer(o: Offer): OfferItem {
+  return {
+    id: o.id,
+    trader: {
+      name: o.client?.username ?? 'Трейдер',
+      rating: o.client?.rating ?? 0,
+      completedTrades: o.client?.ordersCount ?? 0,
+      online: true,
+    },
+    fromAsset: o.fromAsset ?? { name: o.fromAssetID },
+    toAsset: o.toAsset ?? { name: o.toAssetID },
+    amount: String(o.amount),
+    price: String(o.price),
+    paymentMethods: o.clientPaymentMethods ?? [],
+    limits: { min: String(o.minAmount), max: String(o.maxAmount) },
+    type: o.type as 'buy' | 'sell',
+    isEnabled: o.isEnabled,
+    conditions: o.conditions,
+    offerExpirationTimeout: o.orderExpirationTimeout,
+    TTL: o.TTL,
+  };
+}
+
 export const OfferList = ({ type, filters }: OfferListProps) => {
   const [offers, setOffers] = useState<OfferItem[]>([]);
+  const { tokens } = useAuth();
 
   const queryType = type === 'buy' ? 'sell' : 'buy';
 
@@ -55,26 +81,7 @@ export const OfferList = ({ type, filters }: OfferListProps) => {
           type: queryType,
         });
         if (cancelled) return;
-        const mapped = offers.map((o) => ({
-          id: o.id,
-          trader: {
-            name: o.client?.username ?? 'Трейдер',
-            rating: o.client?.rating ?? 0,
-            completedTrades: o.client?.ordersCount ?? 0,
-            online: true,
-          },
-          fromAsset: o.fromAsset ?? { name: o.fromAssetID },
-          toAsset: o.toAsset ?? { name: o.toAssetID },
-          amount: String(o.amount),
-          price: String(o.price),
-          paymentMethods: o.clientPaymentMethods ?? [],
-          limits: { min: String(o.minAmount), max: String(o.maxAmount) },
-          type: o.type as 'buy' | 'sell',
-          isEnabled: o.isEnabled,
-          conditions: o.conditions,
-          offerExpirationTimeout: o.orderExpirationTimeout,
-          TTL: o.TTL,
-        }));
+        const mapped = offers.map(mapOffer);
         setOffers(mapped);
       } catch (err) {
         console.error('load offers error:', err);
@@ -85,6 +92,45 @@ export const OfferList = ({ type, filters }: OfferListProps) => {
       cancelled = true;
     };
   }, [queryType, filters]);
+
+  const handleWsEvent = useCallback(
+    ({ type: eventType, offer }: OfferEvent) => {
+      const mapped = mapOffer(offer);
+      if (mapped.type !== queryType) return;
+
+      if (
+        (filters.fromAsset && filters.fromAsset !== 'all' &&
+          mapped.fromAsset.name !== filters.fromAsset) ||
+        (filters.toAsset && filters.toAsset !== 'all' &&
+          mapped.toAsset.name !== filters.toAsset) ||
+        (filters.paymentMethod && filters.paymentMethod !== 'all' &&
+          !mapped.paymentMethods.some((pm) => pm.id === filters.paymentMethod)) ||
+        (filters.minAmount && Number(mapped.amount) < Number(filters.minAmount)) ||
+        (filters.maxAmount && Number(mapped.amount) > Number(filters.maxAmount))
+      ) {
+        return;
+      }
+
+      setOffers((prev) => {
+        const idx = prev.findIndex((o) => o.id === mapped.id);
+        if (eventType === 'deleted') {
+          if (idx === -1) return prev;
+          const next = [...prev];
+          next.splice(idx, 1);
+          return next;
+        }
+        if (idx === -1) {
+          return [...prev, mapped];
+        }
+        const next = [...prev];
+        next[idx] = mapped;
+        return next;
+      });
+    },
+    [filters, queryType],
+  );
+
+  useOffersWS(tokens?.access, handleWsEvent);
 
   const { t } = useTranslation();
 
