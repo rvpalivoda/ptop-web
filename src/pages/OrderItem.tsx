@@ -2,18 +2,10 @@ import { useEffect, useMemo, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, ShieldCheck, Clock } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import type { OrderFull } from '@/api/orders';
+import { getOrder, type OrderFull } from '@/api/orders';
 import { ChatPanel } from '@/components/chat/ChatPanel';
 import { cn } from '@/lib/utils';
 
-// Заглушка: замени на свой API-клиент
-async function fetchOrder(id: string): Promise<OrderFull> {
-    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL ?? '/api/v1'}/orders/${id}`, {
-        credentials: 'include',
-    });
-    if (!res.ok) throw new Error('Failed to load order');
-    return res.json();
-}
 
 function useCountdown(expiresAt?: string | null) {
     const [left, setLeft] = useState<number>(() => {
@@ -44,10 +36,10 @@ const STATUS_STYLES: Record<string, string> = {
 
 export default function OrderItem({
                                       token,
-                                      currentUserID,
+                                      currentUserName,
                                   }: {
     token?: string;
-    currentUserID: string;
+    currentUserName: string;
 }) {
     const { t } = useTranslation();
     const { id = '' } = useParams();
@@ -58,7 +50,7 @@ export default function OrderItem({
     useEffect(() => {
         let mounted = true;
         setLoading(true);
-        fetchOrder(id)
+        getOrder(id)
             .then((o) => {
                 if (mounted) {
                     setOrder(o);
@@ -74,10 +66,10 @@ export default function OrderItem({
 
     const role: 'buyer' | 'seller' | undefined = useMemo(() => {
         if (!order) return undefined;
-        if (order.buyerID === currentUserID) return 'buyer';
-        if (order.sellerID === currentUserID) return 'seller';
+        if (order.buyer?.username === currentUserName) return 'buyer';
+        if (order.seller?.username === currentUserName) return 'seller';
         return order.offer?.type === 'sell' ? 'seller' : 'buyer';
-    }, [order, currentUserID]);
+    }, [order, currentUserName]);
 
     const { minutes, seconds, isExpired } = useCountdown(order?.expiresAt);
     const BASE = order?.fromAsset?.name ?? order?.fromAssetID ?? '';
@@ -191,7 +183,7 @@ export default function OrderItem({
 
                     {/* RIGHT: Chat */}
                     <div className="lg:col-span-5">
-                        <ChatPanel orderId={order.id} token={token} currentUserID={currentUserID} />
+                        <ChatPanel orderId={order.id} token={token} currentUserName={currentUserName} />
                     </div>
                 </div>
             )}
