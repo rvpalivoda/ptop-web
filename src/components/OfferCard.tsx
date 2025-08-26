@@ -115,11 +115,11 @@ export const OfferCard = ({ offer, isClientOffer, onToggle, onEdit }: OfferCardP
                     {/* Badges */}
                     <div className="flex items-center gap-2">
             <span className={cn('px-2 py-0.5 text-[11px] rounded-full font-medium capitalize', sideClass)}>
-              {type === 'buy' ? t('offerCard.buy', 'Buy') : t('offerCard.sell', 'Sell')}
+              {type === 'buy' ? t('offerCard.sell', 'Sell') : t('offerCard.buy', 'Buy') }
             </span>
-                        <span className={cn('px-2 py-0.5 text-[11px] rounded-full font-medium', statusClass)}>
+                        {/* <span className={cn('px-2 py-0.5 text-[11px] rounded-full font-medium', statusClass)}>
               {isEnabled ? t('offerCard.enabled', 'Enabled') : t('offerCard.disabled', 'Disabled')}
-            </span>
+            </span>*/}
                         {expiration && (
                             <span className="flex items-center gap-1 px-2 py-0.5 text-[11px] rounded-full bg-white/5 ring-1 ring-white/10 text-white/70">
                 <Clock className="w-3.5 h-3.5" />
@@ -183,7 +183,7 @@ export const OfferCard = ({ offer, isClientOffer, onToggle, onEdit }: OfferCardP
                             title={sideLabel as string}
                         >
                             {type === 'buy' ? <ArrowDownUp className="w-3.5 h-3.5" /> : <ArrowLeftRight className="w-3.5 h-3.5" />}
-                            <span className="uppercase">{type}</span>
+                            <span className="uppercase">{type == 'sell' ? 'Buy' : 'Sell'}</span>
                         </div>
 
                         {/* Formula */}
