@@ -57,7 +57,7 @@ function mapOffer(o: Offer): OfferItem {
     type: o.type as 'buy' | 'sell',
     isEnabled: o.isEnabled,
     conditions: o.conditions,
-    offerExpirationTimeout: o.orderExpirationTimeout,
+    orderExpirationTimeout: o.orderExpirationTimeout,
     TTL: o.TTL,
   };
 }
@@ -138,7 +138,7 @@ export const OfferList = ({ type, filters }: OfferListProps) => {
     <div className="space-y-4">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-white">
-          {queryType === "buy" ? t("offers.buy") : t("offers.sell")}
+          {queryType === "sell" ? t("offers.buy") : t("offers.sell")}
         </h3>
         <span className="text-sm text-gray-400">
           {offers.length} {t('offers.found')}
