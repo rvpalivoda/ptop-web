@@ -8,6 +8,10 @@ vi.mock('@/api/offers', () => ({
   getOffers: vi.fn().mockResolvedValue([]),
 }));
 
+vi.mock('@/context/AuthContext', () => ({
+  useAuth: () => ({ tokens: null }),
+}));
+
 describe('OfferList', () => {
   const baseFilters = {
     fromAsset: 'all',
