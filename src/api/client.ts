@@ -6,10 +6,9 @@ const BASE_URL = (
   import.meta.env.VITE_API_BASE_URL ?? '/api/v1'
 ).replace(/\/$/, '');
 
-function forceLogout() {
+function clearAuth() {
   clearTokens();
   clearUserInfo();
-  window.location.assign('/login');
 }
 
 export async function apiRequest<T>(
@@ -36,17 +35,20 @@ export async function apiRequest<T>(
     endpoint !== '/auth/login'
   ) {
     try {
-      const newTokens = await refreshTokens();
-      saveTokens(newTokens);
-      return apiRequest<T>(endpoint, options, true);
-    } catch (err) {
-      forceLogout();
-      throw new Error('Unauthorized');
+      if (tokens?.refresh) {
+        const newTokens = await refreshTokens();
+        saveTokens(newTokens);
+        return apiRequest<T>(endpoint, options, true);
+      }
+    } catch {
+      // ignore refresh errors
     }
+    clearAuth();
+    throw new Error('Unauthorized');
   }
 
   if (endpoint === '/auth/refresh' && !response.ok) {
-    forceLogout();
+    clearAuth();
   }
 
   if (!response.ok) {
