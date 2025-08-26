@@ -79,7 +79,7 @@ export const Header = () => {
 
                             {isAuthenticated ? (
                                 <ProfileDrawer
-                                    triggerClassName="hidden md:inline-flex items-center gap-2 rounded-xl h-9 px-3 text-sm font-medium bg-white/5 text-white/80 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white"
+                                    triggerClassName="hidden md:inline-flex items-center gap-2 rounded-xl h-9 px-3 text-sm font-medium bg-white/5 text-white/80 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white [&>svg]:hidden"
                                 />
                             ) : (
                                 <div className="hidden md:flex items-center gap-2">
@@ -148,7 +148,7 @@ export const Header = () => {
                                 {isAuthenticated ? (
                                     <div className="mt-2 flex flex-col gap-2">
                                         <ProfileDrawer
-                                            triggerClassName="inline-flex items-center gap-2 rounded-xl h-9 px-3 text-sm font-medium bg-white/5 text-white/80 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white"
+                                            triggerClassName="inline-flex items-center gap-2 rounded-xl h-9 px-3 text-sm font-medium bg-white/5 text-white/80 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white [&>svg]:hidden"
                                         />
                                         <button
                                             onClick={() => {
