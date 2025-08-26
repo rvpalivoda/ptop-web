@@ -2,18 +2,10 @@ import { useEffect, useMemo, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, ShieldCheck, Clock } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import type { OrderFull } from '@/api/orders';
+import { getOrder, type OrderFull } from '@/api/orders';
 import { ChatPanel } from '@/components/chat/ChatPanel';
 import { cn } from '@/lib/utils';
 
-// Заглушка: замени на свой API-клиент
-async function fetchOrder(id: string): Promise<OrderFull> {
-    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL ?? '/api/v1'}/orders/${id}`, {
-        credentials: 'include',
-    });
-    if (!res.ok) throw new Error('Failed to load order');
-    return res.json();
-}
 
 function useCountdown(expiresAt?: string | null) {
     const [left, setLeft] = useState<number>(() => {
@@ -58,7 +50,7 @@ export default function OrderItem({
     useEffect(() => {
         let mounted = true;
         setLoading(true);
-        fetchOrder(id)
+        getOrder(id)
             .then((o) => {
                 if (mounted) {
                     setOrder(o);
