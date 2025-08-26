@@ -31,6 +31,7 @@ export function useOffersWS(
     ws.onmessage = (evt) => {
       const event: OfferEvent = JSON.parse(evt.data);
       onEvent(event);
+
     };
     return () => ws.close();
   }, [token, onEvent]);
