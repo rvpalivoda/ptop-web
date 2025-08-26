@@ -69,6 +69,7 @@ function subscribe(token: string, fn: (n: ApiNotification) => void) {
   };
 }
 
+
 export function useNotifications() {
   const { tokens } = useAuth();
   const [items, setItems] = useState<NotificationItem[]>([]);
@@ -109,6 +110,7 @@ export function useNotifications() {
       setItems((prev) => [mapNotification(data), ...prev]);
     });
     return unsubscribe;
+
   }, [tokens?.access]);
 
   const markAsRead = useCallback(async (id: string) => {

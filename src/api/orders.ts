@@ -82,3 +82,7 @@ export function createOrder(data: CreateOrderPayload) {
 export function getClientOrders(role: 'author' | 'offerOwner' = 'author') {
   return apiRequest<OrderFull[]>(`/client/orders?role=${role}`);
 }
+
+export function getOrder(id: string) {
+  return apiRequest<OrderFull>(`/orders/${id}`);
+}
