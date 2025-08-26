@@ -1,13 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from '@/components/ui/sonner';
 import { createOrder } from '@/api/orders';
-import { getClientPaymentMethods, ClientPaymentMethod } from '@/api/clientPaymentMethods';
+import type { ClientPaymentMethod } from '@/api/clientPaymentMethods';
 
 interface CreateOrderFormProps {
   offerId: string;
   limits: { min: string; max: string };
+  paymentMethods: ClientPaymentMethod[];
   onClose: () => void;
 }
 
@@ -20,27 +21,19 @@ const btnSoft =
   'inline-flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 text-sm font-medium text-white/80 ring-1 ring-white/10 hover:bg-white/10 hover:ring-white/20 transition';
 const sectionCard = 'rounded-2xl border border-white/10 bg-gray-900/60 p-4';
 
-export const CreateOrderForm = ({ offerId, limits, onClose }: CreateOrderFormProps) => {
+export const CreateOrderForm = ({
+  offerId,
+  limits,
+  paymentMethods,
+  onClose,
+}: CreateOrderFormProps) => {
   const { t } = useTranslation();
-  const [paymentMethods, setPaymentMethods] = useState<ClientPaymentMethod[]>([]);
   const [formData, setFormData] = useState({
     amount: '',
     clientPaymentMethodId: '',
     pinCode: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-
-  useEffect(() => {
-    async function load() {
-      try {
-        const methods = await getClientPaymentMethods();
-        setPaymentMethods(methods);
-      } catch (err) {
-        console.error('load methods error:', err);
-      }
-    }
-    load();
-  }, []);
 
   const validate = () => {
     const e: Record<string, string> = {};
