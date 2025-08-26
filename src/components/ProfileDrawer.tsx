@@ -34,7 +34,7 @@ import {
 } from '@/api';
 import { useAuth } from '@/context';
 import { useTranslation } from 'react-i18next';
-import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { clearTwoFactorEnabled, loadTwoFactorEnabled, saveTwoFactorEnabled } from '@/storage/two_factor';
 
@@ -62,7 +62,11 @@ interface ModalContentProps {
 }
 
 const ModalContent = ({ children, title, error }: ModalContentProps) => (
-  <DialogContent className="bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 text-white sm:max-w-lg w-[calc(100vw-2rem)] rounded-2xl border border-white/10 shadow-2xl p-0 overflow-hidden">
+  <DialogContent
+      className="bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 text-white sm:max-w-lg w-[calc(100vw-2rem)] rounded-2xl border border-white/10 shadow-2xl p-0 overflow-hidden"
+      onEscapeKeyDown={(e) => e.preventDefault()}
+      onInteractOutside={(e) => e.preventDefault()}
+  >
     <DialogHeader className="px-5 pt-5">
       <DialogTitle className="text-lg font-semibold tracking-tight">{title}</DialogTitle>
     </DialogHeader>
@@ -312,8 +316,9 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
         <SheetContent
             side="right"
             className="text-white h-full bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 border-l border-white/10 p-0"
+            onEscapeKeyDown={(e) => e.preventDefault()}
+            onInteractOutside={(e) => e.preventDefault()}
         >
-          <SheetClose className="absolute right-4 top-4 rounded-full bg-white/5 p-1 text-white/70 ring-1 ring-white/10 hover:bg-white/10 hover:text-white" />
 
           {/* Header */}
           <div className="px-5 pt-6 pb-4 border-b border-white/10 backdrop-blur">
