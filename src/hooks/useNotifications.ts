@@ -35,7 +35,12 @@ let wsToken: string | null = null;
 const listeners = new Set<(n: ApiNotification) => void>();
 
 function connect(token: string) {
-  if (ws && wsToken === token) return;
+  if (
+    ws &&
+    wsToken === token &&
+    (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)
+  )
+    return;
   if (ws) ws.close();
   wsToken = token;
   const base = (import.meta.env.VITE_API_BASE_URL ?? '/api/v1')
@@ -49,6 +54,10 @@ function connect(token: string) {
     } catch {
       // ignore
     }
+  };
+  ws.onclose = () => {
+    ws = null;
+    wsToken = null;
   };
 }
 
