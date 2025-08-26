@@ -98,14 +98,14 @@ export const Header = () => {
                                     <button
                                         onClick={() => setIsNotifOpen(true)}
                                         className="group relative rounded-xl h-9 w-9 grid place-items-center bg-white/5 text-white/80 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white"
-                                        aria-label={t('notifications.open', 'Открыть уведомления')}
+                                        aria-label={t('notifications.open', 'Open notifications')}
                                     >
                                         <Bell size={18}/>
                                         {/* Бейдж с количеством непрочитанных (только если > 0) */}
                                         {unreadCount > 0 && (
                                             <span
                                                 className="absolute -right-1 -top-1 min-w-[18px] h-[18px] px-1 grid place-items-center rounded-full text-[11px] font-semibold bg-emerald-400 text-gray-900"
-                                                aria-label={t('notifications.unreadCount', {defaultValue: '{{count}} неп.', count: unreadCount})}
+                                                aria-label={t('notifications.unreadCount', {defaultValue: '{{count}} unread', count: unreadCount})}
                                             >
                         {unreadCount > 99 ? '99+' : unreadCount}
                       </span>
