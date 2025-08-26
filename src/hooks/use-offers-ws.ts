@@ -17,21 +17,10 @@ export function useOffersWS(
       .replace(/^http/, 'ws')
       .replace(/\/$/, '');
 
-    const WS = WebSocket as unknown as {
-      new (
-        url: string,
-        protocols?: string | string[],
-        options?: { headers?: Record<string, string> },
-      ): WebSocket;
-    };
-
-    const ws = new WS(`${base}/ws/offers`, undefined, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const ws = new WebSocket(`${base}/ws/offers?token=${token}`);
     ws.onmessage = (evt) => {
       const event: OfferEvent = JSON.parse(evt.data);
       onEvent(event);
-
     };
     return () => ws.close();
   }, [token, onEvent]);
