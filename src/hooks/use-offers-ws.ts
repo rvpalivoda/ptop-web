@@ -19,7 +19,8 @@ export function useOffersWS(
 
     const ws = new WebSocket(`${base}/ws/offers?token=${token}`);
     ws.onmessage = (evt) => {
-      onEvent(JSON.parse(evt.data));
+      const event: OfferEvent = JSON.parse(evt.data);
+      onEvent(event);
     };
     return () => ws.close();
   }, [token, onEvent]);
