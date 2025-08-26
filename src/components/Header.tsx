@@ -28,7 +28,15 @@ export const Header = () => {
     );
 
     return (
-        <header className="fixed inset-x-0 top-0 z-50">
+        <>
+            {isMenuOpen && (
+                <div
+                    data-testid="mobile-menu-overlay"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="fixed inset-0 z-40 bg-black/80 md:hidden"
+                />
+            )}
+            <header className="fixed inset-x-0 top-0 z-50">
             {/* стекло/градиент — ближе к стилю offers */}
             <div
                 className="border-b border-white/10 bg-gradient-to-b from-gray-950/80 to-gray-950/70 backdrop-blur supports-[backdrop-filter]:bg-gray-900/40">
@@ -184,5 +192,6 @@ export const Header = () => {
                 )}
             </div>
         </header>
+        </>
     );
 };
