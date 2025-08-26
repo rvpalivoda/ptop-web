@@ -128,6 +128,14 @@ definitions:
       word:
         type: string
     type: object
+  handlers.OfferEvent:
+    properties:
+      offer:
+        $ref: '#/definitions/models.OfferFull'
+      type:
+        example: created
+        type: string
+    type: object
   handlers.OfferRequest:
     properties:
       amount:
@@ -153,6 +161,14 @@ definitions:
       type:
         type: string
     type: object
+  handlers.OrderEvent:
+    properties:
+      order:
+        $ref: '#/definitions/models.OrderFull'
+      type:
+        example: order.created
+        type: string
+    type: object
   handlers.OrderMessageRequest:
     properties:
       content:
@@ -167,6 +183,14 @@ definitions:
       offer_id:
         type: string
       pin_code:
+        type: string
+    type: object
+  handlers.OrderStatusEvent:
+    properties:
+      order:
+        $ref: '#/definitions/models.OrderFull'
+      type:
+        example: order.status_changed
         type: string
     type: object
   handlers.ProfileResponse:
@@ -587,7 +611,6 @@ definitions:
       createdAt:
         type: string
       fileSize:
-        format: int64
         type: integer
       fileType:
         type: string
@@ -1473,7 +1496,7 @@ paths:
           schema:
             $ref: '#/definitions/models.Order'
         "400":
-          description: Bad Request
+          description: нельзя создавать ордер на своё предложение
           schema:
             $ref: '#/definitions/handlers.ErrorResponse'
         "401":
@@ -1822,6 +1845,8 @@ paths:
       - offers
   /orders/{id}/messages:
     get:
+      description: Возвращает историю переписки. Новые сообщения приходят в реальном
+        времени через WebSocket `/ws/orders/{id}/chat`.
       parameters:
       - description: ID ордера
         in: path
@@ -1862,7 +1887,9 @@ paths:
       consumes:
       - application/json
       - multipart/form-data
-      description: 'Поддерживаются типы файлов: image/jpeg, image/png, application/pdf'
+      description: 'Поддерживаются типы файлов: image/jpeg, image/png, application/pdf.
+        После сохранения сообщение мгновенно рассылается всем участникам через WebSocket
+        `/ws/orders/{id}/chat`.'
       parameters:
       - description: ID ордера
         in: path
@@ -1951,9 +1978,49 @@ paths:
       summary: Список платёжных методов
       tags:
       - reference
+  /ws/offers:
+    get:
+      description: Подключение для получения событий CRUD по офферам.
+      parameters:
+      - description: канал
+        in: query
+        name: channel
+        type: string
+      responses:
+        "101":
+          description: Switching Protocols
+          schema:
+            $ref: '#/definitions/handlers.OfferEvent'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: WebSocket обновления офферов
+      tags:
+      - offers
+  /ws/orders:
+    get:
+      description: После подключения авторизованный клиент получает события OrderEvent
+        о создании своих ордеров.
+      responses:
+        "101":
+          description: Switching Protocols
+          schema:
+            $ref: '#/definitions/handlers.OrderEvent'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Websocket ордеров клиента
+      tags:
+      - orders
   /ws/orders/{id}/chat:
     get:
-      description: При подключении отправляет историю сообщений из кеша Redis
+      description: Подключает покупателя и продавца к чату ордера.
       parameters:
       - description: ID ордера
         in: path
@@ -1964,7 +2031,7 @@ paths:
         "101":
           description: Switching Protocols
           schema:
-            type: string
+            $ref: '#/definitions/models.OrderMessage'
         "403":
           description: Forbidden
           schema:
@@ -1976,6 +2043,34 @@ paths:
       security:
       - BearerAuth: []
       summary: Websocket чат ордера
+      tags:
+      - orders
+  /ws/orders/{id}/status:
+    get:
+      description: Позволяет автору и владельцу оффера получать события OrderStatusEvent
+        при каждом изменении статуса указанного ордера.
+      parameters:
+      - description: ID ордера
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "101":
+          description: Switching Protocols
+          schema:
+            $ref: '#/definitions/handlers.OrderStatusEvent'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Websocket уведомлений о статусе ордера
       tags:
       - orders
 securityDefinitions:
