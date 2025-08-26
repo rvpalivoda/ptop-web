@@ -7,11 +7,11 @@ import { MessageBubble } from './MessageBubble';
 export function ChatPanel({
                               orderId,
                               token,
-                              currentUserID,
+                              currentUserName,
                           }: {
     orderId: string;
     token?: string;
-    currentUserID: string;
+    currentUserName: string;
 }) {
     const { t } = useTranslation();
     const { messages, isConnected, sendMessage } = useOrderChat(orderId, token);
@@ -64,7 +64,7 @@ export function ChatPanel({
                         key={m.id}
                         body={m.body}
                         senderName={m.senderName}
-                        isMe={m.senderId === currentUserID}
+                        isMe={m.senderName === currentUserName}
                         createdAt={m.createdAt}
                     />
                 ))}
