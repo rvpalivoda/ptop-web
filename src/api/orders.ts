@@ -26,10 +26,28 @@ export interface OrderFull {
   buyerID: string;
   sellerID: string;
   offerOwnerID: string;
+  author?: {
+    username?: string;
+    rating?: number;
+    ordersCount?: number;
+  };
+  buyer?: {
+    username?: string;
+    rating?: number;
+    ordersCount?: number;
+  };
+  seller?: {
+    username?: string;
+    rating?: number;
+    ordersCount?: number;
+  };
   offerOwner?: {
     username?: string;
     rating?: number;
     ordersCount?: number;
+  };
+  offer?: {
+    type?: string;
   };
   fromAssetID: string;
   toAssetID: string;
@@ -42,6 +60,9 @@ export interface OrderFull {
   };
   status: string;
   createdAt: string;
+  expiresAt?: string;
+  releasedAt?: string;
+  isEscrow?: boolean;
 }
 
 export interface CreateOrderPayload {
