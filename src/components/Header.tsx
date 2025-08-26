@@ -1,206 +1,11 @@
-import {useEffect, useMemo, useState, useCallback} from 'react';
-import {Bell, Menu, X} from 'lucide-react';
-import {Link, NavLink, useNavigate} from 'react-router-dom';
-import {useAuth} from '@/context';
-import {ProfileDrawer} from './ProfileDrawer';
-import {useTranslation} from 'react-i18next';
-
-/** =========================
- *  Notifications: интерфейсы
- *  ========================= */
-export interface NotificationItem {
-    id: string;
-    title: string;
-    body: string;
-    createdAt: string;     // ISO string
-    isRead: boolean;
-    linkTo?: string;       // путь, куда вести по клику
-}
-
-/** ============================================
- *  Хук-заглушка: заменишь на реальный API/WS
- *  ============================================ */
-function useNotifications() {
-    const [items, setItems] = useState<NotificationItem[]>([
-        // TODO: удалить мок, подключить реальный фетч
-        {
-            id: 'n1',
-            title: 'Новая сделка',
-            body: 'Покупатель создал сделку по вашему объявлению.',
-            createdAt: new Date(Date.now() - 5 * 60_000).toISOString(), // 5 мин назад
-            isRead: false,
-            linkTo: '/ad-deals/123',
-        },
-        {
-            id: 'n2',
-            title: 'Платёж зачислен в эскроу',
-            body: 'Проверка средств завершена. Можно продолжать.',
-            createdAt: new Date(Date.now() - 60 * 60_000).toISOString(), // 1 час назад
-            isRead: true,
-            linkTo: '/escrow',
-        },
-    ]);
-
-    const unreadCount = useMemo(() => items.filter(i => !i.isRead).length, [items]);
-
-    const markAsRead = useCallback((id: string) => {
-        setItems(prev => prev.map(i => (i.id === id ? {...i, isRead: true} : i)));
-        // TODO: POST /notifications/:id/read
-    }, []);
-
-    const markAllAsRead = useCallback(() => {
-        setItems(prev => prev.map(i => ({...i, isRead: true})));
-        // TODO: POST /notifications/read-all
-    }, []);
-
-    // TODO: заменить на реальный fetch + WS подписку:
-    // useEffect(() => { fetch('/api/notifications'); ...; subscribeWS(); }, []);
-
-    return {items, unreadCount, markAsRead, markAllAsRead};
-}
-
-/** ============================================
- *  Компонент модального окна уведомлений
- *  ============================================ */
-function NotificationsModal({
-                                open,
-                                onClose,
-                                items,
-                                markAsRead,
-                                markAllAsRead,
-                            }: {
-    open: boolean;
-    onClose: () => void;
-    items: NotificationItem[];
-    markAsRead: (id: string) => void;
-    markAllAsRead: () => void;
-}) {
-    const {t} = useTranslation();
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        if (!open) return;
-        const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
-        window.addEventListener('keydown', onKey);
-        return () => window.removeEventListener('keydown', onKey);
-    }, [open, onClose]);
-
-    if (!open) return null;
-
-    const handleItemClick = (n: NotificationItem) => {
-        markAsRead(n.id);
-        if (n.linkTo) navigate(n.linkTo);
-        onClose();
-    };
-
-    return (
-        <>
-            {/* backdrop */}
-            <div
-                className="fixed inset-0 z-[70] bg-black/60 backdrop-blur-sm"
-                onClick={onClose}
-                data-testid="notifications-backdrop"
-            />
-            {/* dialog */}
-            <div
-                role="dialog"
-                aria-modal="true"
-                className="fixed inset-0 z-[71] grid place-items-center p-4"
-            >
-                <div className="relative w-full max-w-lg rounded-2xl border border-white/10 bg-gray-900/90 backdrop-blur ring-1 ring-white/10 shadow-2xl">
-                    {/* header */}
-                    <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
-                        <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-white/70">
-                {t('notifications.title', 'Уведомления')}
-              </span>
-                            {items.some(i => !i.isRead) && (
-                                <button
-                                    onClick={markAllAsRead}
-                                    className="rounded-lg px-2 py-1 text-xs bg-white/5 text-white/70 ring-1 ring-white/10 hover:bg-white/10 hover:text-white transition"
-                                >
-                                    {t('notifications.markAllRead', 'Отметить все прочитанными')}
-                                </button>
-                            )}
-                        </div>
-                        <button
-                            onClick={onClose}
-                            className="rounded-xl h-9 w-9 grid place-items-center bg-white/5 text-white/80 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white"
-                            aria-label={t('common.close', 'Закрыть')}
-                        >
-                            <X size={18}/>
-                        </button>
-                    </div>
-
-                    {/* list */}
-                    <div className="max-h-[60vh] overflow-y-auto p-2">
-                        {items.length === 0 ? (
-                            <div className="p-6 text-center text-white/60">
-                                {t('notifications.empty', 'Пока уведомлений нет')}
-                            </div>
-                        ) : (
-                            <ul className="divide-y divide-white/10">
-                                {items.map(n => (
-                                    <li key={n.id}>
-                                        <button
-                                            onClick={() => handleItemClick(n)}
-                                            className={[
-                                                'w-full text-left px-4 py-3 transition flex items-start gap-3',
-                                                'hover:bg-white/5',
-                                                !n.isRead ? 'bg-emerald-400/5' : '',
-                                            ].join(' ')}
-                                        >
-                      <span
-                          className={[
-                              'mt-1 inline-flex h-2 w-2 rounded-full',
-                              n.isRead ? 'bg-white/20' : 'bg-emerald-400',
-                          ].join(' ')}
-                          aria-hidden
-                      />
-                                            <div className="flex-1">
-                                                <div className="flex items-center justify-between gap-3">
-                                                    <p className="text-sm font-medium text-white">
-                                                        {n.title}
-                                                    </p>
-                                                    <time
-                                                        className="shrink-0 text-[11px] text-white/50"
-                                                        dateTime={n.createdAt}
-                                                        title={new Date(n.createdAt).toLocaleString()}
-                                                    >
-                                                        {formatRelative(n.createdAt)}
-                                                    </time>
-                                                </div>
-                                                {n.body && (
-                                                    <p className="mt-1 text-sm text-white/70">
-                                                        {n.body}
-                                                    </p>
-                                                )}
-                                            </div>
-                                        </button>
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
-                    </div>
-                </div>
-            </div>
-        </>
-    );
-}
-
-/** Вспомогательный форматтер «X минут назад» */
-function formatRelative(iso: string) {
-    const dt = new Date(iso).getTime();
-    const diff = Math.max(0, Date.now() - dt);
-    const m = Math.floor(diff / 60_000);
-    if (m < 1) return 'только что';
-    if (m < 60) return `${m} мин назад`;
-    const h = Math.floor(m / 60);
-    if (h < 24) return `${h} ч назад`;
-    const d = Math.floor(h / 24);
-    return `${d} дн назад`;
-}
-
+import { useState } from 'react';
+import { Bell, Menu, X } from 'lucide-react';
+import { Link, NavLink } from 'react-router-dom';
+import { useAuth } from '@/context';
+import { ProfileDrawer } from './ProfileDrawer';
+import { useTranslation } from 'react-i18next';
+import { NotificationsModal } from './notifications/NotificationsModal';
+import { useNotifications } from '@/hooks/useNotifications';
 /** =========================
  *  Твой Header с уведомлениями
  *  ========================= */
@@ -209,7 +14,15 @@ export const Header = () => {
     const [isNotifOpen, setIsNotifOpen] = useState(false);
     const {isAuthenticated, logout} = useAuth();
     const {t} = useTranslation();
-    const {items, unreadCount, markAsRead, markAllAsRead} = useNotifications();
+    const {
+        items,
+        unreadCount,
+        markAsRead,
+        markAllAsRead,
+        loadMore,
+        hasMore,
+        loading,
+    } = useNotifications();
 
     const NavItem = ({to, label, onClick}: { to: string; label: string; onClick?: () => void }) => (
         <NavLink
@@ -244,6 +57,9 @@ export const Header = () => {
                 items={items}
                 markAsRead={markAsRead}
                 markAllAsRead={markAllAsRead}
+                loadMore={loadMore}
+                hasMore={hasMore}
+                loading={loading}
             />
 
             <header className="fixed inset-x-0 top-0 z-50">

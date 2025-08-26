@@ -7,6 +7,18 @@ import '../i18n';
 const authState = { isAuthenticated: false };
 vi.mock('@/context', () => ({ useAuth: () => authState }));
 vi.mock('./ProfileDrawer', () => ({ ProfileDrawer: () => <div>drawer</div> }));
+const notificationsState = {
+  items: [],
+  unreadCount: 0,
+  markAsRead: vi.fn(),
+  markAllAsRead: vi.fn(),
+  loadMore: vi.fn(),
+  hasMore: false,
+  loading: false,
+};
+vi.mock('@/hooks/useNotifications', () => ({
+  useNotifications: () => notificationsState,
+}));
 
 describe('Header component', () => {
   afterEach(() => {
