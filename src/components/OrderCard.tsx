@@ -13,6 +13,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import type { OrderFull } from '@/api/orders';
 import { cn } from '@/lib/utils';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 type Props = {
   order: OrderFull;
@@ -55,7 +56,8 @@ function useCountdown(expiresAt?: string | null) {
 
 export function OrderCard({ order, currentUserID, onOpen }: Props) {
   const { t } = useTranslation();
-
+  const navigate = useNavigate();
+  const location = useLocation();
   const {
     id,
     offer,
@@ -126,6 +128,13 @@ export function OrderCard({ order, currentUserID, onOpen }: Props) {
   const copyId = async () => {
     try { await navigator.clipboard.writeText(id); } catch {}
   };
+
+  const handleOpen = () => {
+    if (onOpen) return onOpen(order);
+    // откроем как страницу (можно и как route-modal, если используешь background)
+    navigate(`/orders/${id}`, { state: { background: location } });
+  };
+
 
   return (
       <div className="rounded-xl border border-white/10 bg-gray-900/70 p-0 transition hover:border-white/20 hover:bg-gray-900/80 text-white shadow-lg">
@@ -306,7 +315,7 @@ export function OrderCard({ order, currentUserID, onOpen }: Props) {
             </div>
             <button
                 type="button"
-                onClick={() => onOpen?.(order)}
+                onClick={handleOpen}
                 className="inline-flex items-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-medium ring-1 ring-white/10 bg-white/5 hover:bg-white/10 transition"
             >
               <ExternalLink className="w-4 h-4" />

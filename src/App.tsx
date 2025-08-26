@@ -17,6 +17,7 @@ import MyDeals from "./pages/MyDeals";
 import Transactions from "./pages/Transactions";
 import Escrow from "./pages/Escrow";
 import { ScrollToTopButton } from "./components/ScrollToTopButton";
+import OrderItem from '@/pages/OrderItem';
 
 const queryClient = new QueryClient();
 
