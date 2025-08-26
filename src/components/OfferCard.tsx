@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import { CreateOrderForm } from './CreateOrderForm';
 import { useAuth } from '@/context';
+import type { ClientPaymentMethod } from '@/api/clientPaymentMethods';
 
 interface OfferCardProps {
   offer: {
@@ -17,7 +18,7 @@ interface OfferCardProps {
     toAsset: { name: string };
     amount: string;
     price: string;
-    paymentMethods: string[];
+    paymentMethods: ClientPaymentMethod[];
     limits: { min: string; max: string };
     type: 'buy' | 'sell';
     isEnabled?: boolean;
@@ -106,13 +107,13 @@ export const OfferCard = ({ offer, isClientOffer, onToggle, onEdit }: OfferCardP
             <div className="mt-4">
               <p className="text-xs text-white/60 mb-2">{t('offerCard.paymentMethods')}</p>
               <div className="flex flex-wrap gap-2">
-                {paymentMethods.map((method, index) => (
-                    <span
-                        key={index}
-                        className="px-2 py-1 rounded-full bg-white/10 text-white/70 text-xs ring-1 ring-white/10"
-                    >
-                  {method}
-                </span>
+                {paymentMethods.map((method) => (
+                  <span
+                    key={method.id ?? method.ID}
+                    className="px-2 py-1 rounded-full bg-white/10 text-white/70 text-xs ring-1 ring-white/10"
+                  >
+                    {method.paymentMethod?.name ?? method.name ?? ''}
+                  </span>
                 ))}
               </div>
             </div>
@@ -184,6 +185,7 @@ export const OfferCard = ({ offer, isClientOffer, onToggle, onEdit }: OfferCardP
         <CreateOrderForm
           offerId={id}
           limits={limits}
+          paymentMethods={paymentMethods}
           onClose={() => setShowOrder(false)}
         />
       )}

@@ -16,7 +16,7 @@ const renderWithUser = (username: string, traderName: string) => {
     toAsset: { name: 'BTC' },
     amount: '100',
     price: '1',
-    paymentMethods: ['PayPal'],
+    paymentMethods: [{ id: '1', name: 'PayPal' }],
     limits: { min: '10', max: '100' },
     type: 'buy' as const,
   };

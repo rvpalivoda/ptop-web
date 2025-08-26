@@ -28,7 +28,7 @@ interface OfferItem {
   toAsset: { name: string };
   amount: string;
   price: string;
-  paymentMethods: string[];
+  paymentMethods: ClientPaymentMethod[];
   limits: { min: string; max: string };
   type: 'buy' | 'sell';
   isEnabled?: boolean;
@@ -65,12 +65,7 @@ export const OfferList = ({ type, filters }: OfferListProps) => {
           toAsset: o.toAsset ?? { name: o.toAssetID },
           amount: String(o.amount),
           price: String(o.price),
-          paymentMethods:
-            o.clientPaymentMethods?.map(
-              (m: ClientPaymentMethod) =>
-                m.paymentMethod?.name ?? m.name ?? '',
-            )
-              .filter(Boolean) ?? [],
+          paymentMethods: o.clientPaymentMethods ?? [],
           limits: { min: String(o.minAmount), max: String(o.maxAmount) },
           type,
           isEnabled: o.isEnabled,

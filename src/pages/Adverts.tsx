@@ -7,7 +7,6 @@ import {
   enableOffer,
   disableOffer,
 } from '@/api/offers';
-import type { ClientPaymentMethod } from '@/api/clientPaymentMethods';
 import { OfferCard } from '@/components/OfferCard';
 import { CreateOfferForm } from '@/components/CreateOfferForm';
 
@@ -68,12 +67,7 @@ const Adverts = () => {
                   toAsset: { name: offer.toAsset?.name || offer.toAssetID },
                   amount: String(offer.amount),
                   price: String(offer.price),
-                  paymentMethods:
-                    offer.clientPaymentMethods?.map(
-                      (m: ClientPaymentMethod) =>
-                        m.paymentMethod?.name ?? m.name ?? '',
-                    )
-                      .filter(Boolean) ?? [],
+                  paymentMethods: offer.clientPaymentMethods ?? [],
                   limits: {
                     min: String(offer.minAmount),
                     max: String(offer.maxAmount),
