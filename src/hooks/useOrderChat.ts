@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { createOrderMessage, markOrderMessageRead } from '@/api/orders';
+import { createOrderMessage, markOrderMessageRead, getOrderMessages } from '@/api/orders';
 
 export type ChatMessage = {
     id: string;
@@ -66,6 +66,27 @@ export function useOrderChat(
     useEffect(() => {
         if (!token || !orderId) return;
 
+        let cancelled = false;
+        setMessages([]);
+        getOrderMessages(orderId)
+            .then((history) => {
+                if (cancelled) return;
+                const mapped = history.map((m) => ({
+                    id: m.id,
+                    orderId,
+                    senderId: m.clientID,
+                    body: m.content,
+                    createdAt: m.createdAt,
+                    fileURL: m.fileURL,
+                    fileType: m.fileType,
+                    fileSize: m.fileSize,
+                    readAt: m.readAt,
+                }));
+                setMessages(mapped);
+                onHistory?.(mapped);
+            })
+            .catch(() => {});
+
         const base = (import.meta.env.VITE_API_BASE_URL ?? '/api/v1')
             .replace(/^http/, 'ws')
             .replace(/\/$/, '');
@@ -121,6 +142,7 @@ export function useOrderChat(
         };
 
         return () => {
+            cancelled = true;
             ws.close();
             wsRef.current = null;
         };
