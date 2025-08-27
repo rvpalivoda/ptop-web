@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { createOrderMessage } from '@/api/orders';
+import { createOrderMessage, markOrderMessageRead } from '@/api/orders';
 
 export type ChatMessage = {
     id: string;
@@ -11,6 +11,7 @@ export type ChatMessage = {
     fileURL?: string;
     fileType?: string;
     fileSize?: number;
+    readAt?: string;
 };
 
 type WsCompat = typeof WebSocket & {
@@ -44,6 +45,18 @@ export function useOrderChat(
     const sendMessage = useCallback(async (body: string, file?: File) => {
         try {
             await createOrderMessage(orderId, body, file);
+            return true;
+        } catch {
+            return false;
+        }
+    }, [orderId]);
+
+    const markRead = useCallback(async (msgId: string) => {
+        try {
+            const updated = await markOrderMessageRead(orderId, msgId);
+            setMessages((prev) =>
+                prev.map((m) => (m.id === msgId ? { ...m, readAt: updated.readAt } : m))
+            );
             return true;
         } catch {
             return false;
@@ -113,5 +126,5 @@ export function useOrderChat(
         };
     }, [orderId, token, onConnected, onDisconnected, onError, onHistory]);
 
-    return { messages, isConnected, sendMessage };
+    return { messages, isConnected, sendMessage, markRead };
 }

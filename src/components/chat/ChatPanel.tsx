@@ -65,7 +65,7 @@ export function ChatPanel({
     currentUserName: string
 }) {
     const { t } = useTranslation()
-    const { messages, isConnected, sendMessage } = useOrderChat(orderId, token)
+    const { messages, isConnected, sendMessage, markRead } = useOrderChat(orderId, token)
 
     const [draft, setDraft] = useState('')
     const [file, setFile] = useState<File | null>(null)
@@ -109,6 +109,19 @@ export function ChatPanel({
         el.addEventListener('scroll', handler, { passive: true })
         return () => el.removeEventListener('scroll', handler)
     }, [])
+
+    // mark messages as read when user is at bottom
+    const readSet = useRef<Set<string>>(new Set())
+    useEffect(() => {
+        if (!stickToBottom) return
+        messages.forEach((m) => {
+            if (m.senderName === currentUserName) return
+            if (m.readAt) return
+            if (readSet.current.has(m.id)) return
+            readSet.current.add(m.id)
+            markRead(m.id)
+        })
+    }, [messages, stickToBottom, currentUserName, markRead])
 
     const onSend = async () => {
         const text = draft.trim()
@@ -220,6 +233,7 @@ export function ChatPanel({
                         createdAt={m.createdAt}
                         fileURL={m.fileURL}
                         fileType={m.fileType}
+                        readAt={m.readAt}
                         // allow images to open in a lightbox
                         onImageClick={(src: string) => setLightboxSrc(src)}
                     />
