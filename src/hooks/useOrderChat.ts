@@ -128,29 +128,32 @@ export function useOrderChat(
         ws.onmessage = (evt) => {
             try {
                 const data = JSON.parse(evt.data);
-                switch (data.type) {
-                    case 'CHAT_HISTORY':
-                        if (Array.isArray(data.messages)) {
-                            const mapped = data.messages.map((m: Record<string, unknown>) => mapMessage(m))
-                            setMessages(mapped)
-                            onHistory?.(mapped)
-                        }
-                        break;
-                    case 'NEW_MESSAGE':
-                        if (data.message) {
-                            const mapped = mapMessage(data.message as Record<string, unknown>)
-                            setMessages((prev) => [...prev, mapped])
-                        }
-                        break;
-                    case 'MESSAGE_BATCH':
-                        if (Array.isArray(data.messages)) {
-                            const mapped = data.messages.map((m: Record<string, unknown>) => mapMessage(m))
-                            setMessages((prev) => [...prev, ...mapped])
-                        }
-                        break;
-                    default:
-                        // ignore
-                        break;
+
+                // Случай: сервер прислал просто массив сообщений (история)
+                if (Array.isArray(data)) {
+                    const mapped = data.map((m: Record<string, unknown>) => mapMessage(m));
+                    setMessages(mapped);
+                    onHistory?.(mapped);
+                    return;
+                }
+
+                // Случай: объект с полем messages (может быть история или батч)
+                if (data && typeof data === 'object' && 'messages' in data && Array.isArray(data.messages)) {
+                    const mapped = data.messages.map((m: Record<string, unknown>) => mapMessage(m));
+                    if (data.type === 'CHAT_HISTORY') {
+                        setMessages(mapped);
+                        onHistory?.(mapped);
+                    } else {
+                        setMessages((prev) => [...prev, ...mapped]);
+                    }
+                    return;
+                }
+
+                // Случай: одиночное сообщение или объект с полем message
+                if (data && typeof data === 'object') {
+                    const raw = 'message' in data ? (data.message as Record<string, unknown>) : (data as Record<string, unknown>);
+                    const mapped = mapMessage(raw);
+                    setMessages((prev) => [...prev, mapped]);
                 }
             } catch {
                 // ignore
