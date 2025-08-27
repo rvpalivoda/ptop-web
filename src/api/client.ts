@@ -18,7 +18,10 @@ export async function apiRequest<T>(
 ): Promise<T> {
   const tokens = loadTokens();
   const headers = new Headers(options.headers);
-  headers.set('Content-Type', 'application/json');
+  // если отправляем FormData, пусть браузер сам поставит заголовок
+  if (!(options.body instanceof FormData)) {
+    headers.set('Content-Type', 'application/json');
+  }
   if (tokens?.access) {
     headers.set('Authorization', `Bearer ${tokens.access}`);
   }
