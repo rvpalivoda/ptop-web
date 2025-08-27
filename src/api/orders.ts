@@ -101,7 +101,18 @@ export interface OrderMessage {
   type?: string;
 }
 
-export function createOrderMessage(orderId: string, content: string) {
+export function createOrderMessage(orderId: string, content: string, file?: File) {
+  if (file) {
+    const formData = new FormData();
+    if (content) {
+      formData.append('content', content);
+    }
+    formData.append('file', file);
+    return apiRequest<OrderMessage>(`/orders/${orderId}/messages`, {
+      method: 'POST',
+      body: formData,
+    });
+  }
   return apiRequest<OrderMessage>(`/orders/${orderId}/messages`, {
     method: 'POST',
     body: JSON.stringify({ content }),

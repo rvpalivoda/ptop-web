@@ -8,6 +8,9 @@ export type ChatMessage = {
     senderName?: string;
     body: string;
     createdAt: string;     // ISO
+    fileURL?: string;
+    fileType?: string;
+    fileSize?: number;
 };
 
 type WsCompat = typeof WebSocket & {
@@ -38,9 +41,9 @@ export function useOrderChat(
     const [isConnected, setConnected] = useState(false);
     const wsRef = useRef<WebSocket | null>(null);
 
-    const sendMessage = useCallback(async (body: string) => {
+    const sendMessage = useCallback(async (body: string, file?: File) => {
         try {
-            await createOrderMessage(orderId, body);
+            await createOrderMessage(orderId, body, file);
             return true;
         } catch {
             return false;
