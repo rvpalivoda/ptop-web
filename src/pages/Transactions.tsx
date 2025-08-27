@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Header } from '@/components/Header';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { useTranslation } from 'react-i18next';
 import {
@@ -211,7 +210,6 @@ const Transactions = () => {
 
   return (
       <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 text-white">
-        <Header />
         <div className="container mx-auto px-4 pt-24 pb-10">
           <div className="mb-6 flex items-end justify-between gap-4">
             <div>
