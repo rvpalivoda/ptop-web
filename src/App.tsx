@@ -18,6 +18,7 @@ import Transactions from "./pages/Transactions";
 import Escrow from "./pages/Escrow";
 import { ScrollToTopButton } from "./components/ScrollToTopButton";
 import OrderItem from '@/pages/OrderItem';
+import MainLayout from "./components/MainLayout";
 
 const queryClient = new QueryClient();
 
@@ -34,17 +35,19 @@ const App = () => (
       <AuthProvider>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route element={<MainLayout />}>
+              <Route path="/" element={<Index />} />
+              <Route path="/balance" element={<Balance />} />
+              <Route path="/adverts" element={<Adverts />} />
+              <Route path="/my-deals" element={<MyDeals />} />
+              <Route path="/ad-deals" element={<AdDeals />} />
+              <Route path="/transactions" element={<Transactions />} />
+              <Route path="/escrow" element={<Escrow />} />
+              <Route path="/orders/:id" element={<OrderItemRoute />} />
+            </Route>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/recover" element={<Recover />} />
-            <Route path="/balance" element={<Balance />} />
-            <Route path="/adverts" element={<Adverts />} />
-            <Route path="/my-deals" element={<MyDeals />} />
-            <Route path="/ad-deals" element={<AdDeals />} />
-            <Route path="/transactions" element={<Transactions />} />
-            <Route path="/escrow" element={<Escrow />} />
-            <Route path="/orders/:id" element={<OrderItemRoute />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

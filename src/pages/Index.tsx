@@ -1,6 +1,5 @@
 
 import { useState } from 'react';
-import { Header } from '@/components/Header';
 import { OfferList } from '@/components/OfferList';
 
 import { FilterPanel } from '@/components/FilterPanel';
@@ -18,8 +17,6 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 text-white">
-      <Header />
-
       <div className="container mx-auto px-2 pt-4 sm:pt-6">
         {/* Trading
         <TradingStats />

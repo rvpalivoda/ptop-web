@@ -16,7 +16,6 @@ import { useTranslation } from 'react-i18next';
 import { getOrder, type OrderFull } from '@/api/orders';
 import { ChatPanel } from '@/components/chat/ChatPanel';
 import { cn } from '@/lib/utils';
-import { Header } from '@/components/Header';
 
 // ===== shared countdown (как в OrderCard) =====
 function useCountdown(expiresAt?: string | null) {
@@ -121,8 +120,6 @@ export default function OrderItem({
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 text-white">
             {/* Глобальная навигация как в списке */}
-            <Header />
-
             <div className="container mx-auto px-4 pt-24 pb-8">
                 {/* TOP BAR: Back + breadcrumbs + status/escrow/timer */}
                 <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

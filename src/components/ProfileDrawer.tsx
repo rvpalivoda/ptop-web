@@ -144,7 +144,6 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
   useEffect(() => { twoFactorEnabled ? saveTwoFactorEnabled(true) : clearTwoFactorEnabled(); }, [twoFactorEnabled]);
   useEffect(() => { if (userInfo) setTwoFactorEnabled(userInfo.twofaEnabled); }, [userInfo]);
   useEffect(() => { if (!show2faDialog) { setTwoFactorSecret(null); setOtpAuthUrl(null); setPasswordCheck(''); } }, [show2faDialog]);
-  useEffect(() => { refresh().catch(console.error); }, []);
 
   useEffect(() => {
     if (showPaymentMethodsDialog) {
