@@ -87,7 +87,7 @@ export function useNotifications() {
   const [loading, setLoading] = useState(false);
 
   const loadMore = useCallback(async () => {
-    if (loading || !hasMore) return;
+    if (loading || !hasMore || !tokens?.access) return;
     setLoading(true);
     try {
       const res = await listNotifications(PAGE_SIZE, offset);
@@ -102,12 +102,16 @@ export function useNotifications() {
     } finally {
       setLoading(false);
     }
-  }, [loading, hasMore, offset]);
+  }, [loading, hasMore, offset, tokens?.access]);
 
   useEffect(() => {
+    setItems([]);
+    setOffset(0);
+    setHasMore(true);
+    if (!tokens?.access) return;
     loadMore();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [tokens?.access]);
 
   useEffect(() => {
     const token = tokens?.access;
