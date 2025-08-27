@@ -46,6 +46,7 @@ const STATUS_STYLES: Record<string, string> = {
     EXPIRED: 'bg-rose-500/20 text-rose-300 ring-1 ring-rose-500/30',
 };
 
+
 export default function OrderItem({
                                       token,
                                       currentUserName,
@@ -61,6 +62,9 @@ export default function OrderItem({
     const [order, setOrder] = useState<OrderFull | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
+    const MOBILE_CTA_H = 64;
+    const [isChatTyping, setIsChatTyping] = useState(false);
+
 
     useEffect(() => {
         let mounted = true;
@@ -120,7 +124,12 @@ export default function OrderItem({
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 text-white">
             {/* Глобальная навигация как в списке */}
-            <div className="container mx-auto px-4 pt-24 pb-8">
+            <div className="container mx-auto px-4 pt-24 pb-8" style={{
+                // чтобы чат/инпут не перекрывался, делаем запас под fixed-бар
+                paddingBottom: order
+                    ? `calc(${MOBILE_CTA_H}px + env(safe-area-inset-bottom, 0px))`
+                    : undefined,
+            }}>
                 {/* TOP BAR: Back + breadcrumbs + status/escrow/timer */}
                 <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-center gap-2 min-w-0">
@@ -367,7 +376,15 @@ export default function OrderItem({
                         </div>
 
                         {/* RIGHT: чат */}
-                        <div className="lg:col-span-5">
+                        <div
+                            className="lg:col-span-5"
+                            onFocusCapture={() => setIsChatTyping(true)}
+                            onBlurCapture={(e) => {
+                                // выходим из режима печати, только если фокус реально ушёл из панели
+                                const next = e.relatedTarget as Node | null;
+                                if (!e.currentTarget.contains(next)) setIsChatTyping(false);
+                            }}
+                        >
                             <div className="rounded-2xl bg-white/5 ring-1 ring-white/10 p-3 lg:p-4 h-full">
                                 <ChatPanel orderId={order.id} token={token} currentUserName={currentUserName} />
                             </div>
@@ -377,8 +394,12 @@ export default function OrderItem({
             </div>
 
             {/* Sticky mobile CTA bar (p2p стандарт UX) */}
-            {order && (
-                <div className="fixed inset-x-0 bottom-0 z-30 border-t border-white/10 bg-gray-900/90 backdrop-blur supports-[backdrop-filter]:bg-gray-900/70 p-3 sm:hidden">
+            {order && !isChatTyping && (
+                <div className="fixed inset-x-0 bottom-0 z-30 border-t border-white/10 bg-gray-900/90 backdrop-blur supports-[backdrop-filter]:bg-gray-900/70 p-3 sm:hidden"  style={{
+                    // фиксируем высоту, чтобы корректно рассчитать отступы
+                    height: `calc(${MOBILE_CTA_H}px + env(safe-area-inset-bottom, 0px))`,
+                    paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+                }}>
                     <div className="container mx-auto px-1 flex items-center justify-between gap-2">
                         <div className="text-xs text-white/70">
                             <div className="font-medium">{pair}</div>
