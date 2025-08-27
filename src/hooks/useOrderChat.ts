@@ -1,5 +1,10 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { createOrderMessage } from '@/api/orders';
+import {
+    createOrderMessage,
+    markOrderMessageRead,
+    getOrderMessages,
+    type OrderMessage,
+} from '@/api/orders';
 
 export type ChatMessage = {
     id: string;
@@ -11,6 +16,7 @@ export type ChatMessage = {
     fileURL?: string;
     fileType?: string;
     fileSize?: number;
+    readAt?: string;
 };
 
 type WsCompat = typeof WebSocket & {
@@ -48,6 +54,43 @@ export function useOrderChat(
         } catch {
             return false;
         }
+    }, [orderId]);
+
+    const markRead = useCallback(async (msgId: string) => {
+        try {
+            const updated = await markOrderMessageRead(orderId, msgId);
+            setMessages((prev) =>
+                prev.map((m) => (m.id === msgId ? { ...m, readAt: updated.readAt } : m))
+            );
+            return true;
+        } catch {
+            return false;
+        }
+    }, [orderId]);
+
+    useEffect(() => {
+        let cancelled = false;
+        getOrderMessages(orderId)
+            .then((res: OrderMessage[]) => {
+                if (cancelled) return;
+                const mapped = res.map((m) => ({
+                    id: m.id,
+                    orderId,
+                    senderId: (m as any).senderId ?? m.clientID,
+                    senderName: (m as any).senderName,
+                    body: (m as any).body ?? m.content ?? '',
+                    createdAt: m.createdAt,
+                    fileURL: m.fileURL,
+                    fileType: m.fileType,
+                    fileSize: m.fileSize,
+                    readAt: m.readAt,
+                }));
+                setMessages(mapped);
+            })
+            .catch(() => {});
+        return () => {
+            cancelled = true;
+        };
     }, [orderId]);
 
     useEffect(() => {
@@ -113,5 +156,5 @@ export function useOrderChat(
         };
     }, [orderId, token, onConnected, onDisconnected, onError, onHistory]);
 
-    return { messages, isConnected, sendMessage };
+    return { messages, isConnected, sendMessage, markRead };
 }

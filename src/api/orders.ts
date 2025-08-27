@@ -118,3 +118,17 @@ export function createOrderMessage(orderId: string, content: string, file?: File
     body: JSON.stringify({ content }),
   });
 }
+
+export function markOrderMessageRead(orderId: string, msgId: string) {
+  return apiRequest<OrderMessage>(`/orders/${orderId}/messages/${msgId}/read`, {
+    method: 'PATCH',
+  });
+}
+
+export function getOrderMessages(orderId: string, cursor?: string, after?: string) {
+  const params = new URLSearchParams();
+  if (cursor) params.append('cursor', cursor);
+  if (after) params.append('after', after);
+  const qs = params.toString();
+  return apiRequest<OrderMessage[]>(`/orders/${orderId}/messages${qs ? `?${qs}` : ''}`);
+}
