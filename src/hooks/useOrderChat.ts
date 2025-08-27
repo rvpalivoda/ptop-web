@@ -1,26 +1,26 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
-import { createOrderMessage, markOrderMessageRead, getOrderMessages } from '@/api/orders';
+import { useEffect, useRef, useState, useCallback } from 'react'
+import { createOrderMessage, markOrderMessageRead, getOrderMessages } from '@/api/orders'
 
 export type ChatMessage = {
-    id: string;
-    orderId: string;
-    senderId: string;      // buyerID | sellerID
-    senderName?: string;
-    body: string;
-    createdAt: string;     // ISO
-    fileURL?: string;
-    fileType?: string;
-    fileSize?: number;
-    readAt?: string;
-};
+    id: string
+    orderId: string
+    senderId: string // buyerID | sellerID
+    senderName?: string
+    body: string
+    createdAt: string // ISO
+    fileURL?: string
+    fileType?: string
+    fileSize?: number
+    readAt?: string
+}
 
 type WsCompat = typeof WebSocket & {
     new (
         url: string,
         protocols?: string | string[],
         options?: { headers?: Record<string, string> } // для node-окружений, в браузере игнорится
-    ): WebSocket;
-};
+    ): WebSocket
+}
 
 export function useOrderChat(
     orderId: string,
@@ -41,6 +41,38 @@ export function useOrderChat(
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [isConnected, setConnected] = useState(false);
     const wsRef = useRef<WebSocket | null>(null);
+
+    // нормализуем сообщение сервера в ChatMessage
+    const mapMessage = useCallback(
+        (m: Record<string, unknown>): ChatMessage => {
+            const client = m.client as Record<string, unknown> | undefined
+            return {
+                id: String(m.id),
+                orderId: String(m.orderId ?? orderId),
+                senderId: String(m.senderId ?? m.clientID ?? ''),
+                senderName:
+                    typeof m.senderName === 'string'
+                        ? m.senderName
+                        : typeof m.clientName === 'string'
+                        ? m.clientName
+                        : typeof client?.username === 'string'
+                        ? (client.username as string)
+                        : undefined,
+                body:
+                    typeof m.body === 'string'
+                        ? m.body
+                        : typeof m.content === 'string'
+                        ? m.content
+                        : '',
+                createdAt: String(m.createdAt),
+                fileURL: typeof m.fileURL === 'string' ? m.fileURL : undefined,
+                fileType: typeof m.fileType === 'string' ? m.fileType : undefined,
+                fileSize: typeof m.fileSize === 'number' ? m.fileSize : undefined,
+                readAt: typeof m.readAt === 'string' ? m.readAt : undefined,
+            }
+        },
+        [orderId]
+    )
 
     const sendMessage = useCallback(async (body: string, file?: File) => {
         try {
@@ -70,22 +102,12 @@ export function useOrderChat(
         setMessages([]);
         getOrderMessages(orderId)
             .then((history) => {
-                if (cancelled) return;
-                const mapped = history.map((m) => ({
-                    id: m.id,
-                    orderId,
-                    senderId: m.clientID,
-                    body: m.content,
-                    createdAt: m.createdAt,
-                    fileURL: m.fileURL,
-                    fileType: m.fileType,
-                    fileSize: m.fileSize,
-                    readAt: m.readAt,
-                }));
-                setMessages(mapped);
-                onHistory?.(mapped);
+                if (cancelled) return
+                const mapped = history.map((m) => mapMessage(m))
+                setMessages(mapped)
+                onHistory?.(mapped)
             })
-            .catch(() => {});
+            .catch(() => {})
 
         const base = (import.meta.env.VITE_API_BASE_URL ?? '/api/v1')
             .replace(/^http/, 'ws')
@@ -109,18 +131,21 @@ export function useOrderChat(
                 switch (data.type) {
                     case 'CHAT_HISTORY':
                         if (Array.isArray(data.messages)) {
-                            setMessages(data.messages);
-                            onHistory?.(data.messages);
+                            const mapped = data.messages.map((m: Record<string, unknown>) => mapMessage(m))
+                            setMessages(mapped)
+                            onHistory?.(mapped)
                         }
                         break;
                     case 'NEW_MESSAGE':
                         if (data.message) {
-                            setMessages((prev) => [...prev, data.message]);
+                            const mapped = mapMessage(data.message as Record<string, unknown>)
+                            setMessages((prev) => [...prev, mapped])
                         }
                         break;
                     case 'MESSAGE_BATCH':
                         if (Array.isArray(data.messages)) {
-                            setMessages((prev) => [...prev, ...data.messages]);
+                            const mapped = data.messages.map((m: Record<string, unknown>) => mapMessage(m))
+                            setMessages((prev) => [...prev, ...mapped])
                         }
                         break;
                     default:
@@ -146,7 +171,7 @@ export function useOrderChat(
             ws.close();
             wsRef.current = null;
         };
-    }, [orderId, token, onConnected, onDisconnected, onError, onHistory]);
+    }, [orderId, token, onConnected, onDisconnected, onError, onHistory, mapMessage])
 
     return { messages, isConnected, sendMessage, markRead };
 }
