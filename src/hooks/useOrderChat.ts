@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { createOrderMessage, markOrderMessageRead } from '@/api/orders';
+import {
+    createOrderMessage,
+    markOrderMessageRead,
+    getOrderMessages,
+    type OrderMessage,
+} from '@/api/orders';
+
 
 export type ChatMessage = {
     id: string;
@@ -62,6 +68,32 @@ export function useOrderChat(
             return false;
         }
     }, [orderId]);
+
+    useEffect(() => {
+        let cancelled = false;
+        getOrderMessages(orderId)
+            .then((res: OrderMessage[]) => {
+                if (cancelled) return;
+                const mapped = res.map((m) => ({
+                    id: m.id,
+                    orderId,
+                    senderId: (m as any).senderId ?? m.clientID,
+                    senderName: (m as any).senderName,
+                    body: (m as any).body ?? m.content ?? '',
+                    createdAt: m.createdAt,
+                    fileURL: m.fileURL,
+                    fileType: m.fileType,
+                    fileSize: m.fileSize,
+                    readAt: m.readAt,
+                }));
+                setMessages(mapped);
+            })
+            .catch(() => {});
+        return () => {
+            cancelled = true;
+        };
+    }, [orderId]);
+
 
     useEffect(() => {
         if (!token || !orderId) return;

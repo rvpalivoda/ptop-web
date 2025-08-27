@@ -124,3 +124,12 @@ export function markOrderMessageRead(orderId: string, msgId: string) {
     method: 'PATCH',
   });
 }
+
+export function getOrderMessages(orderId: string, cursor?: string, after?: string) {
+  const params = new URLSearchParams();
+  if (cursor) params.append('cursor', cursor);
+  if (after) params.append('after', after);
+  const qs = params.toString();
+  return apiRequest<OrderMessage[]>(`/orders/${orderId}/messages${qs ? `?${qs}` : ''}`);
+}
+
