@@ -86,3 +86,24 @@ export function getClientOrders(role: 'author' | 'offerOwner' = 'author') {
 export function getOrder(id: string) {
   return apiRequest<OrderFull>(`/orders/${id}`);
 }
+
+export interface OrderMessage {
+  id: string;
+  chatID: string;
+  clientID: string;
+  content: string;
+  createdAt: string;
+  updatedAt?: string;
+  readAt?: string;
+  fileURL?: string;
+  fileType?: string;
+  fileSize?: number;
+  type?: string;
+}
+
+export function createOrderMessage(orderId: string, content: string) {
+  return apiRequest<OrderMessage>(`/orders/${orderId}/messages`, {
+    method: 'POST',
+    body: JSON.stringify({ content }),
+  });
+}
