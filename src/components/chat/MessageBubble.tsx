@@ -5,6 +5,7 @@ import {
     Image as ImageIcon,
     Download,
     ExternalLink,
+    Check,
 } from 'lucide-react'
 import { useMemo } from 'react'
 
@@ -17,6 +18,7 @@ export type MessageBubbleProps = {
     fileType?: string
     /** Optional: when provided, images open in a lightbox */
     onImageClick?: (src: string) => void
+    readAt?: string
 }
 
 const IMAGE_MIMES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
@@ -81,6 +83,7 @@ export function MessageBubble({
                                   fileURL,
                                   fileType,
                                   onImageClick,
+                                  readAt,
                               }: MessageBubbleProps) {
     const filename = useMemo(() => extractFilename(fileURL), [fileURL])
     const kind = useMemo(() => getFileKind(fileType, filename), [fileType, filename])
@@ -152,8 +155,9 @@ export function MessageBubble({
                     </div>
                 )}
 
-                <div className="mt-1 text-[10px] opacity-60" title={created.toLocaleString()}>
+                <div className="mt-1 flex items-center justify-end gap-1 text-[10px] opacity-60" title={created.toLocaleString()}>
                     {created.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    {isMe && readAt && <Check className="h-3 w-3" />}
                 </div>
             </div>
         </div>

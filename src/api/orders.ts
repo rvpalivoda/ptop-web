@@ -118,3 +118,9 @@ export function createOrderMessage(orderId: string, content: string, file?: File
     body: JSON.stringify({ content }),
   });
 }
+
+export function markOrderMessageRead(orderId: string, msgId: string) {
+  return apiRequest<OrderMessage>(`/orders/${orderId}/messages/${msgId}/read`, {
+    method: 'PATCH',
+  });
+}
