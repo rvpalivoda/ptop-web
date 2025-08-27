@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { createOrderMessage } from '@/api/orders';
 
 export type ChatMessage = {
     id: string;
@@ -37,11 +38,14 @@ export function useOrderChat(
     const [isConnected, setConnected] = useState(false);
     const wsRef = useRef<WebSocket | null>(null);
 
-    const sendMessage = useCallback((body: string) => {
-        if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) return false;
-        wsRef.current.send(JSON.stringify({ type: 'NEW_MESSAGE', body }));
-        return true;
-    }, []);
+    const sendMessage = useCallback(async (body: string) => {
+        try {
+            await createOrderMessage(orderId, body);
+            return true;
+        } catch {
+            return false;
+        }
+    }, [orderId]);
 
     useEffect(() => {
         if (!token || !orderId) return;

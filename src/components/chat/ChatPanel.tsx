@@ -25,10 +25,10 @@ export function ChatPanel({
         el.scrollTop = el.scrollHeight;
     }, [messages.length]);
 
-    const onSend = () => {
+    const onSend = async () => {
         const text = draft.trim();
         if (!text) return;
-        const ok = sendMessage(text);
+        const ok = await sendMessage(text);
         if (ok) setDraft('');
     };
 
