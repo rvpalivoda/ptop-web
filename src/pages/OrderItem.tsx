@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useParams, useLocation, useNavigate } from 'react-router-dom';
 import {
     ArrowLeft,
@@ -64,6 +64,35 @@ export default function OrderItem({
     const [loading, setLoading] = useState(true);
     const MOBILE_CTA_H = 64;
     const [isChatTyping, setIsChatTyping] = useState(false);
+    const CHAT_MIN_H = 350;
+
+    // динамическая высота чата до низа экрана
+    const chatWrapRef = useRef<HTMLDivElement | null>(null);
+    const [chatHeight, setChatHeight] = useState<number | undefined>(undefined);
+
+    useEffect(() => {
+        const measure = () => {
+            const el = chatWrapRef.current;
+            if (!el) return;
+            const rect = el.getBoundingClientRect();
+            const bottomOffset = isChatTyping ? 0 : MOBILE_CTA_H;
+            const avail = window.innerHeight - rect.top - bottomOffset;
+            setChatHeight(Math.max(CHAT_MIN_H, Math.floor(avail)));
+        };
+        measure();
+        const onResize = () => measure();
+        const onScroll = () => measure();
+        window.addEventListener('resize', onResize);
+        window.addEventListener('orientationchange', onResize);
+        window.addEventListener('scroll', onScroll, { passive: true });
+        const id = setInterval(measure, 500); // подстраховка против резких layout-shift
+        return () => {
+            window.removeEventListener('resize', onResize);
+            window.removeEventListener('orientationchange', onResize);
+            window.removeEventListener('scroll', onScroll);
+            clearInterval(id);
+        };
+    }, [isChatTyping]);
 
 
     useEffect(() => {
@@ -192,9 +221,9 @@ export default function OrderItem({
                 )}
 
                 {order && (
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-                        {/* LEFT: детали сделки и действия */}
-                        <div className="lg:col-span-7 space-y-4">
+                    <div className="grid grid-cols-1 gap-4">
+                        {/* Детали сделки и действия */}
+                        <div className="space-y-4">
                             {/* Counterparty + Pair banner (визуально дружит с OrderCard) */}
                             <div className="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4">
                                 <div className="flex items-center justify-between gap-4">
@@ -375,9 +404,8 @@ export default function OrderItem({
                             </div>
                         </div>
 
-                        {/* RIGHT: чат */}
+                        {/* Чат под деталями */}
                         <div
-                            className="lg:col-span-5"
                             onFocusCapture={() => setIsChatTyping(true)}
                             onBlurCapture={(e) => {
                                 // выходим из режима печати, только если фокус реально ушёл из панели
@@ -385,8 +413,22 @@ export default function OrderItem({
                                 if (!e.currentTarget.contains(next)) setIsChatTyping(false);
                             }}
                         >
-                            <div className="rounded-2xl bg-white/5 ring-1 ring-white/10 p-3 lg:p-4 h-full">
-                                <ChatPanel orderId={order.id} token={token} currentUserName={currentUserName} />
+                            <div
+                                ref={chatWrapRef}
+                                className="rounded-2xl bg-white/5 ring-1 ring-white/10 p-0 overflow-hidden"
+                                style={chatHeight ? { height: chatHeight } : undefined}
+                            >
+                                <ChatPanel
+                                    orderId={order.id}
+                                    token={token}
+                                    currentUserName={currentUserName}
+                                    embedded
+                                    fitParent
+                                    buyerName={order.buyer?.username ?? undefined}
+                                    sellerName={order.seller?.username ?? undefined}
+                                    buyerId={order.buyerID}
+                                    sellerId={order.sellerID}
+                                />
                             </div>
                         </div>
                     </div>

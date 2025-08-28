@@ -126,5 +126,9 @@ export function markOrderMessageRead(orderId: string, msgId: string) {
 }
 
 export function getOrderMessages(orderId: string) {
-  return apiRequest<OrderMessage[]>(`/orders/${orderId}/messages`);
+  const ts = Date.now();
+  return apiRequest<OrderMessage[]>(`/orders/${orderId}/messages?t=${ts}` as string, {
+    // Явно отключаем HTTP-кеш браузера/прокси для истории чата
+    cache: 'no-store',
+  } as RequestInit);
 }

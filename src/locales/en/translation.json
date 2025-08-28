@@ -180,6 +180,31 @@
     "copy": "Copy",
     "copied": "Copied"
   },
+  "date": {
+    "today": "Today",
+    "yesterday": "Yesterday"
+  },
+  "orderChat": {
+    "title": "Chat",
+    "online": "Connected",
+    "offline": "Connecting...",
+    "placeholder": "Write a message…",
+    "attach": "Attach file",
+    "emoji": "Emoji",
+    "send": "Send",
+    "dropToAttach": "Drop file to attach",
+    "sendFailed": "Failed to send. Try again.",
+    "fileTooLarge": "File is too large (max {{mb}} MB).",
+    "newMessages": "New messages",
+    "youShort": "You",
+    "peerShort": "Peer",
+    "status": {
+      "read": "Read",
+      "sent": "Sent",
+      "unread": "New"
+    },
+    "tipEscrow": "Tip: keep communication in chat until escrow is released. Do not accept off-platform links."
+  },
   "transactions": {
     "incoming": "Incoming",
     "internal": "Internal",

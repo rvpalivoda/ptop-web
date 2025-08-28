@@ -30,3 +30,30 @@ select option {
     background-color: #111827;
     color: #ffffff;
 }
+
+/* Стилизация скролла только в списке сообщений чата */
+.chat-scrollbar {
+    /* сохраняет место под скроллбар, чтобы не дёргалась разметка */
+    scrollbar-gutter: stable both-edges;
+    /* Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+.chat-scrollbar::-webkit-scrollbar {
+    width: 10px;
+}
+@media (max-width: 640px) {
+    .chat-scrollbar::-webkit-scrollbar { width: 8px; }
+}
+.chat-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.chat-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.18);
+    border-radius: 9999px;
+    border: 2px solid transparent; /* создаёт визуальную «тонкую» дорожку */
+    background-clip: content-box;
+}
+.chat-scrollbar:hover::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.26);
+}

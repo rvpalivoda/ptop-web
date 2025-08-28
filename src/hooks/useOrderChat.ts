@@ -45,30 +45,33 @@ export function useOrderChat(
     // нормализуем сообщение сервера в ChatMessage
     const mapMessage = useCallback(
         (m: Record<string, unknown>): ChatMessage => {
-            const client = m.client as Record<string, unknown> | undefined
+            // Строгая схема по swagger, но с толерантностью к разным кейсам (fileUrl/file_url и т.п.)
+            const pickStr = (...keys: string[]) => {
+                for (const k of keys) {
+                    const v = m[k]
+                    if (typeof v === 'string' && v.length > 0) return v
+                }
+                return undefined
+            }
+            const pickNum = (...keys: string[]) => {
+                for (const k of keys) {
+                    const v = m[k]
+                    if (typeof v === 'number' && Number.isFinite(v)) return v
+                }
+                return undefined
+            }
+
             return {
                 id: String(m.id),
-                orderId: String(m.orderId ?? orderId),
-                senderId: String(m.senderId ?? m.clientID ?? ''),
-                senderName:
-                    typeof m.senderName === 'string'
-                        ? m.senderName
-                        : typeof m.clientName === 'string'
-                        ? m.clientName
-                        : typeof client?.username === 'string'
-                        ? (client.username as string)
-                        : undefined,
-                body:
-                    typeof m.body === 'string'
-                        ? m.body
-                        : typeof m.content === 'string'
-                        ? m.content
-                        : '',
-                createdAt: String(m.createdAt),
-                fileURL: typeof m.fileURL === 'string' ? m.fileURL : undefined,
-                fileType: typeof m.fileType === 'string' ? m.fileType : undefined,
-                fileSize: typeof m.fileSize === 'number' ? m.fileSize : undefined,
-                readAt: typeof m.readAt === 'string' ? m.readAt : undefined,
+                orderId: String(orderId),
+                senderId: String((m as any).clientID ?? (m as any).clientId ?? ''),
+                senderName: pickStr('senderName', 'sender_name', 'clientName', 'client_name'),
+                body: pickStr('content') ?? '',
+                createdAt: String(pickStr('createdAt') ?? ''),
+                fileURL: pickStr('fileURL', 'fileUrl', 'file_url'),
+                fileType: pickStr('fileType', 'file_type', 'mime', 'mimeType'),
+                fileSize: pickNum('fileSize', 'file_size', 'size'),
+                readAt: pickStr('readAt', 'read_at'),
             }
         },
         [orderId]
@@ -129,21 +132,20 @@ export function useOrderChat(
             try {
                 const data = JSON.parse(evt.data);
 
-                // Случай: сервер прислал просто массив сообщений (история)
-                if (Array.isArray(data)) {
-                    const mapped = data.map((m: Record<string, unknown>) => mapMessage(m));
-                    setMessages(mapped);
-                    onHistory?.(mapped);
-                    return;
-                }
+                // История, присланная WS, игнорируется — историю берём ТОЛЬКО через REST API
+                if (Array.isArray(data)) return;
 
                 // Случай: объект с полем messages (может быть история или батч)
-                if (data && typeof data === 'object' && 'messages' in data && Array.isArray(data.messages)) {
-                    const mapped = data.messages.map((m: Record<string, unknown>) => mapMessage(m));
-                    if (data.type === 'CHAT_HISTORY') {
-                        setMessages(mapped);
-                        onHistory?.(mapped);
-                    } else {
+                if (data && typeof data === 'object' && 'messages' in data && Array.isArray((data as any).messages)) {
+                    const dtype = (data as any).type as string | undefined
+                    if (dtype === 'READ') {
+                        const mapped = (data as any).messages.map((m: Record<string, unknown>) => mapMessage(m));
+                        setMessages((prev) => prev.map((m) => {
+                            const upd = mapped.find((x) => x.id === m.id)
+                            return upd ? { ...m, readAt: upd.readAt } : m
+                        }))
+                    } else if (dtype !== 'CHAT_HISTORY') {
+                        const mapped = (data as any).messages.map((m: Record<string, unknown>) => mapMessage(m));
                         setMessages((prev) => [...prev, ...mapped]);
                     }
                     return;
@@ -151,8 +153,17 @@ export function useOrderChat(
 
                 // Случай: одиночное сообщение или объект с полем message
                 if (data && typeof data === 'object') {
+                    const type = (data as any).type as string | undefined
                     const raw = 'message' in data ? (data.message as Record<string, unknown>) : (data as Record<string, unknown>);
                     const mapped = mapMessage(raw);
+
+                    // READ-событие: обновляем readAt существующего сообщения
+                    if (type === 'READ' && mapped.id) {
+                        setMessages((prev) => prev.map((m) => (m.id === mapped.id ? { ...m, readAt: mapped.readAt } : m)))
+                        return
+                    }
+
+                    // Новые сообщения: TEXT/FILE/SYSTEM — добавляем в ленту
                     setMessages((prev) => [...prev, mapped]);
                 }
             } catch {
