@@ -17,7 +17,7 @@ import { refresh } from './auth';
 import { loadTokens } from '@/storage/token';
 
 describe('apiRequest', () => {
-  it('не редиректит при 401 без токена', async () => {
+  it('does not redirect on 401 without token', async () => {
     (loadTokens as unknown as ReturnType<typeof vi.fn>).mockReturnValue(null);
     vi.spyOn(global, 'fetch').mockResolvedValue(new Response(null, { status: 401 }));
     await expect(apiRequest('/offers')).rejects.toThrow('Unauthorized');

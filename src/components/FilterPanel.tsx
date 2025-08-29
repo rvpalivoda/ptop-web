@@ -141,7 +141,7 @@ export const FilterPanel = ({
               onClick={() => setShowMobileFilters(true)}
               className="inline-flex items-center gap-2 rounded-xl bg-white/10 hover:bg-white/20 px-3 h-9 text-sm font-medium ring-1 ring-white/10 transition"
           >
-            {t('filters.title', 'Filters')}
+            {t('filters.title')}
             {activeFiltersCount > 0 && (
                 <span className="ml-1 inline-flex items-center justify-center rounded-lg px-2 h-5 text-xs bg-blue-600/90">
               {activeFiltersCount}
@@ -207,7 +207,7 @@ export const FilterPanel = ({
                     type="button"
                     onClick={() => change({ fromAsset: filters.toAsset, toAsset: filters.fromAsset })}
                     className="p-1 rounded bg-white/5 hover:bg-white/10 transition"
-                    aria-label={t('filters.swap', 'Swap assets')}
+                    aria-label={t('filters.swap')}
                 >
                   <ArrowLeftRight className="w-5 h-5 text-gray-300" />
                 </button>
@@ -342,7 +342,7 @@ export const FilterPanel = ({
                         type="button"
                         onClick={() => change({ fromAsset: filters.toAsset, toAsset: filters.fromAsset })}
                         className="p-1 rounded bg-white/5 hover:bg-white/10 transition"
-                        aria-label={t('filters.swap', 'Swap assets')}
+                        aria-label={t('filters.swap')}
                     >
                       <ArrowLeftRight className="w-5 h-5 text-gray-300" />
                     </button>
@@ -404,7 +404,7 @@ export const FilterPanel = ({
                         onClick={clearFilters}
                         className="text-sm text-gray-300 hover:text-white underline underline-offset-4"
                     >
-                      {t('filters.clear', 'Clear')}
+                      {t('filters.clear')}
                     </button>
                     <div className="flex gap-2">
                       <button
@@ -412,14 +412,14 @@ export const FilterPanel = ({
                           onClick={() => setShowMobileFilters(false)}
                           className="h-10 px-3 rounded-xl ring-1 ring-white/15 text-sm hover:bg-white/10 transition"
                       >
-                        {t('filters.close', 'Close')}
+                        {t('filters.close')}
                       </button>
                       <button
                           type="button"
                           onClick={() => setShowMobileFilters(false)}
                           className={BTN_PRIMARY}
                       >
-                        {t('filters.apply', 'Apply')}
+                        {t('filters.apply')}
                       </button>
                     </div>
                   </div>

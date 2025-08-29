@@ -18,7 +18,7 @@ export async function apiRequest<T>(
 ): Promise<T> {
   const tokens = loadTokens();
   const headers = new Headers(options.headers);
-  // если отправляем FormData, пусть браузер сам поставит заголовок
+  // When sending FormData, let the browser set the header
   if (!(options.body instanceof FormData)) {
     headers.set('Content-Type', 'application/json');
   }
@@ -31,12 +31,18 @@ export async function apiRequest<T>(
     headers,
   });
 
-  if (
-    response.status === 401 &&
-    !isRetry &&
-    endpoint !== '/auth/refresh' &&
-    endpoint !== '/auth/login'
-  ) {
+  // Handle 401: try to refresh access by refresh token and retry request
+  if (response.status === 401) {
+    // If this is a retry after refresh — sign out
+    if (isRetry || endpoint === '/auth/refresh') {
+      clearAuth();
+      throw new Error('Unauthorized');
+    }
+    // Do not try to refresh for login/refresh routes
+    if (endpoint === '/auth/login') {
+      clearAuth();
+      throw new Error('Unauthorized');
+    }
     try {
       if (tokens?.refresh) {
         const newTokens = await refreshTokens();
@@ -44,7 +50,7 @@ export async function apiRequest<T>(
         return apiRequest<T>(endpoint, options, true);
       }
     } catch {
-      // ignore refresh errors
+      // refresh failed — clear session
     }
     clearAuth();
     throw new Error('Unauthorized');

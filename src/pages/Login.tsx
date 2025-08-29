@@ -121,7 +121,7 @@ const Login = () => {
                             </div>
 
                             <button type="submit" className={btnPrimary} disabled={loading} aria-busy={loading}>
-                                {loading ? t('common.loading', { defaultValue: 'Loading…' }) : t('login.submit')}
+                                {loading ? t('common.loading') : t('login.submit')}
                             </button>
                         </form>
 

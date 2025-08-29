@@ -12,8 +12,7 @@ import Recover from "./pages/Recover";
 import NotFound from "./pages/NotFound";
 import Balance from "./pages/Balance";
 import Adverts from "./pages/Adverts";
-import AdDeals from "./pages/AdDeals";
-import MyDeals from "./pages/MyDeals";
+import Orders from "./pages/Orders";
 import Transactions from "./pages/Transactions";
 import Escrow from "./pages/Escrow";
 import { ScrollToTopButton } from "./components/ScrollToTopButton";
@@ -39,8 +38,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/balance" element={<Balance />} />
               <Route path="/adverts" element={<Adverts />} />
-              <Route path="/my-deals" element={<MyDeals />} />
-              <Route path="/ad-deals" element={<AdDeals />} />
+              <Route path="/orders" element={<Orders />} />
               <Route path="/transactions" element={<Transactions />} />
               <Route path="/escrow" element={<Escrow />} />
               <Route path="/orders/:id" element={<OrderItemRoute />} />

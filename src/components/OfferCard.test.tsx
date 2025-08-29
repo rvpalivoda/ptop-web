@@ -35,13 +35,13 @@ describe('OfferCard', () => {
     cleanup();
   });
 
-  it('отключает кнопку для своего оффера', () => {
+  it('disables button for own offer', () => {
     renderWithUser('Alice', 'Alice');
     const btn = screen.getByRole('button', { name: /sell/i });
     expect(btn).toBeDisabled();
   });
 
-  it('включает кнопку для чужого оффера', () => {
+  it('enables button for foreign offer', () => {
     renderWithUser('Alice', 'Bob');
     const btn = screen.getByRole('button', { name: /sell/i });
     expect(btn).not.toBeDisabled();

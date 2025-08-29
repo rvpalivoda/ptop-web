@@ -37,7 +37,7 @@ vi.mock('@/context', () => ({
 }));
 
 describe('Adverts page', () => {
-  it('отображает офферы клиента в порядке даты создания', async () => {
+  it('renders client offers sorted by creation date', async () => {
     render(
       <MemoryRouter>
         <Adverts />

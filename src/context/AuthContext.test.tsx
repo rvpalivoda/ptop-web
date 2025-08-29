@@ -25,7 +25,7 @@ describe("AuthContext", () => {
     localStorage.clear();
   });
 
-  it("login получает профиль и сохраняет userInfo", async () => {
+  it("login fetches profile and saves userInfo", async () => {
     const { login, profile } = await import("@/api/auth");
     vi.mocked(login).mockResolvedValue({ access: "a", refresh: "r" });
     vi.mocked(profile).mockResolvedValue({
@@ -63,7 +63,7 @@ describe("AuthContext", () => {
     });
   });
 
-  it("register возвращает мнемонику", async () => {
+  it("register returns mnemonic", async () => {
     const { register } = await import("@/api/auth");
     vi.mocked(register).mockResolvedValue({
       access: "a",
@@ -106,7 +106,7 @@ describe("AuthContext", () => {
     });
   });
 
-  it("refresh обновляет токены и userInfo", async () => {
+  it("refresh updates tokens and userInfo", async () => {
     const { refresh, profile } = await import("@/api/auth");
     vi.mocked(refresh).mockResolvedValue({ access: "na", refresh: "nr" });
     vi.mocked(profile).mockResolvedValue({
@@ -140,7 +140,7 @@ describe("AuthContext", () => {
     expect(ctx!.userInfo).toEqual({ username: "u2", twofaEnabled: false, pinCodeSet: true });
   });
 
-  it("recover устанавливает userInfo", async () => {
+  it("recover sets userInfo", async () => {
     const { recover, profile } = await import("@/api/auth");
     vi.mocked(recover).mockResolvedValue({ access: "a", refresh: "r" });
     vi.mocked(profile).mockResolvedValue({
@@ -172,7 +172,7 @@ describe("AuthContext", () => {
     expect(ctx!.userInfo).toEqual({ username: "u3", twofaEnabled: true, pinCodeSet: true });
   });
 
-  it("setPinCode вызывает API", async () => {
+  it("setPinCode calls API", async () => {
     const { setPinCode } = await import("@/api/pin");
     vi.mocked(setPinCode).mockResolvedValue(undefined);
 
@@ -198,7 +198,7 @@ describe("AuthContext", () => {
     expect(setPinCode).toHaveBeenCalledWith("pwd", "1234");
   });
 
-  it("logout вызывает API и очищает состояние", async () => {
+  it("logout calls API and clears state", async () => {
     const { logout: apiLogout } = await import("@/api/auth");
     vi.mocked(apiLogout).mockResolvedValue({ status: "ok" } as any);
 

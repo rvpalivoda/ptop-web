@@ -7,7 +7,7 @@ beforeEach(() => {
 });
 
 describe('balances api', () => {
-  it('getBalances возвращает список балансов', async () => {
+  it('getBalances returns balances list', async () => {
     const mockData = [
       {
         amount: 1,
@@ -32,7 +32,7 @@ describe('balances api', () => {
     expect(res).toEqual(mockData);
   });
 
-  it('createWallet отправляет asset_id и возвращает кошелек', async () => {
+  it('createWallet sends asset_id and returns wallet', async () => {
     const mockWallet = { id: '1', assetID: 'btc', value: 'addr' };
     const mockFetch = vi
       .spyOn(global, 'fetch')

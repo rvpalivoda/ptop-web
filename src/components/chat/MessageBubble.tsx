@@ -170,7 +170,7 @@ export function MessageBubble({
                 {!compact && (
                     <div className={cn('mb-0.5 flex items-center gap-2 text-[11px] opacity-70')}>
             <span className="truncate max-w-[240px]">
-              {senderName || (isMe ? t('orderChat.youShort', 'You') : t('orderChat.peerShort', 'Peer'))}
+              {senderName || (isMe ? t('orderChat.youShort') : t('orderChat.peerShort'))}
             </span>
 
                         {/* small toolbar (copy) appears on hover for text messages */}
@@ -181,11 +181,11 @@ export function MessageBubble({
                                     'ml-auto hidden items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px]',
                                     'ring-1 ring-white/10 hover:bg-white/10 group-hover:flex sm:group-hover:inline-flex'
                                 )}
-                                aria-label={t('orderChat.copy', 'Copy')}
-                                title={copied ? t('orderChat.copied', 'Copied!') : t('orderChat.copy', 'Copy')}
+                                aria-label={t('orderChat.copy')}
+                                title={copied ? t('orderChat.copied') : t('orderChat.copy')}
                             >
                                 <Copy className="h-3.5 w-3.5" />
-                                <span className="hidden sm:inline">{copied ? t('orderChat.copied', 'Copied!') : t('orderChat.copy', 'Copy')}</span>
+                                <span className="hidden sm:inline">{copied ? t('orderChat.copied') : t('orderChat.copy')}</span>
                             </button>
                         )}
                     </div>
@@ -208,7 +208,7 @@ export function MessageBubble({
                             'hover:ring-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40'
                         )}
                         title={filename ?? 'image'}
-                        aria-label={t('orderChat.openImage', 'Open image')}
+                        aria-label={t('orderChat.openImage')}
                     >
                         <img
                             src={fileURL}
@@ -242,8 +242,8 @@ export function MessageBubble({
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] ring-1 ring-white/10 hover:bg-white/10"
-                                title={t('orderChat.open', 'Open')}
-                                aria-label={t('orderChat.open', 'Open')}
+                                title={t('orderChat.open')}
+                                aria-label={t('orderChat.open')}
                             >
                                 <ExternalLink className="h-3.5 w-3.5" />
                             </a>
@@ -251,8 +251,8 @@ export function MessageBubble({
                                 href={fileURL}
                                 download={filename}
                                 className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] ring-1 ring-white/10 hover:bg-white/10"
-                                title={t('orderChat.download', 'Download')}
-                                aria-label={t('orderChat.download', 'Download')}
+                                title={t('orderChat.download')}
+                                aria-label={t('orderChat.download')}
                             >
                                 <Download className="h-3.5 w-3.5" />
                             </a>

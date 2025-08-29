@@ -277,10 +277,10 @@ export function ChatPanel({
                 const el = listRef.current
                 if (el) el.scrollTop = el.scrollHeight
             } else {
-                setError(t('orderChat.sendFailed', 'Failed to send. Try again.'))
+                setError(t('orderChat.sendFailed'))
             }
         } catch (e) {
-            setError(t('orderChat.sendFailed', 'Failed to send. Try again.'))
+            setError(t('orderChat.sendFailed'))
         } finally {
             setIsSending(false)
         }
@@ -292,7 +292,7 @@ export function ChatPanel({
         // basic client-side guardrails for P2P UX
         const maxMB = 15
         if (f.size > maxMB * 1024 * 1024) {
-            setError(t('orderChat.fileTooLarge', { defaultValue: 'File is too large (max {{mb}} MB).', mb: maxMB }))
+            setError(t('orderChat.fileTooLarge', { mb: maxMB }))
             if (fileInputRef.current) fileInputRef.current.value = ''
             return
         }
@@ -375,10 +375,10 @@ export function ChatPanel({
         >
             {/* header */}
             <div className="flex items-center justify-between px-2 py-1.5 sm:px-3 sm:py-2 border-b border-white/10">
-                <div className="text-sm font-medium">{t('orderChat.title', 'Chat')}</div>
+                <div className="text-sm font-medium">{t('orderChat.title')}</div>
                 <div className={cn('text-xs flex items-center gap-2', isConnected ? 'text-emerald-300' : 'text-white/60')}>
                     <span className={cn('inline-block h-2 w-2 rounded-full', isConnected ? 'bg-emerald-400' : 'bg-yellow-400 animate-pulse')} />
-                    {isConnected ? t('orderChat.online', 'Connected') : t('orderChat.offline', 'Connecting...')}
+                    {isConnected ? t('orderChat.online') : t('orderChat.offline')}
                 </div>
             </div>
 
@@ -426,7 +426,7 @@ export function ChatPanel({
                 {dndActive && (
                     <div className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-xl sm:rounded-2xl bg-black/50">
                         <div className="pointer-events-none rounded-xl border border-dashed border-white/20 bg-white/5 px-4 py-3 text-sm text-white/80">
-                            {t('orderChat.dropToAttach', 'Drop file to attach')}
+                            {t('orderChat.dropToAttach')}
                         </div>
                     </div>
                 )}
@@ -442,7 +442,7 @@ export function ChatPanel({
                             }}
                             className="absolute right-4 bottom-4 inline-flex items-center gap-1 rounded-full bg-white/10 backdrop-blur px-3 py-1.5 text-xs ring-1 ring-white/15 hover:bg-white/15"
                         >
-                            <ChevronDown className="h-4 w-4" /> {t('orderChat.newMessages', 'New messages')}
+                            <ChevronDown className="h-4 w-4" /> {t('orderChat.newMessages')}
                         </button>
                     )}
                 </div>
@@ -460,7 +460,7 @@ export function ChatPanel({
                             type="button"
                             onClick={() => setError(null)}
                             className="ml-auto rounded p-1 hover:bg-white/10"
-                            aria-label={t('common.dismiss', 'Dismiss') as string}
+                            aria-label={t('common.dismiss') as string}
                         >
                             <X className="h-3.5 w-3.5" />
                         </button>
@@ -473,7 +473,7 @@ export function ChatPanel({
                             type="button"
                             onClick={() => fileInputRef.current?.click()}
                             className="inline-flex items-center justify-center rounded-full p-2.5 h-11 w-11 ring-1 ring-transparent hover:bg-white/10 transition"
-                            title={t('orderChat.attach', 'Attach file') as string}
+                            title={t('orderChat.attach') as string}
                             disabled={isSending}
                         >
                             <Paperclip className="w-4 h-4" />
@@ -486,7 +486,7 @@ export function ChatPanel({
                             onKeyDown={onKeyDown}
                             onPaste={onPaste}
                             rows={1}
-                            placeholder={t('orderChat.placeholder', 'Write a message…') as string}
+                            placeholder={t('orderChat.placeholder') as string}
                             className="flex-1 min-w-0 resize-none max-h-[140px] bg-transparent px-2 py-2 text-base sm:text-sm outline-none placeholder:text-white/40 disabled:opacity-70"
                             disabled={isSending}
                         />
@@ -496,7 +496,7 @@ export function ChatPanel({
                                 type="button"
                                 onClick={() => setShowEmoji((v) => !v)}
                                 className="inline-flex items-center justify-center rounded-full p-2.5 h-11 w-11 ring-1 ring-transparent hover:bg-white/10 transition"
-                                title={t('orderChat.emoji', 'Emoji') as string}
+                                title={t('orderChat.emoji') as string}
                                 disabled={isSending}
                                 aria-expanded={showEmoji}
                                 aria-haspopup
@@ -537,7 +537,7 @@ export function ChatPanel({
                         type="button"
                         onClick={onSend}
                         className="inline-flex items-center justify-center rounded-full p-2.5 h-11 w-11 bg-emerald-500/20 hover:bg-emerald-500/25 transition disabled:opacity-60"
-                        title={t('orderChat.send', 'Send') as string}
+                        title={t('orderChat.send') as string}
                         disabled={isSending || (!draft.trim() && !file)}
                     >
                         {isSending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
@@ -560,7 +560,7 @@ export function ChatPanel({
 
                 {/* tiny antifraud hint for P2P context */}
                 <div className="mt-2 flex items-center gap-2 text-[11px] text-white/50">
-                    <Check className="h-3.5 w-3.5" /> {t('orderChat.tipEscrow', 'Tip: keep communication in chat until escrow is released. Do not accept off-platform links.')}
+                    <Check className="h-3.5 w-3.5" /> {t('orderChat.tipEscrow')}
                 </div>
                 </div>
             </div>
@@ -580,7 +580,7 @@ export function ChatPanel({
                         type="button"
                         className="absolute right-4 top-4 rounded-full bg-white/10 p-2 ring-1 ring-white/20 hover:bg-white/15"
                         onClick={() => setLightboxSrc(null)}
-                        aria-label={t('common.close', 'Close') as string}
+                        aria-label={t('common.close') as string}
                     >
                         <X className="h-5 w-5" />
                     </button>
@@ -602,9 +602,9 @@ function DateDivider({ when }: { when: string | Date }) {
 
     let label: string
     if (isSameDay(d, today)) {
-        label = t('date.today', 'Today')
+        label = t('date.today')
     } else if (isSameDay(d, yesterday)) {
-        label = t('date.yesterday', 'Yesterday')
+        label = t('date.yesterday')
     } else {
         label = d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
     }

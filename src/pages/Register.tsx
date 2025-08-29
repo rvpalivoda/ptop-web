@@ -123,7 +123,7 @@ const Register = () => {
                                 </div>
 
                                 <button type="submit" className={btnPrimary} disabled={loading} aria-busy={loading}>
-                                    {loading ? t('common.loading', { defaultValue: 'Loading…' }) : t('register.submit')}
+                                    {loading ? t('common.loading') : t('register.submit')}
                                 </button>
                             </form>
                         ) : (

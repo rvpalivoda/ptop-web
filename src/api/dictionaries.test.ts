@@ -7,14 +7,14 @@ vi.mock('./client', () => ({
 }));
 
 describe('dictionaries api', () => {
-  it('запрашивает методы оплаты без страны', async () => {
+  it('requests payment methods without country', async () => {
     const apiReqMock = apiRequest as unknown as ReturnType<typeof vi.fn>;
     apiReqMock.mockResolvedValue([]);
     await getPaymentMethods();
     expect(apiRequest).toHaveBeenCalledWith('/payment-methods');
   });
 
-  it('запрашивает методы оплаты с указанной страной', async () => {
+  it('requests payment methods with specified country', async () => {
     const apiReqMock = apiRequest as unknown as ReturnType<typeof vi.fn>;
     apiReqMock.mockResolvedValue([]);
     await getPaymentMethods('RU');

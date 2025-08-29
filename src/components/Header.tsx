@@ -4,10 +4,11 @@ import { Link, NavLink } from 'react-router-dom';
 import { useAuth } from '@/context';
 import { ProfileDrawer } from './ProfileDrawer';
 import { useTranslation } from 'react-i18next';
+import { LanguageSelect } from './LanguageSelect';
 import { NotificationsModal } from './notifications/NotificationsModal';
 import { useNotifications } from '@/hooks/useNotifications';
 /** =========================
- *  Твой Header с уведомлениями
+ *  Header with notifications
  *  ========================= */
 export const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -50,7 +51,7 @@ export const Header = () => {
                 />
             )}
 
-            {/* Modal уведомлений */}
+            {/* Notifications modal */}
             <NotificationsModal
                 open={isNotifOpen}
                 onClose={() => setIsNotifOpen(false)}
@@ -84,28 +85,28 @@ export const Header = () => {
                             {isAuthenticated && (
                                 <nav className="hidden md:flex items-center gap-2">
                                     <NavItem to="/adverts" label={t('header.adverts')} />
-                                    <NavItem to="/my-deals" label={t('header.myDeals')} />
-                                    <NavItem to="/ad-deals" label={t('header.adDeals')} />
-                                    <NavItem to="/transactions" label={t('header.transactions')} />
-                                    <NavItem to="/balance" label={t('header.balance')} />
-                                    <NavItem to="/escrow" label={t('header.escrow')} />
+                                    <NavItem to="/orders" label={t('header.orders', 'Orders')} />
                                 </nav>
                             )}
 
                             {/* Actions */}
                             <div className="flex items-center gap-2">
+                                {/* Language dropdown (desktop) */}
+                                <div className="hidden md:flex items-center mr-1">
+                                    <LanguageSelect variant="desktop" />
+                                </div>
                                 {isAuthenticated && (
                                     <button
                                         onClick={() => setIsNotifOpen(true)}
                                         className="group relative rounded-xl h-9 w-9 grid place-items-center bg-white/5 text-white/80 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white"
-                                        aria-label={t('notifications.open', 'Open notifications')}
+                                        aria-label={t('notifications.open')}
                                     >
                                         <Bell size={18}/>
-                                        {/* Бейдж с количеством непрочитанных (только если > 0) */}
+                                        {/* Unread count badge (only if > 0) */}
                                         {unreadCount > 0 && (
                                             <span
                                                 className="absolute -right-1 -top-1 min-w-[18px] h-[18px] px-1 grid place-items-center rounded-full text-[11px] font-semibold bg-emerald-400 text-gray-900"
-                                                aria-label={t('notifications.unreadCount', {defaultValue: '{{count}} unread', count: unreadCount})}
+                                aria-label={t('notifications.unreadCount', { count: unreadCount })}
                                             >
                         {unreadCount > 99 ? '99+' : unreadCount}
                       </span>
@@ -167,11 +168,7 @@ export const Header = () => {
                                     {isAuthenticated && (
                                         <>
                                             <NavItem to="/adverts" label={t('header.adverts')} onClick={() => setIsMenuOpen(false)} />
-                                            <NavItem to="/my-deals" label={t('header.myDeals')} onClick={() => setIsMenuOpen(false)} />
-                                            <NavItem to="/ad-deals" label={t('header.adDeals')} onClick={() => setIsMenuOpen(false)} />
-                                            <NavItem to="/transactions" label={t('header.transactions')} onClick={() => setIsMenuOpen(false)} />
-                                            <NavItem to="/balance" label={t('header.balance')} onClick={() => setIsMenuOpen(false)} />
-                                            <NavItem to="/escrow" label={t('header.escrow')} onClick={() => setIsMenuOpen(false)} />
+                                            <NavItem to="/orders" label={t('header.orders', 'Orders')} onClick={() => setIsMenuOpen(false)} />
                                         </>
                                     )}
 
@@ -186,6 +183,10 @@ export const Header = () => {
                                             >
                                                 {t('profile.logout')}
                                             </button>
+                                            {/* Language dropdown (mobile) */}
+                                            <div className="pt-1">
+                                                <LanguageSelect variant="mobile" onChangeDone={() => setIsMenuOpen(false)} />
+                                            </div>
                                         </div>
                                     ) : (
                                         <div className="mt-2 flex flex-col gap-2">
@@ -203,6 +204,10 @@ export const Header = () => {
                                             >
                                                 {t('header.register')}
                                             </Link>
+                                            {/* Language dropdown (mobile) for guest */}
+                                            <div className="pt-1">
+                                                <LanguageSelect variant="mobile" onChangeDone={() => setIsMenuOpen(false)} />
+                                            </div>
                                         </div>
                                     )}
                                 </nav>

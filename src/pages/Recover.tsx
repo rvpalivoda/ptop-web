@@ -186,7 +186,7 @@ const Recover = () => {
                                 )}
 
                                 <button type="submit" className={btnPrimary} disabled={loading} aria-busy={loading}>
-                                    {loading ? t('common.loading', { defaultValue: 'Loading…' }) : t('recover.submit')}
+                                    {loading ? t('common.loading') : t('recover.submit')}
                                 </button>
                             </form>
                         ) : (

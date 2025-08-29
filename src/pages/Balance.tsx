@@ -81,8 +81,8 @@ const Balance = () => {
     if (!assets.length) {
       return (
           <div className="rounded-2xl border border-white/10 bg-white/5 p-10 text-center">
-            <div className="text-lg font-semibold text-white/90">{t('balance.noAssets', { defaultValue: 'No assets yet' })}</div>
-            <div className="mt-1 text-sm text-white/60">{t('balance.noAssetsHelp', { defaultValue: 'Once you add an asset, it will appear here.' })}</div>
+            <div className="text-lg font-semibold text-white/90">{t('balance.noAssets')}</div>
+            <div className="mt-1 text-sm text-white/60">{t('balance.noAssetsHelp')}</div>
           </div>
       );
     }
@@ -138,7 +138,7 @@ const Balance = () => {
                           className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white/5 px-3 py-2 text-sm font-medium ring-1 ring-white/10 transition hover:bg-white/10 hover:ring-white/20 disabled:opacity-60"
                       >
                         <Wallet className="h-4 w-4" />
-                        {creatingId === b.id ? t('balance.creating', { defaultValue: 'Creating…' }) : t('balance.getAddress')}
+                        {creatingId === b.id ? t('balance.creating') : t('balance.getAddress')}
                       </button>
                   )}
                 </div>
@@ -157,7 +157,7 @@ const Balance = () => {
       <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 text-white">
         <div className="container mx-auto px-4 pt-24 pb-8">
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{t('header.balance')}</h1>
-          <p className="mt-1 mb-5 text-sm text-white/60">{t('balance.subtitle', { defaultValue: 'Your assets and deposit addresses' })}</p>
+          <p className="mt-1 mb-5 text-sm text-white/60">{t('balance.subtitle')}</p>
           {content}
         </div>
       </div>

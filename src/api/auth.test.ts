@@ -37,7 +37,7 @@ beforeEach(() => {
 });
 
 describe("auth api", () => {
-  it("login отправляет параметры и возвращает токены", async () => {
+  it("login sends params and returns tokens", async () => {
     const mockFetch = vi
       .spyOn(global, "fetch" as any)
       .mockResolvedValue({
@@ -53,7 +53,7 @@ describe("auth api", () => {
     expect(tokens).toEqual({ access: "a", refresh: "r" });
   });
 
-  it("register отправляет параметры и возвращает мнемонику", async () => {
+  it("register sends params and returns mnemonic", async () => {
     const mockFetch = vi
       .spyOn(global, "fetch" as any)
       .mockResolvedValue({
@@ -86,7 +86,7 @@ describe("auth api", () => {
     });
   });
 
-  it("recover отправляет правильный payload", async () => {
+  it("recover sends correct payload", async () => {
     const mockFetch = vi
       .spyOn(global, "fetch" as any)
       .mockResolvedValue({
@@ -111,7 +111,7 @@ describe("auth api", () => {
     expect(res).toEqual({ access: "a", refresh: "r" });
   });
 
-  it("recoverChallenge возвращает позиции", async () => {
+  it("recoverChallenge returns positions", async () => {
     const mockFetch = vi
       .spyOn(global, "fetch" as any)
       .mockResolvedValue({
@@ -125,7 +125,7 @@ describe("auth api", () => {
     expect(res).toEqual({ positions: [1, 2, 3] });
   });
 
-  it("changePassword отправляет корректный payload", async () => {
+  it("changePassword sends correct payload", async () => {
     const mockFetch = vi
       .spyOn(global, "fetch" as any)
       .mockResolvedValue({
@@ -145,7 +145,7 @@ describe("auth api", () => {
     });
   });
 
-  it("verifyPassword отправляет пароль и возвращает результат", async () => {
+  it("verifyPassword sends password and returns result", async () => {
     const mockFetch = vi
       .spyOn(global, "fetch" as any)
       .mockResolvedValue({
@@ -162,7 +162,7 @@ describe("auth api", () => {
     expect(res).toEqual({ verified: true });
   });
 
-  it("regenerateWords отправляет пароль и возвращает мнемонику", async () => {
+  it("regenerateWords sends password and returns mnemonic", async () => {
     const mockFetch = vi
       .spyOn(global, "fetch" as any)
       .mockResolvedValue({
@@ -181,7 +181,7 @@ describe("auth api", () => {
     expect(res).toEqual({ mnemonic: [{ position: 1, word: "one" }] });
   });
 
-  it("logout делает POST без тела", async () => {
+  it("logout does POST without body", async () => {
     const mockFetch = vi
       .spyOn(global, "fetch" as any)
       .mockResolvedValue({
@@ -197,7 +197,7 @@ describe("auth api", () => {
     expect(opts.body).toBeUndefined();
   });
 
-  it("refresh использует refresh_token", async () => {
+  it("refresh uses refresh_token", async () => {
     localStorage.setItem("peerex_tokens", JSON.stringify({ access: "x", refresh: "r" }));
     const mockFetch = vi
       .spyOn(global, "fetch" as any)
@@ -213,7 +213,7 @@ describe("auth api", () => {
     expect(res).toEqual({ access: "na", refresh: "nr" });
   });
 
-  it("profile возвращает данные профиля", async () => {
+  it("profile returns profile data", async () => {
     const mockFetch = vi
       .spyOn(global, "fetch" as any)
       .mockResolvedValue({
@@ -235,4 +235,3 @@ describe("auth api", () => {
     });
   });
 });
-

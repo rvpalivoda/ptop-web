@@ -63,13 +63,20 @@ export interface OfferFilters {
   max_amount?: string;
   payment_method?: string;
   type?: 'buy' | 'sell';
+  limit?: number;
+  offset?: number;
 }
 
 export function getOffers(filters: OfferFilters = {}) {
   const params = new URLSearchParams();
   Object.entries(filters).forEach(([key, value]) => {
     if (value && value !== 'all') {
-      params.set(key, value);
+      // limit/offset — numeric; others — strings
+      if (key === 'limit' || key === 'offset') {
+        params.set(key, String(value));
+      } else {
+        params.set(key, value as string);
+      }
     }
   });
   const query = params.toString();

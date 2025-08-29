@@ -42,7 +42,7 @@ describe('FilterPanel', () => {
 
   beforeEach(() => { navigate.mockClear(); });
 
-  it('вызывает onFiltersChange при смене актива', async () => {
+  it('calls onFiltersChange on asset change', async () => {
     const onFiltersChange = vi.fn();
     render(
       <FilterPanel
@@ -64,7 +64,7 @@ describe('FilterPanel', () => {
     });
   });
 
-  it('сбрасывает выбор при одинаковых активах', async () => {
+  it('resets selection when assets are equal', async () => {
     const Wrapper = () => {
       const [filters, setFilters] = useState(baseFilters);
       return (
@@ -88,7 +88,7 @@ describe('FilterPanel', () => {
     expect(toSelect).toHaveValue('all');
   });
 
-  it('вызывает onFiltersChange при смене метода оплаты', async () => {
+  it('calls onFiltersChange on payment method change', async () => {
     const onFiltersChange = vi.fn();
     render(
       <FilterPanel
@@ -110,7 +110,7 @@ describe('FilterPanel', () => {
     });
   });
 
-  it('переключает тип сделки', async () => {
+  it('switches trade type', async () => {
     const onTabChange = vi.fn();
     render(
       <FilterPanel
@@ -129,7 +129,7 @@ describe('FilterPanel', () => {
     expect(onTabChange).toHaveBeenCalledWith('sell');
   });
 
-  it('перенаправляет на логин для гостя', async () => {
+  it('redirects to login for guest', async () => {
     authState.isAuthenticated = false;
     render(
       <FilterPanel
@@ -147,7 +147,7 @@ describe('FilterPanel', () => {
     expect(navigate).toHaveBeenCalledWith('/login');
   });
 
-  it('открывает форму создания объявления для авторизованного пользователя', async () => {
+  it('opens create offer form for authenticated user', async () => {
     authState.isAuthenticated = true;
     render(
       <FilterPanel
@@ -162,7 +162,7 @@ describe('FilterPanel', () => {
     const btns = screen.getAllByTestId('create-advert');
     fireEvent.click(btns[btns.length - 1]);
 
-    expect(await screen.findByText(i18n.t('createOffer.createTitle'))).toBeInTheDocument();
+    expect(await screen.findByText(i18n.t('createOffer.createTitle') as string)).toBeInTheDocument();
     expect(navigate).not.toHaveBeenCalled();
   });
 });

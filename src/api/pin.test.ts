@@ -27,7 +27,7 @@ describe("pin api", () => {
     localStorage.clear();
   });
 
-  it("setPinCode отправляет пароль и пинкод", async () => {
+  it("setPinCode sends password and pincode", async () => {
     mockFetch.mockResolvedValue({
       ok: true,
       status: 200,
@@ -43,4 +43,3 @@ describe("pin api", () => {
     expect(res).toEqual({ status: "ok" });
   });
 });
-

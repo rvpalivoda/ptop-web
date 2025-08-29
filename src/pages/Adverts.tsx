@@ -56,7 +56,7 @@ const Adverts = () => {
                 offer={{
                   id: offer.id,
                   trader: {
-                    name: 'Вы',
+                    name: t('common.you'),
                     rating: 0,
                     completedTrades: 0,
                     online: true,

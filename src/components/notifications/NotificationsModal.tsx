@@ -67,21 +67,21 @@ export function NotificationsModal({
           <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium text-white/70">
-                {t('notifications.title', 'Notifications')}
+                {t('notifications.title')}
               </span>
               {items.some((i) => !i.isRead) && (
                 <button
                   onClick={markAllAsRead}
                   className="rounded-lg px-2 py-1 text-xs bg-white/5 text-white/70 ring-1 ring-white/10 hover:bg-white/10 hover:text-white transition"
                 >
-                  {t('notifications.markAllRead', 'Mark all as read')}
+                  {t('notifications.markAllRead')}
                 </button>
               )}
             </div>
             <button
               onClick={onClose}
               className="rounded-lg p-1 text-white/70 hover:bg-white/5 hover:text-white transition"
-              aria-label={t('notifications.close', 'Close')}
+              aria-label={t('notifications.close')}
             >
               <X size={18} />
             </button>
@@ -90,7 +90,7 @@ export function NotificationsModal({
           <div className="max-h-[60vh] overflow-y-auto p-2" onScroll={handleScroll}>
             {items.length === 0 ? (
               <div className="p-6 text-center text-white/60">
-                {t('notifications.empty', 'No notifications yet')}
+                {t('notifications.empty')}
               </div>
             ) : (
               <ul className="divide-y divide-white/10">
@@ -133,7 +133,7 @@ export function NotificationsModal({
             )}
             {loading && (
               <div className="p-4 text-center text-white/60">
-                {t('notifications.loading', 'Loading...')}
+                {t('notifications.loading')}
               </div>
             )}
           </div>
@@ -147,7 +147,7 @@ function formatRelative(iso: string, t: TFunction) {
   const dt = new Date(iso).getTime();
   const diff = Math.max(0, Date.now() - dt);
   const m = Math.floor(diff / 60_000);
-  if (m < 1) return t('notifications.justNow', 'just now');
+  if (m < 1) return t('notifications.justNow');
   if (m < 60)
     return t('notifications.minutesAgo', {
       count: m,

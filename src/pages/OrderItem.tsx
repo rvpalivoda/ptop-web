@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { Link, useParams, useLocation, useNavigate } from 'react-router-dom';
 import {
     ArrowLeft,
@@ -13,11 +13,13 @@ import {
     ExternalLink,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { getOrder, type OrderFull } from '@/api/orders';
+import { getOrder, type OrderFull, getOrderActions, type OrderActionInfo, markOrderPaid, releaseOrder, cancelOrder, openDispute } from '@/api/orders';
 import { ChatPanel } from '@/components/chat/ChatPanel';
 import { cn } from '@/lib/utils';
+import { useOrderStatusWS } from '@/hooks/useOrderStatusWS';
+import { toast } from '@/components/ui/sonner';
 
-// ===== shared countdown (как в OrderCard) =====
+// ===== shared countdown (same as OrderCard) =====
 function useCountdown(expiresAt?: string | null) {
     const [left, setLeft] = useState<number>(() => {
         if (!expiresAt) return 0;
@@ -36,12 +38,13 @@ function useCountdown(expiresAt?: string | null) {
     return { minutes, seconds, isExpired, ms: left };
 }
 
-// ===== единый стиль статусов (как в OrderCard) =====
+// ===== unified status styles (same as OrderCard) =====
 const STATUS_STYLES: Record<string, string> = {
     WAIT_PAYMENT: 'bg-yellow-500/20 text-yellow-300 ring-1 ring-yellow-500/30',
     PAID: 'bg-blue-500/20 text-blue-300 ring-1 ring-blue-500/30',
     DISPUTE: 'bg-orange-500/20 text-orange-300 ring-1 ring-orange-500/30',
     CANCELED: 'bg-gray-500/20 text-gray-300 ring-1 ring-gray-500/30',
+    CANCELLED: 'bg-gray-500/20 text-gray-300 ring-1 ring-gray-500/30',
     RELEASED: 'bg-emerald-500/20 text-emerald-300 ring-1 ring-emerald-500/30',
     EXPIRED: 'bg-rose-500/20 text-rose-300 ring-1 ring-rose-500/30',
 };
@@ -62,11 +65,13 @@ export default function OrderItem({
     const [order, setOrder] = useState<OrderFull | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
+    const [actions, setActions] = useState<OrderActionInfo[]>([]);
+    const [busyAction, setBusyAction] = useState<string | null>(null);
     const MOBILE_CTA_H = 64;
     const [isChatTyping, setIsChatTyping] = useState(false);
     const CHAT_MIN_H = 350;
 
-    // динамическая высота чата до низа экрана
+    // dynamic chat height down to viewport bottom
     const chatWrapRef = useRef<HTMLDivElement | null>(null);
     const [chatHeight, setChatHeight] = useState<number | undefined>(undefined);
 
@@ -85,7 +90,7 @@ export default function OrderItem({
         window.addEventListener('resize', onResize);
         window.addEventListener('orientationchange', onResize);
         window.addEventListener('scroll', onScroll, { passive: true });
-        const id = setInterval(measure, 500); // подстраховка против резких layout-shift
+        const id = setInterval(measure, 500); // safeguard against sudden layout shifts
         return () => {
             window.removeEventListener('resize', onResize);
             window.removeEventListener('orientationchange', onResize);
@@ -112,12 +117,61 @@ export default function OrderItem({
         };
     }, [id]);
 
+    // Subscribe to order status WS and update order on each change
+    useOrderStatusWS(order?.id ?? id, token, (o) => {
+        const prev = order?.status;
+        setOrder(o);
+        if (prev && o?.status && prev !== o.status) {
+            toast(t('orderItem.toast.statusUpdated').replace('{{prev}}', String(prev)).replace('{{next}}', String(o.status)));
+        }
+    });
+
+    // Determine role based on order/current user name
+
     const role: 'buyer' | 'seller' | undefined = useMemo(() => {
         if (!order) return undefined;
         if (order.buyer?.username === currentUserName) return 'buyer';
         if (order.seller?.username === currentUserName) return 'seller';
         return order.offer?.type === 'sell' ? 'seller' : 'buyer';
     }, [order, currentUserName]);
+
+    // Local fallback for available actions (if backend doesn't expose /actions)
+    const computeLocalActions = useCallback((): OrderActionInfo[] => {
+        if (!order || !role) return [];
+        const s = order.status;
+        const acts: OrderActionInfo[] = [];
+        if (s === 'WAIT_PAYMENT') {
+            if (role === 'buyer') acts.push({ name: 'paid' });
+            // pre-payment cancel: both sides may attempt; backend will return 403 if forbidden
+            acts.push({ name: 'cancel', reasonRequired: false });
+        } else if (s === 'PAID') {
+            if (role === 'seller') acts.push({ name: 'release' });
+            acts.push({ name: 'dispute', reasonRequired: false });
+        } else if (s === 'DISPUTE') {
+            // arbitration only — no buttons for regular roles
+        }
+        return acts;
+    }, [order, role]);
+
+    // Fetch available actions from server (if present), otherwise use local fallback
+    useEffect(() => {
+        let cancelled = false;
+        if (!order) return;
+        getOrderActions(order.id)
+            .then((list) => {
+                if (!cancelled) setActions(Array.isArray(list) ? list : []);
+            })
+            .catch((e) => {
+                if (!cancelled) {
+                    setActions(computeLocalActions());
+                    // server /actions not available — using local fallback
+                    if (e instanceof Error) console.warn('getOrderActions error:', e.message);
+                }
+            });
+        return () => {
+            cancelled = true;
+        };
+    }, [order?.id, order?.status, computeLocalActions]);
 
     const { minutes, seconds, isExpired } = useCountdown(order?.expiresAt);
 
@@ -152,9 +206,9 @@ export default function OrderItem({
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 text-white">
-            {/* Глобальная навигация как в списке */}
+            {/* Global navigation similar to list */}
             <div className="container mx-auto px-4 pt-24 pb-8" style={{
-                // чтобы чат/инпут не перекрывался, делаем запас под fixed-бар
+                // keep extra space for fixed bar to avoid overlap
                 paddingBottom: order
                     ? `calc(${MOBILE_CTA_H}px + env(safe-area-inset-bottom, 0px))`
                     : undefined,
@@ -167,7 +221,7 @@ export default function OrderItem({
                             className="inline-flex items-center gap-2 rounded-xl px-3 py-2 ring-1 ring-white/10 bg-white/5 hover:bg-white/10 transition"
                         >
                             <ArrowLeft className="w-4 h-4" />
-                            {t('orderItem.back', 'Back to orders')}
+                            {t('orderItem.back')}
                         </Link>
                         {order && (
                             <div className="hidden sm:flex items-center text-sm text-white/60 min-w-0">
@@ -185,27 +239,27 @@ export default function OrderItem({
                             {order.isEscrow && (
                                 <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] rounded-full font-medium bg-cyan-500/20 text-cyan-300 ring-1 ring-cyan-500/30">
                   <ShieldCheck className="w-3.5 h-3.5" />
-                                    {t('orderCard.escrow', 'Escrow')}
+                                    {t('orderCard.escrow')}
                 </span>
                             )}
                             {role && (
                                 <span className={cn('px-2 py-0.5 text-[11px] rounded-full font-medium', sideClass)}>
-                  {role === 'buyer' ? t('orderCard.youBuy', 'You buy') : t('orderCard.youSell', 'You sell')}
+                  {role === 'buyer' ? t('orderCard.youBuy') : t('orderCard.youSell')}
                 </span>
                             )}
                             <div className="flex items-center gap-1 text-sm text-white/80">
                                 <Clock className="w-4 h-4" />
                                 {order.expiresAt ? (
                                     isExpired ? (
-                                        <span className="text-rose-300">{t('orderCard.expired', 'Expired')}</span>
+                                        <span className="text-rose-300">{t('orderCard.expired')}</span>
                                     ) : (
                                         <span>
-                      {t('orderCard.expiresIn', 'Expires in')}{' '}
+                      {t('orderCard.expiresIn')}{' '}
                                             {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
                     </span>
                                     )
                                 ) : (
-                                    <span className="opacity-70">{t('orderCard.noExpiry', 'No expiry')}</span>
+                                    <span className="opacity-70">{t('orderCard.noExpiry')}</span>
                                 )}
                             </div>
                         </div>
@@ -222,9 +276,9 @@ export default function OrderItem({
 
                 {order && (
                     <div className="grid grid-cols-1 gap-4">
-                        {/* Детали сделки и действия */}
+                        {/* Deal details and actions */}
                         <div className="space-y-4">
-                            {/* Counterparty + Pair banner (визуально дружит с OrderCard) */}
+                            {/* Counterparty + Pair banner (consistent with OrderCard visuals) */}
                             <div className="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4">
                                 <div className="flex items-center justify-between gap-4">
                                     {/* Counterparty */}
@@ -243,7 +297,7 @@ export default function OrderItem({
                           ) : (
                               <Store className="w-3.5 h-3.5" />
                           )}
-                                                    {role === 'buyer' ? t('orderCard.counterparty', 'Counterparty') : t('orderCard.offerOwner', 'Offer owner (you?)')}
+                                                    {role === 'buyer' ? t('orderCard.counterparty') : t('orderCard.offerOwner')}
                         </span>
                                             </div>
                                             <div className="flex items-center gap-2 text-xs text-white/60">
@@ -271,7 +325,7 @@ export default function OrderItem({
                                                 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs ring-1 ring-white/10',
                                                 role === 'buyer' ? 'bg-red-500/15 text-red-300' : 'bg-green-500/15 text-green-300'
                                             )}
-                                            title={role === 'buyer' ? (t('orderCard.youBuy', 'You buy') as string) : (t('orderCard.youSell', 'You sell') as string)}
+                                            title={role === 'buyer' ? (t('orderCard.youBuy') as string) : (t('orderCard.youSell') as string)}
                                         >
                                             {role === 'buyer' ? <ArrowDownUp className="w-3.5 h-3.5" /> : <ArrowLeftRight className="w-3.5 h-3.5" />}
                                             <span className="uppercase">{role}</span>
@@ -299,7 +353,7 @@ export default function OrderItem({
                                         <p className="text-[11px] text-white/60">{t('offerCard.amount')} ({BASE})</p>
                                         <p className="text-xl leading-tight font-semibold">{order.amount}</p>
                                         {role && (
-                                            <p className="text-xs text-white/50">{t('orderCard.role')}: {t(`orderCard.${role}`, role)}</p>
+                                            <p className="text-xs text-white/50">{t('orderCard.role')}: {t(`orderCard.${role}`)}</p>
                                         )}
                                     </div>
 
@@ -313,11 +367,11 @@ export default function OrderItem({
 
                                     <div className="col-span-12 sm:col-span-3">
                                         <p className="text-[11px] text-white/60">{t('offerCard.paymentMethods')}</p>
-                                        <p className="text-sm text-white/80 truncate" title={paymentMethod || t('orderCard.notSpecified', 'Not specified')}>
-                                            {paymentMethod || t('orderCard.notSpecified', 'Not specified')}
+                                        <p className="text-sm text-white/80 truncate" title={paymentMethod || t('orderCard.notSpecified')}>
+                                            {paymentMethod || t('orderCard.notSpecified')}
                                         </p>
                                         <p className="mt-1 text-xs text-white/60">
-                                            {t('orderCard.status', 'Status')}: <span className={cn('font-medium px-1.5 py-0.5 rounded-md', statusClass)}>{t(`orderStatus.${order.status}`, order.status)}</span>
+                                            {t('orderCard.status')}: <span className={cn('font-medium px-1.5 py-0.5 rounded-md', statusClass)}>{t(`orderStatus.${order.status}`)}</span>
                                         </p>
                                     </div>
 
@@ -330,7 +384,7 @@ export default function OrderItem({
                                                 type="button"
                                                 onClick={copyId}
                                                 className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] ring-1 ring-white/10 bg-white/5 hover:bg-white/10 transition"
-                                                title={t('common.copy', 'Copy') as string}
+                                                title={t('common.copy') as string}
                                             >
                                                 <Copy className="w-3.5 h-3.5" />
                                             </button>
@@ -342,73 +396,153 @@ export default function OrderItem({
                             {/* Instructions / compliance block */}
                             <div className="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4 space-y-3">
                                 <div className="flex items-center justify-between">
-                                    <div className="text-sm opacity-70">{t('orderItem.instructions', 'Instructions')}</div>
+                                    <div className="text-sm opacity-70">{t('orderItem.instructions')}</div>
                                     <div className="flex items-center gap-2 text-xs text-white/60">
                                         <Clock className="w-4 h-4" />
                                         {order.expiresAt ? (
-                                            isExpired ? (
-                                                <span className="text-rose-300">{t('orderCard.expired', 'Expired')}</span>
-                                            ) : (
-                                                <span>
-                          {t('orderCard.expiresIn', 'Expires in')}{' '}
-                                                    {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
+                                    isExpired ? (
+                                        <span className="text-rose-300">{t('orderCard.expired')}</span>
+                                    ) : (
+                                        <span>
+                          {t('orderCard.expiresIn')}{' '}
+                            {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
                         </span>
-                                            )
-                                        ) : (
-                                            <span className="opacity-70">{t('orderCard.noExpiry', 'No expiry')}</span>
-                                        )}
+                                    )
+                                ) : (
+                                    <span className="opacity-70">{t('orderCard.noExpiry')}</span>
+                                )}
                                     </div>
                                 </div>
                                 <div className="text-white/90">
-                                    {t('orderItem.placeholder', 'Payment and delivery details go here.')}
+                                    {t('orderItem.placeholder')}
                                 </div>
 
                                 {/* Action buttons (UX стандарты p2p): просто UI-слой, без логики */}
                                 <div className="pt-2 flex flex-wrap gap-2">
                                     {/* Примерные действия: отметка оплаты / отмена / открытие диспута */}
-                                    <button
-                                        type="button"
-                                        disabled={order.status !== 'WAIT_PAYMENT'}
-                                        className={cn(
-                                            'inline-flex items-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-medium ring-1 ring-white/10 transition',
-                                            order.status === 'WAIT_PAYMENT' ? 'bg-emerald-500/20 hover:bg-emerald-500/25' : 'bg-white/5 text-white/60 cursor-not-allowed'
-                                        )}
-                                        title={t('orderItem.markAsPaid', 'Mark as paid') as string}
-                                    >
-                                        <ExternalLink className="w-4 h-4" />
-                                        {t('orderItem.markAsPaid', 'Mark as paid')}
-                                    </button>
+                                    {/* Динамические действия в зависимости от доступности */}
+                                    {actions.some(a => a.name === 'paid') && (
+                                        <button
+                                            type="button"
+                                            disabled={busyAction !== null}
+                                            onClick={async () => {
+                                                try {
+                                                    setBusyAction('paid');
+                                                    const updated = await markOrderPaid(order.id);
+                                                    setOrder(updated);
+                                                } catch (e) {
+                                                    console.error('mark paid error:', e);
+                                                    toast(e instanceof Error ? e.message : t('orderItem.toast.markPaidError'));
+                                                } finally {
+                                                    setBusyAction(null);
+                                                }
+                                            }}
+                                            className={cn(
+                                                'inline-flex items-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-medium ring-1 ring-white/10 transition',
+                                                'bg-emerald-500/20 hover:bg-emerald-500/25'
+                                            )}
+                                            title={t('orderItem.markAsPaid') as string}
+                                        >
+                                            <ExternalLink className="w-4 h-4" />
+                                            {(actions.find(a => a.name === 'paid')?.label) ?? t('orderItem.markAsPaid')}
+                                        </button>
+                                    )}
 
-                                    <button
-                                        type="button"
-                                        disabled={order.status === 'CANCELED' || order.status === 'RELEASED' || order.status === 'EXPIRED'}
-                                        className={cn(
-                                            'inline-flex items-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-medium ring-1 ring-white/10 transition',
-                                            order.status === 'CANCELED' || order.status === 'RELEASED' || order.status === 'EXPIRED'
-                                                ? 'bg-white/5 text-white/60 cursor-not-allowed'
-                                                : 'bg-rose-500/20 hover:bg-rose-500/25'
-                                        )}
-                                        title={t('orderItem.cancelOrder', 'Cancel order') as string}
-                                    >
-                                        {t('orderItem.cancelOrder', 'Cancel order')}
-                                    </button>
+                                    {actions.some(a => a.name === 'release') && (
+                                        <button
+                                            type="button"
+                                            disabled={busyAction !== null}
+                                            onClick={async () => {
+                                                try {
+                                                    setBusyAction('release');
+                                                    const updated = await releaseOrder(order.id);
+                                                    setOrder(updated);
+                                                } catch (e) {
+                                                    console.error('release error:', e);
+                                                    toast(e instanceof Error ? e.message : t('orderItem.toast.releaseError'));
+                                                } finally {
+                                                    setBusyAction(null);
+                                                }
+                                            }}
+                                            className={cn(
+                                                'inline-flex items-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-medium ring-1 ring-white/10 transition',
+                                                'bg-emerald-500/20 hover:bg-emerald-500/25'
+                                            )}
+                                            title={t('orderItem.release') as string}
+                                        >
+                                            {(actions.find(a => a.name === 'release')?.label) ?? t('orderItem.release')}
+                                        </button>
+                                    )}
 
-                                    <button
-                                        type="button"
-                                        className="inline-flex items-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-medium ring-1 ring-white/10 bg-white/5 hover:bg-white/10 transition"
-                                        title={t('orderItem.openDispute', 'Open dispute') as string}
-                                    >
-                                        {t('orderItem.openDispute', 'Open dispute')}
-                                    </button>
+                                    {actions.some(a => a.name === 'cancel') && (
+                                        <button
+                                            type="button"
+                                            disabled={busyAction !== null}
+                                            onClick={async () => {
+                                                try {
+                                                    setBusyAction('cancel');
+                                                    const act = actions.find(a => a.name === 'cancel');
+                                                    let reason: string | undefined = undefined;
+                                                    if (act?.reasonRequired) {
+                                                        reason = window.prompt(t('orderItem.prompt.cancelReason')) || undefined;
+                                                        if (!reason) { setBusyAction(null); return; }
+                                                    }
+                                                    const updated = await cancelOrder(order.id, reason);
+                                                    setOrder(updated);
+                                                } catch (e) {
+                                                    console.error('cancel error:', e);
+                                                    toast(e instanceof Error ? e.message : t('orderItem.toast.cancelError'));
+                                                } finally {
+                                                    setBusyAction(null);
+                                                }
+                                            }}
+                                            className={cn(
+                                                'inline-flex items-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-medium ring-1 ring-white/10 transition',
+                                                'bg-rose-500/20 hover:bg-rose-500/25'
+                                            )}
+                                            title={t('orderItem.cancelOrder') as string}
+                                        >
+                                            {(actions.find(a => a.name === 'cancel')?.label) ?? t('orderItem.cancelOrder')}
+                                        </button>
+                                    )}
+
+                                    {actions.some(a => a.name === 'dispute') && (
+                                        <button
+                                            type="button"
+                                            disabled={busyAction !== null}
+                                            onClick={async () => {
+                                                try {
+                                                    setBusyAction('dispute');
+                                                    const act = actions.find(a => a.name === 'dispute');
+                                                    let reason: string | undefined = undefined;
+                                                    if (act?.reasonRequired) {
+                                                        reason = window.prompt(t('orderItem.prompt.disputeReason')) || undefined;
+                                                        if (!reason) { setBusyAction(null); return; }
+                                                    }
+                                                    const updated = await openDispute(order.id, reason);
+                                                    setOrder(updated);
+                                                } catch (e) {
+                                                    console.error('dispute error:', e);
+                                                    toast(e instanceof Error ? e.message : t('orderItem.toast.disputeError'));
+                                                } finally {
+                                                    setBusyAction(null);
+                                                }
+                                            }}
+                                            className="inline-flex items-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-medium ring-1 ring-white/10 bg-white/5 hover:bg-white/10 transition"
+                                            title={t('orderItem.openDispute') as string}
+                                        >
+                                            {(actions.find(a => a.name === 'dispute')?.label) ?? t('orderItem.openDispute')}
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         </div>
 
-                        {/* Чат под деталями */}
+                        {/* Chat under details */}
                         <div
                             onFocusCapture={() => setIsChatTyping(true)}
                             onBlurCapture={(e) => {
-                                // выходим из режима печати, только если фокус реально ушёл из панели
+                                // leave typing mode only if focus actually left the panel
                                 const next = e.relatedTarget as Node | null;
                                 if (!e.currentTarget.contains(next)) setIsChatTyping(false);
                             }}
@@ -435,7 +569,7 @@ export default function OrderItem({
                 )}
             </div>
 
-            {/* Sticky mobile CTA bar — отключен, чтобы не перекрывать отправку сообщений */}
+            {/* Sticky mobile CTA bar — disabled to avoid overlapping message input */}
         </div>
     );
 }

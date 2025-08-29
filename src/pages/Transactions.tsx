@@ -214,7 +214,7 @@ const Transactions = () => {
           <div className="mb-6 flex items-end justify-between gap-4">
             <div>
               <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{t('header.transactions')}</h1>
-              <p className="mt-1 text-sm text-white/60">{t('transactions.subtitle', { defaultValue: 'Review your incoming, internal, and outgoing transactions.' })}</p>
+              <p className="mt-1 text-sm text-white/60">{t('transactions.subtitle')}</p>
             </div>
           </div>
 
@@ -227,14 +227,14 @@ const Transactions = () => {
               }}
               className="w-full"
           >
-            <TabsList className="mb-5 inline-flex rounded-2xl bg-white/5 p-1 ring-1 ring-white/10 backdrop-blur">
-              <SmartTabsTrigger value="in" icon={ArrowDownRight} className="mr-[10px] ml-[-4px]">
+            <TabsList className="mb-5 inline-flex flex-wrap gap-2 rounded-2xl bg-white/5 p-1 ring-1 ring-white/10 backdrop-blur">
+              <SmartTabsTrigger value="in" icon={ArrowDownRight} className="mr-2 md:mr-[10px] md:ml-[-4px]">
                 {t('transactions.incoming')}
               </SmartTabsTrigger>
-              <SmartTabsTrigger value="internal" icon={Shuffle} className="mr-[10px]">
+              <SmartTabsTrigger value="internal" icon={Shuffle} className="mr-2 md:mr-[10px]">
                 {t('transactions.internal')}
               </SmartTabsTrigger>
-              <SmartTabsTrigger value="out" icon={ArrowUpRight} className="mr-[-4px]">
+              <SmartTabsTrigger value="out" icon={ArrowUpRight} className="md:mr-[-4px]">
                 {t('transactions.outgoing')}
               </SmartTabsTrigger>
             </TabsList>

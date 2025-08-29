@@ -27,7 +27,7 @@ describe("two_factor api", () => {
     localStorage.clear();
   });
 
-  it("enable2fa отправляет пароль и получает секрет", async () => {
+  it("enable2fa sends password and receives secret", async () => {
     mockFetch.mockResolvedValue({
       ok: true,
       status: 200,
@@ -43,7 +43,7 @@ describe("two_factor api", () => {
     expect(res).toEqual({ secret: "sec", url: "otp" });
   });
 
-  it("disable2fa отправляет пароль", async () => {
+  it("disable2fa sends password", async () => {
     mockFetch.mockResolvedValue({
       ok: true,
       status: 200,

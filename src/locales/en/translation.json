@@ -10,14 +10,19 @@
     "myDeals": "My Deals",
     "adDeals": "Ad Deals",
     "transactions": "Transactions",
-    "escrow": "Escrow"
+    "escrow": "Escrow",
+    "orders": "Orders"
   },
   "balance": {
     "getAddress": "Get address",
     "loading": "Loading...",
     "amount": "Amount",
     "address": "Address:",
-    "amountEscrow": "Amount Escrow"
+    "amountEscrow": "Amount Escrow",
+    "noAssets": "No assets yet",
+    "noAssetsHelp": "Once you add an asset, it will appear here.",
+    "creating": "Creating…",
+    "subtitle": "Your assets and deposit addresses"
   },
   "login": {
     "back": "Back",
@@ -34,7 +39,8 @@
     "toastErrorPrefix": "Login error: {{message}}",
     "toastErrorGeneric": "Login error",
     "2facode": "Auth Code",
-    "2faCodePlaceholder": "Enter your topt code"
+    "2faCodePlaceholder": "Enter your topt code",
+    "optional": "optional"
   },
   "register": {
     "back": "Back",
@@ -124,10 +130,17 @@
     "underDevelopment": "Section under development",
     "logout": "Logout",
     "personalSettings": "Personal settings",
+    "security": "Security",
     "paymentMethods": "Payment methods",
     "add": "Add",
     "edit": "Edit",
-    "delete": "Delete"
+    "delete": "Delete",
+    "tip": "Keep your recovery words in a safe place. Never share them.",
+    "walletSection": {
+      "wallet": "Wallet",
+      "transactions": "Transactions"
+    },
+    "finance": "Finance"
   },
   "filters": {
     "title": "Filters",
@@ -162,12 +175,35 @@
     "chat": "Chat",
     "sell": "Sell",
     "buy": "Buy",
-    "sec": "sec"
+    "sec": "sec",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "sideBuy": "Buy (you sell QUOTE for BASE)",
+    "sideSell": "Sell (you buy QUOTE for BASE)",
+    "baseAsset": "Base asset",
+    "perTrade": "Per trade"
   },
   "orderCard": {
     "status": "Status",
     "created": "Created",
-    "counterparty": "Counterparty"
+    "counterparty": "Counterparty",
+    "escrow": "Escrow",
+    "expired": "Expired",
+    "expiresIn": "Expires in",
+    "noExpiry": "No expiry",
+    "fromMyAds": "From my ads",
+    "iInitiated": "I initiated",
+    "youBuy": "You buy",
+    "youSell": "You sell",
+    "offerOwner": "Offer owner (you)",
+    "role": "Role",
+    "buyer": "buyer",
+    "seller": "seller",
+    "total": "Total",
+    "notSpecified": "Not specified",
+    "open": "Open order",
+    "tipMyDeal": "This order was created on your offer.",
+    "tipAdDeal": "You created this order on someone else’s offer."
   },
   "orderStatus": {
     "OrderStatusWaitPayment": "Waiting payment",
@@ -178,7 +214,19 @@
   },
   "common": {
     "copy": "Copy",
-    "copied": "Copied"
+    "copied": "Copied",
+    "you": "You",
+    "error": "Error",
+    "loading": "Loading…",
+    "close": "Close",
+    "dismiss": "Dismiss",
+    "enabled": "enabled",
+    "disabled": "disabled",
+    "language": "Language",
+    "languages": {
+      "en": "English",
+      "ru": "Russian"
+    }
   },
   "date": {
     "today": "Today",
@@ -218,7 +266,8 @@
     "prev": "Previous",
     "next": "Next",
     "noData": "No transactions",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "subtitle": "Review your incoming, internal, and outgoing transactions."
   },
   "createOffer": {
     "errors": {
@@ -283,10 +332,64 @@
       "error": "Order creation error"
     }
   },
+  "orderItem": {
+    "back": "Back to orders",
+    "instructions": "Instructions",
+    "placeholder": "Payment and delivery details go here.",
+    "markAsPaid": "Mark as paid",
+    "release": "Release",
+    "cancelOrder": "Cancel order",
+    "openDispute": "Open dispute",
+    "toast": {
+      "statusUpdated": "Order status updated: {{prev}} → {{next}}",
+      "markPaidError": "Failed to mark as paid",
+      "releaseError": "Failed to release funds",
+      "cancelError": "Failed to cancel order",
+      "disputeError": "Failed to open dispute"
+    },
+    "prompt": {
+      "cancelReason": "Provide cancel reason",
+      "disputeReason": "Provide dispute reason"
+    }
+  },
   "offers": {
     "buy": "Buy Offers",
     "sell": "Sell Offers",
     "found": " offers found",
-    "adsAvailable": "{{count}} ads available"
+    "adsAvailable": "{{count}} ads available",
+    "loading": "Loading…",
+    "noMore": "No more offers",
+    "traderDefault": "Trader"
+  },
+  "chatDemo": {
+    "searchPlaceholder": "Search chats...",
+    "online": "Online",
+    "typeMessagePlaceholder": "Type a message...",
+    "selectChatTitle": "Select a chat",
+    "selectChatSubtitle": "Choose a contact to start chatting",
+    "contacts": {
+      "alexey": "Alexey Morozov",
+      "maria": "Maria Sidorova",
+      "dmitry": "Dmitry Kozlov",
+      "elena": "Elena Petrova"
+    },
+    "last": {
+      "readyToTrade": "Ready to trade USDT",
+      "thanksQuickTrade": "Thanks for the quick trade!",
+      "whenMeet": "When can we meet?",
+      "confirmReceipt": "I confirm receipt"
+    },
+    "messages": {
+      "helloBuyUSDT": "Hello! Interested in buying USDT",
+      "helloAvailableAmount": "Hello! Yes, available. What amount interests you?",
+      "needAmountRate": "I need 50,000 RUB. What is the rate?",
+      "ratePaymentMethod": "Rate is 94.5 RUB per USDT. Payment method?",
+      "sberbankReady": "Sberbank works. Ready to trade USDT"
+    }
+  },
+  "ordersFilters": {
+    "status": "Status",
+    "dateFrom": "Date from",
+    "dateTo": "Date to"
   }
 }

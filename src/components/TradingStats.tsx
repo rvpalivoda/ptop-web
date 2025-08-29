@@ -18,14 +18,14 @@ export const TradingStats = () => {
       icon: TrendingDown
     },
     {
-      title: 'Активные сделки',
+      title: 'Active trades',
       value: '1,247',
       change: '+15%',
       isPositive: true,
       icon: DollarSign
     },
     {
-      title: 'Онлайн трейдеров',
+      title: 'Traders online',
       value: '3,892',
       change: '+8%',
       isPositive: true,

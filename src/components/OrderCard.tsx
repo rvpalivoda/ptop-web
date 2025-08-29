@@ -29,6 +29,7 @@ const STATUS_STYLES: Record<string, string> = {
   PAID: 'bg-blue-500/20 text-blue-300 ring-1 ring-blue-500/30',
   DISPUTE: 'bg-orange-500/20 text-orange-300 ring-1 ring-orange-500/30',
   CANCELED: 'bg-gray-500/20 text-gray-300 ring-1 ring-gray-500/30',
+  CANCELLED: 'bg-gray-500/20 text-gray-300 ring-1 ring-gray-500/30',
   RELEASED: 'bg-emerald-500/20 text-emerald-300 ring-1 ring-emerald-500/30',
   EXPIRED: 'bg-rose-500/20 text-rose-300 ring-1 ring-rose-500/30',
 };
@@ -103,12 +104,12 @@ export function OrderCard({ order, currentUserID, onOpen }: Props) {
       '';
 
   const kindLabel = kind === 'my-deal'
-      ? t('orderCard.fromMyAds', 'From my ads')
-      : t('orderCard.iInitiated', 'I initiated');
+      ? t('orderCard.fromMyAds')
+      : t('orderCard.iInitiated');
 
   const youAction = role === 'buyer'
-      ? t('orderCard.youBuy', 'You buy')
-      : t('orderCard.youSell', 'You sell');
+      ? t('orderCard.youBuy')
+      : t('orderCard.youSell');
 
   const { minutes, seconds, isExpired } = useCountdown(expiresAt);
   const statusClass = STATUS_STYLES[status] ?? 'bg-white/10 text-white ring-1 ring-white/10';
@@ -160,7 +161,7 @@ export function OrderCard({ order, currentUserID, onOpen }: Props) {
             {isEscrow && (
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] rounded-full font-medium bg-cyan-500/20 text-cyan-300 ring-1 ring-cyan-500/30">
               <ShieldCheck className="w-3.5 h-3.5" />
-                  {t('orderCard.escrow', 'Escrow')}
+                  {t('orderCard.escrow')}
             </span>
             )}
 
@@ -174,15 +175,15 @@ export function OrderCard({ order, currentUserID, onOpen }: Props) {
             <Clock className="w-4 h-4" />
             {expiresAt ? (
                 isExpired ? (
-                    <span className="text-rose-300">{t('orderCard.expired', 'Expired')}</span>
+                    <span className="text-rose-300">{t('orderCard.expired')}</span>
                 ) : (
                     <span>
-                {t('orderCard.expiresIn', 'Expires in')}{' '}
+                {t('orderCard.expiresIn')}{' '}
                       {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
               </span>
                 )
             ) : (
-                <span className="opacity-70">{t('orderCard.noExpiry', 'No expiry')}</span>
+                <span className="opacity-70">{t('orderCard.noExpiry')}</span>
             )}
           </div>
         </div>
@@ -201,12 +202,12 @@ export function OrderCard({ order, currentUserID, onOpen }: Props) {
                   {kind === 'my-deal' ? (
                       <>
                         <Store className="w-3.5 h-3.5" />
-                        {t('orderCard.offerOwner', 'Offer owner (you)')}
+                        {t('orderCard.offerOwner')}
                       </>
                   ) : (
                       <>
                         <UserRound className="w-3.5 h-3.5" />
-                        {t('orderCard.counterparty', 'Counterparty')}
+                        {t('orderCard.counterparty')}
                       </>
                   )}
                 </span>
@@ -277,12 +278,12 @@ export function OrderCard({ order, currentUserID, onOpen }: Props) {
 
             <div className="col-span-12 sm:col-span-3">
               <p className="text-[11px] text-white/60">{t('offerCard.paymentMethods')}</p>
-              <p className="text-sm text-white/80 truncate" title={paymentMethod || t('orderCard.notSpecified', 'Not specified')}>
-                {paymentMethod || t('orderCard.notSpecified', 'Not specified')}
+              <p className="text-sm text-white/80 truncate" title={paymentMethod || t('orderCard.notSpecified')}>
+                {paymentMethod || t('orderCard.notSpecified')}
               </p>
               {showTotal && (
                   <p className="mt-1 text-xs text-white/60">
-                    {t('orderCard.total', 'Total')}: <span className="text-white/80 font-medium">
+                    {t('orderCard.total')}: <span className="text-white/80 font-medium">
                   {totalQuote!.toLocaleString()} {QUOTE}
                 </span>
                   </p>
@@ -298,7 +299,7 @@ export function OrderCard({ order, currentUserID, onOpen }: Props) {
                     type="button"
                     onClick={copyId}
                     className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] ring-1 ring-white/10 bg-white/5 hover:bg-white/10 transition"
-                    title={t('common.copy', 'Copy') as string}
+                    title={t('common.copy') as string}
                 >
                   <Copy className="w-3.5 h-3.5" />
                 </button>
@@ -310,8 +311,8 @@ export function OrderCard({ order, currentUserID, onOpen }: Props) {
           <div className="mt-4 flex items-center justify-between gap-3">
             <div className="text-xs text-white/50">
               {kind === 'my-deal'
-                  ? t('orderCard.tipMyDeal', 'This order was created on your offer.')
-                  : t('orderCard.tipAdDeal', 'You created this order on someone else’s offer.')}
+                  ? t('orderCard.tipMyDeal')
+                  : t('orderCard.tipAdDeal')}
             </div>
             <button
                 type="button"
@@ -319,7 +320,7 @@ export function OrderCard({ order, currentUserID, onOpen }: Props) {
                 className="inline-flex items-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-medium ring-1 ring-white/10 bg-white/5 hover:bg-white/10 transition"
             >
               <ExternalLink className="w-4 h-4" />
-              {t('orderCard.open', 'Open order')}
+              {t('orderCard.open')}
             </button>
           </div>
         </div>

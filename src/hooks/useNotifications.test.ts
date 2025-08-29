@@ -16,7 +16,7 @@ afterEach(() => {
 });
 
 describe('useNotifications', () => {
-  it('не запрашивает уведомления без токена', () => {
+  it('does not request notifications without token', () => {
     renderHook(() => useNotifications());
     expect(listNotifications).not.toHaveBeenCalled();
   });

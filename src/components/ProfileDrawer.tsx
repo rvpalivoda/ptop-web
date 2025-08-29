@@ -84,6 +84,7 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
   const { userInfo, regenerateWords, changePassword, setPinCode, refresh, logout } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
 
   const [showPwdDialog, setShowPwdDialog] = useState(false);
   const [show2faDialog, setShow2faDialog] = useState(false);
@@ -319,7 +320,7 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
   const handleLogout = async () => { await logout(); navigate('/login'); };
 
   return (
-      <Sheet>
+      <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
           <button className={triggerClassName || btnGhost}>
             <User className="h-4 w-4" />
@@ -358,9 +359,9 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
                   </button>
                   <div className="mt-0.5 text-xs text-white/60">
                     {twoFactorEnabled ? (
-                        <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-emerald-300 ring-1 ring-emerald-500/30">2FA {t('common.enabled', { defaultValue: 'enabled' })}</span>
+                        <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-emerald-300 ring-1 ring-emerald-500/30">2FA {t('common.enabled')}</span>
                     ) : (
-                        <span className="rounded-full bg-white/5 px-2 py-0.5 text-white/70 ring-1 ring-white/10">2FA {t('common.disabled', { defaultValue: 'disabled' })}</span>
+                        <span className="rounded-full bg-white/5 px-2 py-0.5 text-white/70 ring-1 ring-white/10">2FA {t('common.disabled')}</span>
                     )}
                   </div>
                 </div>
@@ -368,10 +369,41 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
             </div>
           </div>
 
+          {/* Finance section: Escrow / Wallet / Transactions */}
+          <div className="px-5 py-4 border-b border-white/10">
+            <div className="mb-2 text-xs uppercase tracking-wide text-white/60">{t('profile.finance', { defaultValue: 'Finance' })}</div>
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                type="button"
+                onClick={() => { navigate('/escrow'); setOpen(false); }}
+                className="rounded-xl bg-white/5 px-3 py-2 text-xs sm:text-sm font-medium ring-1 ring-white/10 hover:bg-white/10 hover:ring-white/20 transition text-left"
+              >
+                {t('header.escrow')}
+              </button>
+              <button
+                type="button"
+                onClick={() => { navigate('/balance'); setOpen(false); }}
+                className="rounded-xl bg-white/5 px-3 py-2 text-xs sm:text-sm font-medium ring-1 ring-white/10 hover:bg-white/10 hover:ring-white/20 transition text-left"
+              >
+                {t('profile.walletSection.wallet', { defaultValue: 'Wallet' })}
+              </button>
+              <button
+                type="button"
+                onClick={() => { navigate('/transactions'); setOpen(false); }}
+                className="rounded-xl bg-white/5 px-3 py-2 text-xs sm:text-sm font-medium ring-1 ring-white/10 hover:bg-white/10 hover:ring-white/20 transition text-left"
+              >
+                {t('profile.walletSection.transactions', { defaultValue: 'Transactions' })}
+              </button>
+            </div>
+          </div>
+
+
+
+
           {/* Body */}
           <div className="flex h-[calc(100%-152px)] flex-col overflow-y-auto px-5 py-5 gap-4">
             <div>
-              <div className="mb-3 text-sm font-semibold uppercase tracking-wide text-white/60">{t('profile.personalSettings', { defaultValue: 'Personal Settings' })}</div>
+              <div className="mb-3 text-sm font-semibold uppercase tracking-wide text-white/60">{t('profile.personalSettings')}</div>
               <div className="grid gap-2">
                 <Dialog open={showPaymentMethodsDialog} onOpenChange={setShowPaymentMethodsDialog}>
                   <DialogTrigger asChild>
@@ -422,7 +454,7 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
             </div>
             {/* Security actions  <div className={card}> */}
             <div>
-              <div className="mb-3 text-sm font-semibold uppercase tracking-wide text-white/60">{t('profile.security', { defaultValue: 'Security' })}</div>
+              <div className="mb-3 text-sm font-semibold uppercase tracking-wide text-white/60">{t('profile.security')}</div>
               <div className="grid gap-2  ">
                 <Dialog open={showPwdDialog} onOpenChange={setShowPwdDialog}>
                   <DialogTrigger asChild>
@@ -576,9 +608,30 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
 
             {/* Tips / Docs  className={card}*/}
             <div >
-              <div className="text-sm text-white/70">{t('profile.tip', { defaultValue: 'Keep your recovery words in a safe place. Never share them.' })}</div>
+              <div className="text-sm text-white/70">{t('profile.tip')}</div>
             </div>
           </div>
+
+          {/* Finance section: Wallet & Transactions */}
+          <div className="px-5 py-4 border-b border-white/10">
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => navigate('/balance')}
+                className="rounded-xl bg-white/5 px-3 py-2 text-sm font-medium ring-1 ring-white/10 hover:bg-white/10 hover:ring-white/20 transition text-left"
+              >
+                {t('profile.walletSection.wallet', { defaultValue: 'Wallet' })}
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate('/transactions')}
+                className="rounded-xl bg-white/5 px-3 py-2 text-sm font-medium ring-1 ring-white/10 hover:bg-white/10 hover:ring-white/20 transition text-left"
+              >
+                {t('profile.walletSection.transactions', { defaultValue: 'Transactions' })}
+              </button>
+            </div>
+          </div>
+
 
           {/* Footer */}
           <div className="sticky bottom-0 w-full border-t border-white/10 bg-gray-900/60 px-5 py-4 backdrop-blur">

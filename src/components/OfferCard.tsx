@@ -11,12 +11,12 @@ interface OfferCardProps {
         id: string;
         trader: { name: string; rating: number; completedTrades: number; online: boolean };
         fromAsset: { name: string }; // BASE
-        toAsset: { name: string };   // QUOTE (фиат/крипта)
+        toAsset: { name: string };   // QUOTE (fiat/crypto)
         amount: string;
-        price: string;               // за 1 BASE в QUOTE
+        price: string;               // price for 1 BASE in QUOTE
         paymentMethods: ClientPaymentMethod[];
-        limits: { min: string; max: string }; // в QUOTE
-        type: 'buy' | 'sell';        // сторона трейдера: buy — он покупает BASE за QUOTE
+        limits: { min: string; max: string }; // in QUOTE
+        type: 'buy' | 'sell';        // trader side: buy — trader buys BASE for QUOTE
         isEnabled?: boolean;
         conditions?: string;
         offerExpirationTimeout?: number;
@@ -66,8 +66,8 @@ export const OfferCard = ({ offer, isClientOffer, onToggle, onEdit }: OfferCardP
 
     const sideLabel =
         type === 'buy'
-            ? t('offerCard.sideBuy', 'Buy (you sell QUOTE for BASE)')
-            : t('offerCard.sideSell', 'Sell (you buy QUOTE for BASE)');
+            ? t('offerCard.sideBuy')
+            : t('offerCard.sideSell');
 
     const expiration = TTL
         ? new Date(TTL)
@@ -115,10 +115,10 @@ export const OfferCard = ({ offer, isClientOffer, onToggle, onEdit }: OfferCardP
                     {/* Badges */}
                     <div className="flex items-center gap-2">
             <span className={cn('px-2 py-0.5 text-[11px] rounded-full font-medium capitalize', sideClass)}>
-              {type === 'buy' ? t('offerCard.sell', 'Sell') : t('offerCard.buy', 'Buy') }
+              {type === 'buy' ? t('offerCard.sell') : t('offerCard.buy') }
             </span>
                         {/* <span className={cn('px-2 py-0.5 text-[11px] rounded-full font-medium', statusClass)}>
-              {isEnabled ? t('offerCard.enabled', 'Enabled') : t('offerCard.disabled', 'Disabled')}
+              {isEnabled ? t('offerCard.enabled') : t('offerCard.disabled')}
             </span>*/}
                         {expiration && (
                             <span className="flex items-center gap-1 px-2 py-0.5 text-[11px] rounded-full bg-white/5 ring-1 ring-white/10 text-white/70">
@@ -164,7 +164,7 @@ export const OfferCard = ({ offer, isClientOffer, onToggle, onEdit }: OfferCardP
                     </div>
                 </div>
 
-                {/* ROW 2: PAIR BANNER — крупный тикер пары, направление, формула */}
+                {/* ROW 2: PAIR BANNER — big pair ticker, direction, formula */}
                 <div className="px-4 lg:px-3 pb-2">
                     <div className="w-full rounded-lg bg-white/5 ring-1 ring-white/10 px-3 py-2.5 flex items-center gap-3">
                         {/* Pair ticker */}
@@ -195,21 +195,21 @@ export const OfferCard = ({ offer, isClientOffer, onToggle, onEdit }: OfferCardP
                     </div>
                 </div>
 
-                {/* ROW 3: ключевые показатели (BASE amount, QUOTE limits, методы оплаты) */}
+                {/* ROW 3: key stats (BASE amount, QUOTE limits, payment methods) */}
                 <div className="px-4 lg:px-3 pb-4">
                     <div className="grid grid-cols-12 items-center gap-3">
-                        {/* AMOUNT in BASE (крупно) */}
+                        {/* AMOUNT in BASE (large) */}
                         <div className="col-span-6 sm:col-span-4">
                             <p className="text-[11px] text-white/60">{t('offerCard.amount')} ({BASE})</p>
                             <p className="text-xl leading-tight font-semibold">{amount}</p>
-                            <p className="text-xs text-white/50">{t('offerCard.baseAsset', 'Base asset')}</p>
+                            <p className="text-xs text-white/50">{t('offerCard.baseAsset')}</p>
                         </div>
 
                         {/* LIMITS in QUOTE */}
                         <div className="col-span-6 sm:col-span-4">
                             <p className="text-[11px] text-white/60">{t('offerCard.limits')} ({QUOTE})</p>
                             <p className="text-lg leading-tight font-semibold">{limits.min} – {limits.max}</p>
-                            <p className="text-xs text-white/50">{t('offerCard.perTrade', 'Per trade')}</p>
+                            <p className="text-xs text-white/50">{t('offerCard.perTrade')}</p>
                         </div>
 
                         {/* METHODS one-line +N */}
@@ -222,7 +222,7 @@ export const OfferCard = ({ offer, isClientOffer, onToggle, onEdit }: OfferCardP
                         </div>
                     </div>
 
-                    {/* Bottom strip: условия + UUID с копированием */}
+                    {/* Bottom strip: conditions + UUID with copy */}
                     <div className="mt-3 flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between">
                         <div className="text-xs text-white/60 truncate">
                             {conditions && (
@@ -240,7 +240,7 @@ export const OfferCard = ({ offer, isClientOffer, onToggle, onEdit }: OfferCardP
                                 type="button"
                                 onClick={copyId}
                                 className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] ring-1 ring-white/10 bg-white/5 hover:bg-white/10 transition"
-                                title={t('common.copy', 'Copy') as string}
+                                title={t('common.copy') as string}
                             >
                                 <Copy className="w-3.5 h-3.5" />
                             </button>

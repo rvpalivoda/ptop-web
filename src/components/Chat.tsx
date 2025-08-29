@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import { Send, Search, User, MoreVertical } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface Message {
   id: number;
@@ -20,6 +21,7 @@ interface ChatUser {
 }
 
 export const Chat = () => {
+  const { t } = useTranslation();
   const [selectedChat, setSelectedChat] = useState<number | null>(1);
   const [messageText, setMessageText] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -27,30 +29,30 @@ export const Chat = () => {
   const chatUsers: ChatUser[] = [
     {
       id: 1,
-      name: 'Алексей Морозов',
-      lastMessage: 'Готов к сделке по USDT',
+      name: t('chatDemo.contacts.alexey', 'Alexey Morozov'),
+      lastMessage: t('chatDemo.last.readyToTrade', 'Ready to trade USDT'),
       timestamp: '10:30',
       unread: 2
     },
     {
       id: 2,
-      name: 'Мария Сидорова',
-      lastMessage: 'Спасибо за быструю сделку!',
+      name: t('chatDemo.contacts.maria', 'Maria Sidorova'),
+      lastMessage: t('chatDemo.last.thanksQuickTrade', 'Thanks for the quick trade!'),
       timestamp: '09:15',
       unread: 0
     },
     {
       id: 3,
-      name: 'Дмитрий Козлов',
-      lastMessage: 'Когда можем встретиться?',
-      timestamp: 'Вчера',
+      name: t('chatDemo.contacts.dmitry', 'Dmitry Kozlov'),
+      lastMessage: t('chatDemo.last.whenMeet', 'When can we meet?'),
+      timestamp: t('date.yesterday', 'Yesterday'),
       unread: 1
     },
     {
       id: 4,
-      name: 'Елена Петрова',
-      lastMessage: 'Подтверждаю получение',
-      timestamp: 'Вчера',
+      name: t('chatDemo.contacts.elena', 'Elena Petrova'),
+      lastMessage: t('chatDemo.last.confirmReceipt', 'I confirm receipt'),
+      timestamp: t('date.yesterday', 'Yesterday'),
       unread: 0
     }
   ];
@@ -58,38 +60,38 @@ export const Chat = () => {
   const messages: Message[] = [
     {
       id: 1,
-      text: 'Здравствуйте! Интересует покупка USDT',
+      text: t('chatDemo.messages.helloBuyUSDT', 'Hello! Interested in buying USDT'),
       sender: 'other',
       timestamp: '10:15',
-      senderName: 'Алексей Морозов'
+      senderName: t('chatDemo.contacts.alexey', 'Alexey Morozov')
     },
     {
       id: 2,
-      text: 'Здравствуйте! Да, есть в наличии. Какая сумма вас интересует?',
+      text: t('chatDemo.messages.helloAvailableAmount', 'Hello! Yes, available. What amount interests you?'),
       sender: 'user',
       timestamp: '10:16',
-      senderName: 'Вы'
+      senderName: t('common.you', 'You')
     },
     {
       id: 3,
-      text: 'Нужно на 50,000 рублей. Курс какой?',
+      text: t('chatDemo.messages.needAmountRate', 'I need 50,000 RUB. What is the rate?'),
       sender: 'other',
       timestamp: '10:18',
-      senderName: 'Алексей Морозов'
+      senderName: t('chatDemo.contacts.alexey', 'Alexey Morozov')
     },
     {
       id: 4,
-      text: 'Курс 94.5 рубля за USDT. Способ оплаты?',
+      text: t('chatDemo.messages.ratePaymentMethod', 'Rate is 94.5 RUB per USDT. Payment method?'),
       sender: 'user',
       timestamp: '10:20',
-      senderName: 'Вы'
+      senderName: t('common.you', 'You')
     },
     {
       id: 5,
-      text: 'Сбербанк подходит. Готов к сделке по USDT',
+      text: t('chatDemo.messages.sberbankReady', 'Sberbank works. Ready to trade USDT'),
       sender: 'other',
       timestamp: '10:30',
-      senderName: 'Алексей Морозов'
+      senderName: t('chatDemo.contacts.alexey', 'Alexey Morozov')
     }
   ];
 
@@ -116,7 +118,7 @@ export const Chat = () => {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
               type="text"
-              placeholder="Поиск чатов..."
+              placeholder={t('chatDemo.searchPlaceholder', 'Search chats...')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
@@ -170,7 +172,7 @@ export const Chat = () => {
                   </div>
                   <div>
                     <h3 className="text-sm font-medium">{selectedUser.name}</h3>
-                    <p className="text-xs text-green-600">В сети</p>
+                    <p className="text-xs text-green-600">{t('chatDemo.online', 'Online')}</p>
                   </div>
                 </div>
                 <button className="text-gray-400 hover:text-gray-200">
@@ -213,7 +215,7 @@ export const Chat = () => {
                   type="text"
                   value={messageText}
                   onChange={(e) => setMessageText(e.target.value)}
-                  placeholder="Введите сообщение..."
+                  placeholder={t('chatDemo.typeMessagePlaceholder', 'Type a message...')}
                   className="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                 />
                 <button
@@ -231,8 +233,8 @@ export const Chat = () => {
               <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
                 <User className="w-8 h-8 text-gray-400" />
               </div>
-              <h3 className="text-lg font-medium mb-2">Выберите чат</h3>
-              <p className="text-gray-400">Выберите собеседника для начала общения</p>
+              <h3 className="text-lg font-medium mb-2">{t('chatDemo.selectChatTitle', 'Select a chat')}</h3>
+              <p className="text-gray-400">{t('chatDemo.selectChatSubtitle', 'Choose a contact to start chatting')}</p>
             </div>
           </div>
         )}
