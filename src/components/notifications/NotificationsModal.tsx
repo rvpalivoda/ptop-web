@@ -64,7 +64,7 @@ export function NotificationsModal({
         className="fixed inset-0 z-[71] grid place-items-center md:p-4"
       >
         <div className="relative w-full h-full md:h-auto md:max-w-lg rounded-none md:rounded-2xl border-0 md:border border-white/10 bg-gray-900/95 md:bg-gray-900/90 backdrop-blur ring-0 md:ring-1 md:ring-white/10 shadow-2xl">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 sticky top-0 bg-gray-900/95">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 sticky top-0 bg-gray-900/95 md:rounded-t-2xl">
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium text-white/70">
                 {t('notifications.title')}
@@ -87,7 +87,7 @@ export function NotificationsModal({
             </button>
           </div>
 
-          <div className="h-[calc(100vh-48px)] md:max-h-[60vh] overflow-y-auto p-2" onScroll={handleScroll}>
+          <div className="h-[calc(100vh-48px)] md:max-h-[60vh] overflow-y-auto p-2 modal-scrollbar" onScroll={handleScroll}>
             {items.length === 0 ? (
               <div className="p-6 text-center text-white/60">
                 {t('notifications.empty')}

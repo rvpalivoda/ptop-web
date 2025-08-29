@@ -229,17 +229,30 @@ const Transactions = () => {
               }}
               className="w-full"
           >
-            <TabsList className="mb-4 inline-flex flex-nowrap whitespace-nowrap overflow-x-auto gap-2 rounded-2xl bg-white/5 p-1 ring-1 ring-white/10 backdrop-blur -mx-3 px-3 md:mx-0 md:px-1">
-              <SmartTabsTrigger value="in" icon={ArrowDownRight} className="mr-1 md:mr-[10px] md:ml-[-4px]">
+            <TabsList
+                className="
+    mb-4
+    grid grid-cols-3 gap-2            /* мобилка: три равные колонки */
+    rounded-2xl bg-white/5 p-1 ring-1 ring-white/10 backdrop-blur
+    px-3 md:px-1                      /* нужные горизонтальные отступы */
+    md:flex md:flex-nowrap            /* на больших: flex-лента слева */
+    md:justify-start
+    md:overflow-x-auto md:overflow-y-hidden md:whitespace-nowrap
+  "
+            >
+              <SmartTabsTrigger value="in" icon={ArrowDownRight}>
                 {t('transactions.incoming')}
               </SmartTabsTrigger>
-              <SmartTabsTrigger value="internal" icon={Shuffle} className="mr-1 md:mr-[10px]">
+
+              <SmartTabsTrigger value="internal" icon={Shuffle}>
                 {t('transactions.internal')}
               </SmartTabsTrigger>
-              <SmartTabsTrigger value="out" icon={ArrowUpRight} className="md:mr-[-4px]">
+
+              <SmartTabsTrigger value="out" icon={ArrowUpRight}>
                 {t('transactions.outgoing')}
               </SmartTabsTrigger>
             </TabsList>
+
 
 
             <TabsContent value="in" className="mt-0 focus:outline-none">{table}</TabsContent>

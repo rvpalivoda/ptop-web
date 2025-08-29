@@ -28,7 +28,7 @@ const btnGhost =
     'inline-flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 text-sm font-medium text-white/80 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white';
 const btnSoft =
     'inline-flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 text-sm font-medium text-white/80 ring-1 ring-white/10 hover:bg-white/10 hover:ring-white/20 transition';
-const sectionCard = 'rounded-2xl border border-white/10 bg-gray-900/60 p-4';
+const sectionCard = '  p-2';
 
 export const CreateOfferForm = ({ onClose, offer }: CreateOfferFormProps) => {
   const { t } = useTranslation();
@@ -100,6 +100,17 @@ export const CreateOfferForm = ({ onClose, offer }: CreateOfferFormProps) => {
     }
     loadBaseMethods();
   }, [newMethod.country_id, countries]);
+
+  // Мобильная нативность: блокируем прокрутку body и скрываем нижнее меню
+  useEffect(() => {
+    try { window.dispatchEvent(new CustomEvent('bottomnav-hide')); } catch {}
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      try { window.dispatchEvent(new CustomEvent('bottomnav-show')); } catch {}
+      document.body.style.overflow = prev;
+    };
+  }, []);
 
   const validate = () => {
     const e: Record<string, string> = {};
@@ -218,21 +229,27 @@ export const CreateOfferForm = ({ onClose, offer }: CreateOfferFormProps) => {
   }, [formData.paymentMethodIds, paymentMethods]);
 
   return (
-      <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4 backdrop-blur">
-         <div className="w-full max-w-2xl h-[85vh] flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 text-white shadow-2xl">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={offer ? String(t('createOffer.editTitle')) : String(t('createOffer.createTitle'))}
+        className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-2 backdrop-blur"
+        onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+      >
+         <div className="w-full sm:max-w-2xl h-[100dvh] sm:h-[85vh] flex flex-col overflow-hidden rounded-none sm:rounded-2xl border border-white/10 bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 text-white shadow-2xl">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
             <div>
                 <h2 className="text-xl md:text-2xl font-bold tracking-tight">{offer ? t('createOffer.editTitle') : t('createOffer.createTitle')}</h2>
                 <p className="mt-0.5 text-xs text-white/60">{t('createOffer.subtitle')}</p>
             </div>
-            <button onClick={onClose} className={`${btnGhost} !px-2 !py-1`} aria-label="Close">
+            <button onClick={onClose} className={`${btnGhost} !px-2 !py-1 tap-manipulation`} aria-label="Close">
               <X className="h-4 w-4" />
             </button>
           </div>
 
           {/* Form body */}
-          <form onSubmit={handleSubmit} className="max-h-[75vh] overflow-y-auto px-5 py-5 pb-0">
+          <form onSubmit={handleSubmit} className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-5 py-5 pb-0 modal-scrollbar">
             <div className="grid grid-cols-1 gap-4">
               {/* Trade type */}
               <div className={sectionCard}>
@@ -270,22 +287,22 @@ export const CreateOfferForm = ({ onClose, offer }: CreateOfferFormProps) => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                       <label className="mb-1.5 block text-xs text-white/60">{t('createOffer.price')}</label>
-                    <input type="number" inputMode="decimal" value={formData.price} onChange={(e) => setFormData({ ...formData, price: e.target.value })} className={inputBase} />
+                    <input type="number" inputMode="decimal" step="any" value={formData.price} onChange={(e) => setFormData({ ...formData, price: e.target.value })} className={inputBase} />
                     {errors.price && <p className="mt-1 text-xs text-rose-300">{errors.price}</p>}
                   </div>
                   <div>
                       <label className="mb-1.5 block text-xs text-white/60">{t('createOffer.amount')}</label>
-                    <input type="number" inputMode="decimal" value={formData.amount} onChange={(e) => setFormData({ ...formData, amount: e.target.value })} className={inputBase} />
+                    <input type="number" inputMode="decimal" step="any" value={formData.amount} onChange={(e) => setFormData({ ...formData, amount: e.target.value })} className={inputBase} />
                     {errors.amount && <p className="mt-1 text-xs text-rose-300">{errors.amount}</p>}
                   </div>
                   <div>
                       <label className="mb-1.5 block text-xs text-white/60">{t('createOffer.minAmount')}</label>
-                    <input type="number" inputMode="decimal" value={formData.minAmount} onChange={(e) => setFormData({ ...formData, minAmount: e.target.value })} className={inputBase} />
+                    <input type="number" inputMode="decimal" step="any" value={formData.minAmount} onChange={(e) => setFormData({ ...formData, minAmount: e.target.value })} className={inputBase} />
                     {errors.minAmount && <p className="mt-1 text-xs text-rose-300">{errors.minAmount}</p>}
                   </div>
                   <div>
                       <label className="mb-1.5 block text-xs text-white/60">{t('createOffer.maxAmount')}</label>
-                    <input type="number" inputMode="decimal" value={formData.maxAmount} onChange={(e) => setFormData({ ...formData, maxAmount: e.target.value })} className={inputBase} />
+                    <input type="number" inputMode="decimal" step="any" value={formData.maxAmount} onChange={(e) => setFormData({ ...formData, maxAmount: e.target.value })} className={inputBase} />
                     {errors.maxAmount && <p className="mt-1 text-xs text-rose-300">{errors.maxAmount}</p>}
                   </div>
                   <div>
@@ -392,6 +409,7 @@ export const CreateOfferForm = ({ onClose, offer }: CreateOfferFormProps) => {
                     value={formData.conditions}
                     onChange={(e) => setFormData({ ...formData, conditions: e.target.value })}
                     className={textareaBase}
+                    enterKeyHint="done"
                 />
                 {errors.conditions && <p className="mt-1 text-xs text-rose-300">{errors.conditions}</p>}
                 <div className="mt-1.5 flex items-start gap-2 text-xs text-white/60">
@@ -402,9 +420,9 @@ export const CreateOfferForm = ({ onClose, offer }: CreateOfferFormProps) => {
             </div>
 
             {/* Footer actions */}
-            <div className="sticky bottom-0 -mx-5 mt-5 flex items-center justify-end gap-2 border-t border-white/10 bg-gray-900/60 px-5 py-4 backdrop-blur m-0">
-                <button type="button" onClick={onClose} className={btnSoft}>{t('createOffer.cancel')}</button>
-                <button type="submit" className={btnPrimary}>{offer ? t('createOffer.save') : t('createOffer.create')}</button>
+            <div className="sticky bottom-0 -mx-5 mt-5 flex items-center justify-end gap-2 border-t border-white/10 bg-gray-900/60 pr-5 pl-0 pt-3 pb-safe backdrop-blur m-0">
+                <button type="button" onClick={onClose} className={`${btnSoft} tap-manipulation`}>{t('createOffer.cancel')}</button>
+                <button type="submit" className={`${btnPrimary} tap-manipulation`}>{offer ? t('createOffer.save') : t('createOffer.create')}</button>
             </div>
           </form>
         </div>

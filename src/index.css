@@ -57,3 +57,47 @@ select option {
 .chat-scrollbar:hover::-webkit-scrollbar-thumb {
     background-color: rgba(255, 255, 255, 0.26);
 }
+
+/* Стилизация скролла в модалке создания оффера */
+.modal-scrollbar {
+    /* резервируем место только под правый скроллбар */
+    scrollbar-gutter: stable;
+    /* Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(148, 163, 184, 0.45) transparent; /* slate-400 на прозрачном фоне */
+}
+.modal-scrollbar::-webkit-scrollbar {
+    width: 10px;
+}
+@media (max-width: 640px) {
+    .modal-scrollbar::-webkit-scrollbar { width: 8px; }
+}
+.modal-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.modal-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(148, 163, 184, 0.35); /* slate-400 */
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+.modal-scrollbar:hover::-webkit-scrollbar-thumb {
+    background-color: rgba(148, 163, 184, 0.5);
+}
+
+/* Мобильные улучшения */
+/* Без задержки 300ms и подсветки при тапе */
+button, [role="button"], .tap-manipulation {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+/* Безопасная зона снизу для iOS (safe-area) */
+.pb-safe {
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
+}
+
+/* Безопасная зона сверху для вырезов (notch) */
+.pt-safe {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 8px);
+}

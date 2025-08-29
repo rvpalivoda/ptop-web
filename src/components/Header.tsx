@@ -14,6 +14,7 @@ export const Header = () => {
     const {isAuthenticated, logout} = useAuth();
     const {t} = useTranslation();
     const [hidden, setHidden] = useState(false);
+    const [forcedHidden, setForcedHidden] = useState(false);
     const lastY = useRef<number>(typeof window !== 'undefined' ? window.scrollY : 0);
 
     useEffect(() => {
@@ -33,6 +34,18 @@ export const Header = () => {
         };
         window.addEventListener('scroll', onScroll, { passive: true });
         return () => window.removeEventListener('scroll', onScroll);
+    }, []);
+
+    // External control to hide/show header (e.g., mobile chat fullscreen)
+    useEffect(() => {
+        const hide = () => setForcedHidden(true);
+        const show = () => setForcedHidden(false);
+        window.addEventListener('header-hide', hide as any);
+        window.addEventListener('header-show', show as any);
+        return () => {
+            window.removeEventListener('header-hide', hide as any);
+            window.removeEventListener('header-show', show as any);
+        };
     }, []);
     const {
         items,
@@ -76,7 +89,7 @@ export const Header = () => {
                 loading={loading}
             />
 
-            <header className={`fixed inset-x-0 top-0 z-50 transition-transform duration-200 ${hidden ? '-translate-y-full' : 'translate-y-0'}`}>
+            <header className={`fixed inset-x-0 top-0 z-50 transition-transform duration-200 ${(hidden || forcedHidden) ? '-translate-y-full' : 'translate-y-0'}`}>
                 <div className="border-b border-white/10 bg-gradient-to-b from-gray-950/80 to-gray-950/70 backdrop-blur supports-[backdrop-filter]:bg-gray-900/40">
                     <div className="container mx-auto px-1">
                         <div className="flex h-14 md:h-16 items-center justify-between">

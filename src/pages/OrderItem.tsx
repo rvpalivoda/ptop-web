@@ -80,7 +80,8 @@ export default function OrderItem({
             const el = chatWrapRef.current;
             if (!el) return;
             const rect = el.getBoundingClientRect();
-            const bottomOffset = isChatTyping ? 0 : MOBILE_CTA_H;
+            // Всегда резервируем место под нижнее фиксированное меню, чтобы инпут/чат не перекрывались
+            const bottomOffset = MOBILE_CTA_H;
             const avail = window.innerHeight - rect.top - bottomOffset;
             setChatHeight(Math.max(CHAT_MIN_H, Math.floor(avail)));
         };
@@ -213,19 +214,11 @@ export default function OrderItem({
                     ? `calc(${MOBILE_CTA_H}px + env(safe-area-inset-bottom, 0px))`
                     : undefined,
             }}>
-                {/* TOP BAR: Back + breadcrumbs + status/escrow/timer */}
+                {/* TOP BAR: breadcrumbs + status/escrow/timer + back */}
                 <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-center gap-2 min-w-0">
-                        <Link
-                            to={goBackHref}
-                            className="inline-flex items-center gap-2 rounded-xl px-3 py-2 ring-1 ring-white/10 bg-white/5 hover:bg-white/10 transition"
-                        >
-                            <ArrowLeft className="w-4 h-4" />
-                            {t('orderItem.back')}
-                        </Link>
                         {order && (
                             <div className="hidden sm:flex items-center text-sm text-white/60 min-w-0">
-                                <span className="mx-2">/</span>
                                 <span className="truncate" title={pair}>{pair}</span>
                             </div>
                         )}
@@ -233,6 +226,14 @@ export default function OrderItem({
 
                     {order && (
                         <div className="inline-flex flex-wrap items-center gap-2">
+                            <Link
+                                to={goBackHref}
+                                className="inline-flex items-center gap-2 rounded-xl px-3 py-1.5 text-xs font-medium ring-1 ring-white/10 bg-white/5 hover:bg-white/10 transition"
+                                title={t('orderItem.back') as string}
+                            >
+                                <ArrowLeft className="w-4 h-4" />
+                                {t('orderItem.back')}
+                            </Link>
               <span className={cn('px-2 py-0.5 text-[11px] rounded-full font-medium capitalize', statusClass)}>
                 {t(`orderStatus.${order.status}`, order.status)}
               </span>
@@ -562,6 +563,16 @@ export default function OrderItem({
                                     sellerName={order.seller?.username ?? undefined}
                                     buyerId={order.buyerID}
                                     sellerId={order.sellerID}
+                                    orderPair={pair}
+                                    disableSend={['CANCELED','CANCELLED','RELEASED','EXPIRED'].includes(order.status)}
+                                    orderHeaderLines={[
+                                      `${order.amount} ${BASE} • ${order.price} ${QUOTE}`,
+                                      paymentMethod ? String(paymentMethod) : '',
+                                      role ? (role === 'buyer' ? String(t('orderCard.youBuy')) : String(t('orderCard.youSell'))) : ''
+                                    ].filter(Boolean) as string[]}
+                                    orderStatus={order.status}
+                                    orderExpiresAt={order.expiresAt ?? undefined}
+                                    orderEscrow={!!order.isEscrow}
                                 />
                             </div>
                         </div>

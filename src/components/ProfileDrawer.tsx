@@ -60,7 +60,7 @@ function TimezoneSelect() {
       <select
         value={tz}
         onChange={(e) => { const v = e.target.value; setTz(v); try { localStorage.setItem('app_tz', v); } catch {} }}
-        className={"h-9 px-3 w-full rounded-xl ring-1 ring-white/10 bg-white/5 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white/20"}
+        className={"h-9 px-3 w-full rounded-xl ring-1 ring-white/10 bg-white/5 text-white/90 placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white/20 text-xs font-medium"}
       >
         {zones.map(z => (
           <option key={z} value={z} className="bg-gray-900 text-white">{z}</option>

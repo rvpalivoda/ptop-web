@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ArrowLeftRight, ArrowDownUp, Clock, Star, Pencil, PowerOff, Copy } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { CreateOrderForm } from './CreateOrderForm';
@@ -31,6 +32,7 @@ export const OfferCard = ({ offer, isClientOffer, onToggle, onEdit }: OfferCardP
     const { t } = useTranslation();
     const [showOrder, setShowOrder] = useState(false);
     const { userInfo } = useAuth();
+    const navigate = useNavigate();
 
     const {
         id,
@@ -155,7 +157,10 @@ export const OfferCard = ({ offer, isClientOffer, onToggle, onEdit }: OfferCardP
                                     'flex-1 lg:flex-none rounded-xl px-4 py-2 text-sm font-semibold transition disabled:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed',
                                     type === 'buy' ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'
                                 )}
-                                onClick={() => setShowOrder(true)}
+                                onClick={() => {
+                                    if (!userInfo) { navigate('/register'); return; }
+                                    setShowOrder(true);
+                                }}
                                 disabled={isOwnOffer}
                             >
                                 {type === 'buy' ? t('offerCard.sell') : t('offerCard.buy')}

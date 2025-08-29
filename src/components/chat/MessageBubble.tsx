@@ -164,7 +164,7 @@ export function MessageBubble({
     const bubbleCorners = isMe ? 'rounded-br-md' : 'rounded-bl-md'
 
     return (
-        <div ref={containerRef} className={cn('flex w-full', isMe ? 'justify-end' : 'justify-start')}>
+        <div ref={containerRef} className={cn('flex w-full px-3 sm:px-4 md:px-6', isMe ? 'justify-end' : 'justify-start')}>
             <div className={cn(bubbleBase, isMe ? bubbleMine : bubblePeer, bubbleCorners)}>
                 {/* header (sender) */}
                 {!compact && (
