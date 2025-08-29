@@ -1,20 +1,39 @@
-import { useState } from 'react';
-import { Bell, Menu, X } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Bell } from 'lucide-react';
 import { Link, NavLink } from 'react-router-dom';
 import { useAuth } from '@/context';
 import { ProfileDrawer } from './ProfileDrawer';
 import { useTranslation } from 'react-i18next';
-import { LanguageSelect } from './LanguageSelect';
 import { NotificationsModal } from './notifications/NotificationsModal';
 import { useNotifications } from '@/hooks/useNotifications';
 /** =========================
  *  Header with notifications
  *  ========================= */
 export const Header = () => {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isNotifOpen, setIsNotifOpen] = useState(false);
     const {isAuthenticated, logout} = useAuth();
     const {t} = useTranslation();
+    const [hidden, setHidden] = useState(false);
+    const lastY = useRef<number>(typeof window !== 'undefined' ? window.scrollY : 0);
+
+    useEffect(() => {
+        const handler = () => setIsNotifOpen(true);
+        window.addEventListener('open-notifications', handler as any);
+        return () => window.removeEventListener('open-notifications', handler as any);
+    }, []);
+    useEffect(() => {
+        const onScroll = () => {
+            const y = window.scrollY;
+            const prev = lastY.current;
+            const delta = y - prev;
+            if (Math.abs(delta) > 6) {
+                setHidden(delta > 0 && y > 32);
+                lastY.current = y;
+            }
+        };
+        window.addEventListener('scroll', onScroll, { passive: true });
+        return () => window.removeEventListener('scroll', onScroll);
+    }, []);
     const {
         items,
         unreadCount,
@@ -43,13 +62,7 @@ export const Header = () => {
 
     return (
         <>
-            {isMenuOpen && (
-                <div
-                    data-testid="mobile-menu-overlay"
-                    onClick={() => setIsMenuOpen(false)}
-                    className="fixed inset-0 z-40 bg-black/80 md:hidden"
-                />
-            )}
+            {/* no mobile overlay */}
 
             {/* Notifications modal */}
             <NotificationsModal
@@ -63,10 +76,10 @@ export const Header = () => {
                 loading={loading}
             />
 
-            <header className="fixed inset-x-0 top-0 z-50">
+            <header className={`fixed inset-x-0 top-0 z-50 transition-transform duration-200 ${hidden ? '-translate-y-full' : 'translate-y-0'}`}>
                 <div className="border-b border-white/10 bg-gradient-to-b from-gray-950/80 to-gray-950/70 backdrop-blur supports-[backdrop-filter]:bg-gray-900/40">
                     <div className="container mx-auto px-1">
-                        <div className="flex h-16 items-center justify-between">
+                        <div className="flex h-14 md:h-16 items-center justify-between">
                             {/* Logo */}
                             <div className="flex items-center gap-3">
                                 <Link
@@ -91,14 +104,33 @@ export const Header = () => {
 
                             {/* Actions */}
                             <div className="flex items-center gap-2">
-                                {/* Language dropdown (desktop) */}
-                                <div className="hidden md:flex items-center mr-1">
-                                    <LanguageSelect variant="desktop" />
-                                </div>
+                <div className="md:hidden flex items-center gap-2">{isAuthenticated ? (
+                        <>
+                            <ProfileDrawer
+                                triggerClassName="inline-flex items-center gap-2 rounded-xl h-9 px-3 text-sm font-medium bg-white/5 text-white/80 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white"
+                            />
+                        </>
+                    ) : (
+                        <>
+                            <Link
+                                to="/login"
+                                className="rounded-xl h-9 px-3 pt-2 text-sm font-medium bg-white/5 text-white/80 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white"
+                            >
+                                {t('header.login')}
+                            </Link>
+                            <Link
+                                to="/register"
+                                className="rounded-xl h-9 px-3 pt-2 text-sm font-semibold bg-white/10 text-white ring-1 ring-white/10 transition hover:bg-white/20"
+                            >
+                                {t('header.register')}
+                            </Link>
+                        </>
+                    )}</div>
+                                {/* Language moved to Profile */}
                                 {isAuthenticated && (
                                     <button
                                         onClick={() => setIsNotifOpen(true)}
-                                        className="group relative rounded-xl h-9 w-9 grid place-items-center bg-white/5 text-white/80 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white"
+                                        className="hidden md:grid group relative rounded-xl h-9 w-9 place-items-center bg-white/5 text-white/80 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white"
                                         aria-label={t('notifications.open')}
                                     >
                                         <Bell size={18}/>
@@ -148,72 +180,12 @@ export const Header = () => {
                                 )}
 
                                 {/* Mobile menu */}
-                                <button
-                                    onClick={() => setIsMenuOpen(v => !v)}
-                                    className="md:hidden rounded-xl h-9 w-9 grid place-items-center bg-white/5 text-white/80 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white"
-                                    aria-label="Toggle menu"
-                                    aria-expanded={isMenuOpen}
-                                >
-                                    {isMenuOpen ? <X size={20}/> : <Menu size={20}/>}
-                                </button>
+                                {/* no hamburger menu */}
                             </div>
                         </div>
                     </div>
 
-                    {/* Mobile menu */}
-                    {isMenuOpen && (
-                        <div className="md:hidden border-t border-white/10">
-                            <div className="container mx-auto px-4 py-3">
-                                <nav className="flex flex-col gap-2">
-                                    {isAuthenticated && (
-                                        <>
-                                            <NavItem to="/adverts" label={t('header.adverts')} onClick={() => setIsMenuOpen(false)} />
-                                            <NavItem to="/orders" label={t('header.orders', 'Orders')} onClick={() => setIsMenuOpen(false)} />
-                                        </>
-                                    )}
-
-                                    {isAuthenticated ? (
-                                        <div className="mt-2 flex flex-col gap-2">
-                                            <ProfileDrawer
-                                                triggerClassName="inline-flex items-center gap-2 rounded-xl h-9 px-3 text-sm font-medium bg-white/5 text-white/80 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white [&>svg]:hidden"
-                                            />
-                                            <button
-                                                onClick={() => { logout(); setIsMenuOpen(false); }}
-                                                className="text-left rounded-xl h-9 px-3 text-sm font-medium bg-white/5 text-white/80 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white"
-                                            >
-                                                {t('profile.logout')}
-                                            </button>
-                                            {/* Language dropdown (mobile) */}
-                                            <div className="pt-1">
-                                                <LanguageSelect variant="mobile" onChangeDone={() => setIsMenuOpen(false)} />
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <div className="mt-2 flex flex-col gap-2">
-                                            <Link
-                                                to="/login"
-                                                onClick={() => setIsMenuOpen(false)}
-                                                className="rounded-xl h-9 px-3 pt-2 text-sm font-medium bg-white/5 text-white/80 ring-1 ring-white/10 transition hover:bg-white/10 hover:text-white"
-                                            >
-                                                {t('header.login')}
-                                            </Link>
-                                            <Link
-                                                to="/register"
-                                                onClick={() => setIsMenuOpen(false)}
-                                                className="rounded-xl h-9 px-3 pt-2 text-sm font-semibold bg-white/10 text-white ring-1 ring-white/10 transition hover:bg-white/20"
-                                            >
-                                                {t('header.register')}
-                                            </Link>
-                                            {/* Language dropdown (mobile) for guest */}
-                                            <div className="pt-1">
-                                                <LanguageSelect variant="mobile" onChangeDone={() => setIsMenuOpen(false)} />
-                                            </div>
-                                        </div>
-                                    )}
-                                </nav>
-                            </div>
-                        </div>
-                    )}
+                    {/* no mobile menu */}
                 </div>
             </header>
         </>

@@ -126,20 +126,25 @@ export const FilterPanel = ({
   useEffect(() => {
     if (showMobileFilters) {
       document.body.style.overflow = 'hidden';
+      try { window.dispatchEvent(new CustomEvent('bottomnav-hide')); } catch {}
     } else {
       document.body.style.overflow = '';
+      try { window.dispatchEvent(new CustomEvent('bottomnav-show')); } catch {}
     }
-    return () => { document.body.style.overflow = ''; };
+    return () => {
+      document.body.style.overflow = '';
+      try { window.dispatchEvent(new CustomEvent('bottomnav-show')); } catch {}
+    };
   }, [showMobileFilters]);
 
   return (
       <div className={WRAP}>
         {/* Мобильная панель: кнопки Filters + Create (только <lg) */}
-        <div className="flex items-center justify-between mb-3 lg:hidden">
+        <div className="flex items-center gap-2 mb-3 lg:hidden">
           <button
               type="button"
               onClick={() => setShowMobileFilters(true)}
-              className="inline-flex items-center gap-2 rounded-xl bg-white/10 hover:bg-white/20 px-3 h-9 text-sm font-medium ring-1 ring-white/10 transition"
+              className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-white/10 hover:bg-white/20 px-3 h-10 text-sm font-medium ring-1 ring-white/10 transition"
           >
             {t('filters.title')}
             {activeFiltersCount > 0 && (
@@ -153,7 +158,7 @@ export const FilterPanel = ({
               type="button"
               data-testid="create-advert"
               onClick={() => (isAuthenticated ? setShowCreateForm(true) : navigate('/login'))}
-              className={BTN_PRIMARY + ' ml-2 w-auto'}
+              className={BTN_PRIMARY + ' flex-1'}
           >
             + {t('filters.createAdvert')}
           </button>
@@ -433,5 +438,3 @@ export const FilterPanel = ({
       </div>
   );
 };
-
-

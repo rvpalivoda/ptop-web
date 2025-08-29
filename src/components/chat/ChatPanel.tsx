@@ -451,6 +451,14 @@ export function ChatPanel({
                 <div
                     className="px-2 sm:px-3 py-2 border-t border-white/10"
                     style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+                    onFocusCapture={() => { try { window.dispatchEvent(new CustomEvent('bottomnav-hide')); } catch {} }}
+                    onBlurCapture={(e) => {
+                        // вернуть нижнее меню только если фокус ушел за пределы композера
+                        const next = e.relatedTarget as Node | null
+                        if (!e.currentTarget.contains(next)) {
+                          try { window.dispatchEvent(new CustomEvent('bottomnav-show')); } catch {}
+                        }
+                    }}
                 >
                 {!!error && (
                     <div className="mb-2 flex items-center gap-2 rounded-lg bg-red-500/10 px-3 py-2 text-xs text-red-300 ring-1 ring-red-500/20">

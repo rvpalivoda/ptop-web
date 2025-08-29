@@ -155,7 +155,7 @@ const Balance = () => {
 
   return (
       <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 text-white">
-        <div className="container mx-auto px-4 pt-24 pb-8">
+        <div className="container mx-auto px-3 pt-16 md:pt-24 pb-24 md:pb-8">
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{t('header.balance')}</h1>
           <p className="mt-1 mb-5 text-sm text-white/60">{t('balance.subtitle')}</p>
           {content}

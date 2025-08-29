@@ -18,8 +18,8 @@ export function LanguageSelect({ variant = 'desktop', className, onChangeDone }:
 
   const classes =
     variant === 'desktop'
-      ? 'h-9 px-2 rounded-md text-xs font-medium ring-1 ring-white/10 bg-white/5 text-white/90 hover:bg-white/10 focus:outline-none '
-      : 'h-9 px-2 rounded-md text-xs font-medium ring-1 ring-white/10 bg-white/5 text-white/90 hover:bg-white/10 focus:outline-none w-full ';
+      ? 'h-9 px-3 rounded-xl text-xs font-medium ring-1 ring-white/10 bg-white/5 text-white/90 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/20'
+      : 'h-9 px-3 rounded-xl text-xs font-medium ring-1 ring-white/10 bg-white/5 text-white/90 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/20 w-full';
 
   const handleChange = (lng: string) => {
     const base = (lng || 'en').split('-')[0];
@@ -46,4 +46,3 @@ export function LanguageSelect({ variant = 'desktop', className, onChangeDone }:
     </div>
   );
 }
-

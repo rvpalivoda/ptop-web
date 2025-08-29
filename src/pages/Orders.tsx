@@ -42,16 +42,16 @@ const Orders = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 text-white" data-testid="orders-page">
-      <div className="container mx-auto px-4 pt-24 pb-8">
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-bold">{title}</h1>
-          <div className="inline-flex rounded-2xl bg-white/5 p-1 ring-1 ring-white/10">
+      <div className="container mx-auto px-3 pt-16 md:pt-24 pb-24 md:pb-8">
+        <div className="flex items-center justify-between mb-3 md:mb-4">
+          <h1 className="hidden md:block text-2xl font-bold">{title}</h1>
+          <div className="inline-flex w-full md:w-auto rounded-2xl bg-white/5 p-1 ring-1 ring-white/10">
             <button
               type="button"
               onClick={() => setMode('offerOwner')}
               aria-pressed={mode === 'offerOwner'}
               className={[
-                'rounded-2xl px-3 h-9 text-sm font-medium transition',
+                'rounded-2xl px-3 h-9 text-sm font-medium transition w-1/2 md:w-auto',
                 mode === 'offerOwner' ? 'bg-white/15 text-white' : 'text-white/80 hover:bg-white/10',
               ].join(' ')}
             >
@@ -62,7 +62,7 @@ const Orders = () => {
               onClick={() => setMode('author')}
               aria-pressed={mode === 'author'}
               className={[
-                'rounded-2xl px-3 h-9 text-sm font-medium transition',
+                'rounded-2xl px-3 h-9 text-sm font-medium transition w-1/2 md:w-auto',
                 mode === 'author' ? 'bg-white/15 text-white' : 'text-white/80 hover:bg-white/10',
               ].join(' ')}
             >

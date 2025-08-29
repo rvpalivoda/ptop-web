@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import QRCode from 'react-qr-code';
+import { LanguageSelect } from './LanguageSelect';
 import {
   enable2fa,
   disable2fa,
@@ -39,6 +40,35 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { clearTwoFactorEnabled, loadTwoFactorEnabled, saveTwoFactorEnabled } from '@/storage/two_factor';
 
 interface Props { triggerClassName?: string }
+
+function TimezoneSelect() {
+  const { t } = useTranslation();
+  const [tz, setTz] = useState<string>(() => {
+    try { return localStorage.getItem('app_tz') || Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'; } catch { return 'UTC'; }
+  });
+  const zones = (() => {
+    const fallback = ['UTC','Europe/London','Europe/Berlin','Europe/Moscow','Asia/Dubai','Asia/Almaty','Asia/Tokyo','Asia/Shanghai','Asia/Kolkata','America/New_York','America/Chicago','America/Denver','America/Los_Angeles','America/Sao_Paulo','Australia/Sydney'];
+    try {
+      // @ts-ignore
+      if (typeof Intl.supportedValuesOf === 'function') return (Intl as any).supportedValuesOf('timeZone') as string[];
+    } catch {}
+    return fallback;
+  })();
+  return (
+    <div>
+      <div className="text-[11px] text-white/60 mb-1">{t('profile.localeSection.timezone', { defaultValue: 'Time zone' })}</div>
+      <select
+        value={tz}
+        onChange={(e) => { const v = e.target.value; setTz(v); try { localStorage.setItem('app_tz', v); } catch {} }}
+        className={"h-9 px-3 w-full rounded-xl ring-1 ring-white/10 bg-white/5 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white/20"}
+      >
+        {zones.map(z => (
+          <option key={z} value={z} className="bg-gray-900 text-white">{z}</option>
+        ))}
+      </select>
+    </div>
+  );
+}
 
 const inputBase =
     'w-full px-3.5 py-2.5 bg-white/5 text-white placeholder-white/40 rounded-xl ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-white/20 transition';
@@ -329,7 +359,7 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
         </SheetTrigger>
         <SheetContent
             side="right"
-            className="text-white h-full bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 border-l border-white/10 p-0"
+            className="text-white h-full bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 border-l border-white/10 p-0 overflow-y-auto"
             onEscapeKeyDown={(e) => e.preventDefault()}
             onInteractOutside={(e) => e.preventDefault()}
         >
@@ -397,13 +427,27 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
             </div>
           </div>
 
+          {/* Locale & Timezone */}
+          <div className="px-5 py-4 border-b border-white/10">
+            <div className="mb-2 text-xs uppercase tracking-wide text-white/60">{t('profile.localeSection.title', { defaultValue: 'Locale & Timezone' })}</div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {/* Language */}
+              <div>
+                <div className="text-[11px] text-white/60 mb-1">{t('profile.localeSection.language', { defaultValue: 'Language' })}</div>
+                <LanguageSelect variant="mobile" />
+              </div>
+              {/* Timezone */}
+              <TimezoneSelect />
+            </div>
+          </div>
+
 
 
 
           {/* Body */}
           <div className="flex h-[calc(100%-152px)] flex-col overflow-y-auto px-5 py-5 gap-4">
             <div>
-              <div className="mb-3 text-sm font-semibold uppercase tracking-wide text-white/60">{t('profile.personalSettings')}</div>
+              <div className="mb-2 text-xs uppercase tracking-wide text-white/60">{t('profile.personalSettings')}</div>
               <div className="grid gap-2">
                 <Dialog open={showPaymentMethodsDialog} onOpenChange={setShowPaymentMethodsDialog}>
                   <DialogTrigger asChild>
@@ -454,7 +498,7 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
             </div>
             {/* Security actions  <div className={card}> */}
             <div>
-              <div className="mb-3 text-sm font-semibold uppercase tracking-wide text-white/60">{t('profile.security')}</div>
+              <div className="mb-2 text-xs uppercase tracking-wide text-white/60">{t('profile.security')}</div>
               <div className="grid gap-2  ">
                 <Dialog open={showPwdDialog} onOpenChange={setShowPwdDialog}>
                   <DialogTrigger asChild>
@@ -609,26 +653,6 @@ export const ProfileDrawer = ({ triggerClassName }: Props) => {
             {/* Tips / Docs  className={card}*/}
             <div >
               <div className="text-sm text-white/70">{t('profile.tip')}</div>
-            </div>
-          </div>
-
-          {/* Finance section: Wallet & Transactions */}
-          <div className="px-5 py-4 border-b border-white/10">
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => navigate('/balance')}
-                className="rounded-xl bg-white/5 px-3 py-2 text-sm font-medium ring-1 ring-white/10 hover:bg-white/10 hover:ring-white/20 transition text-left"
-              >
-                {t('profile.walletSection.wallet', { defaultValue: 'Wallet' })}
-              </button>
-              <button
-                type="button"
-                onClick={() => navigate('/transactions')}
-                className="rounded-xl bg-white/5 px-3 py-2 text-sm font-medium ring-1 ring-white/10 hover:bg-white/10 hover:ring-white/20 transition text-left"
-              >
-                {t('profile.walletSection.transactions', { defaultValue: 'Transactions' })}
-              </button>
             </div>
           </div>
 

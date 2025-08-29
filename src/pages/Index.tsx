@@ -17,12 +17,12 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 text-white">
-      <div className="container mx-auto px-2 pt-4 sm:pt-6">
+      <div className="container mx-auto px-3 pt-4 sm:pt-6 pb-24 md:pb-8">
         {/* Trading
         <TradingStats />
         Stats */}
         {/* Main Content */}
-        <div className="mt-16">
+        <div className="mt-12 md:mt-16">
           {/* <div className="bg-gray-800 rounded-lg p-6">*/}
           <div>
             <FilterPanel

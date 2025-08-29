@@ -140,7 +140,12 @@
       "wallet": "Кошелёк",
       "transactions": "Транзакции"
     },
-    "finance": "Финансы"
+    "finance": "Финансы",
+    "localeSection": {
+      "title": "Локаль и Временная зона",
+      "language": "Язык",
+      "timezone": "Часовой пояс"
+    }
   },
   "filters": {
     "title": "Фильтры",
@@ -226,7 +231,8 @@
     "languages": {
       "en": "Английский",
       "ru": "Русский"
-    }
+    },
+    "market": "Маркет"
   },
   "date": {
     "today": "Сегодня",

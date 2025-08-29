@@ -207,7 +207,7 @@ export default function OrderItem({
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 text-white">
             {/* Global navigation similar to list */}
-            <div className="container mx-auto px-4 pt-24 pb-8" style={{
+            <div className="container mx-auto px-3 pt-16 md:pt-24 pb-24 md:pb-8" style={{
                 // keep extra space for fixed bar to avoid overlap
                 paddingBottom: order
                     ? `calc(${MOBILE_CTA_H}px + env(safe-area-inset-bottom, 0px))`

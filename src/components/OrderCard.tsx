@@ -234,18 +234,18 @@ export function OrderCard({ order, currentUserID, onOpen }: Props) {
           </div>
 
           {/* PAIR BANNER — крупная пара и формула */}
-          <div className="mt-3 w-full rounded-lg bg-white/5 ring-1 ring-white/10 px-3 py-2.5 flex items-center gap-3">
+          <div className="mt-3 w-full rounded-lg bg-white/5 ring-1 ring-white/10 px-3 py-2 flex items-center gap-2">
             {/* Pair ticker */}
-            <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-bold tracking-tight">{BASE}</span>
-              <span className="text-xl text-white/60">/</span>
-              <span className="text-xl font-semibold text-white/90">{QUOTE}</span>
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-lg md:text-2xl font-bold tracking-tight">{BASE}</span>
+              <span className="text-base md:text-xl text-white/60">/</span>
+              <span className="text-base md:text-xl font-semibold text-white/90">{QUOTE}</span>
             </div>
 
             {/* Direction pill by YOUR role */}
             <div
                 className={cn(
-                    'ml-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs ring-1 ring-white/10',
+                    'ml-2 inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-[10px] md:text-xs ring-1 ring-white/10',
                     role === 'buyer' ? 'bg-red-500/15 text-red-300' : 'bg-green-500/15 text-green-300'
                 )}
                 title={youAction as string}
@@ -255,10 +255,10 @@ export function OrderCard({ order, currentUserID, onOpen }: Props) {
             </div>
 
             {/* Formula */}
-            <div className="ml-auto text-sm sm:text-base text-white/80">
-              <span className="font-medium">1 {BASE}</span>
-              <span className="mx-2 opacity-70">≈</span>
-              <span className="font-semibold">{price} {QUOTE}</span>
+            <div className="ml-auto text-right text-xs md:text-sm text-white/80">
+              <span className="font-medium whitespace-nowrap">1 {BASE}</span>
+              <span className="mx-1 md:mx-2 opacity-70">≈</span>
+              <span className="font-semibold whitespace-nowrap">{price} {QUOTE}</span>
             </div>
           </div>
 
@@ -307,9 +307,9 @@ export function OrderCard({ order, currentUserID, onOpen }: Props) {
             </div>
           </div>
 
-          {/* FOOTER: подсказка + открыть */}
-          <div className="mt-4 flex items-center justify-between gap-3">
-            <div className="text-xs text-white/50">
+          {/* FOOTER: tip + open (mobile-friendly) */}
+          <div className="mt-3 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
+            <div className="text-xs text-white/50 order-2 sm:order-1">
               {kind === 'my-deal'
                   ? t('orderCard.tipMyDeal')
                   : t('orderCard.tipAdDeal')}
@@ -317,7 +317,7 @@ export function OrderCard({ order, currentUserID, onOpen }: Props) {
             <button
                 type="button"
                 onClick={handleOpen}
-                className="inline-flex items-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-medium ring-1 ring-white/10 bg-white/5 hover:bg-white/10 transition"
+                className="order-1 sm:order-2 inline-flex items-center justify-center gap-2 rounded-2xl px-3 py-2 text-sm font-medium ring-1 ring-white/10 bg-white/5 hover:bg-white/10 transition w-full sm:w-auto"
             >
               <ExternalLink className="w-4 h-4" />
               {t('orderCard.open')}

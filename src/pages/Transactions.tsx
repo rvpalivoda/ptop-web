@@ -27,10 +27,11 @@ const statusTones: Record<string, StatusTone> = {
   canceled: { bg: 'bg-gray-500/10', text: 'text-gray-300', ring: 'ring-gray-500/30' },
 };
 
-const formatDate = (d: string | number | Date, locale?: string) =>
+const formatDate = (d: string | number | Date, locale?: string, timeZone?: string) =>
     new Intl.DateTimeFormat(locale ?? undefined, {
       year: 'numeric', month: 'short', day: '2-digit',
       hour: '2-digit', minute: '2-digit',
+      timeZone,
     }).format(new Date(d));
 
 const formatAmount = (n: number | string, locale?: string) => {
@@ -68,7 +69,7 @@ const Pill = ({ status }: { status: string }) => {
 const SmartTabsTrigger = ({ value, children, icon: Icon, className = '' }: { value: TabKey; children: React.ReactNode; icon: any; className?: string }) => (
     <TabsTrigger
         value={value}
-        className={`group relative overflow-hidden rounded-2xl px-4 py-2.5 text-sm font-medium text-white/80 ring-1 ring-white/10 transition-all data-[state=active]:text-white data-[state=active]:shadow data-[state=active]:ring-white/20 data-[state=active]:bg-white/10 hover:text-white hover:ring-white/20 ${className}`}
+        className={`group relative overflow-hidden rounded-2xl px-3 py-2 md:px-4 md:py-2.5 text-xs md:text-sm font-medium text-white/80 ring-1 ring-white/10 transition-all data-[state=active]:text-white data-[state=active]:shadow data-[state=active]:ring-white/20 data-[state=active]:bg-white/10 hover:text-white hover:ring-white/20 ${className}`}
     >
     <span className="inline-flex items-center gap-2">
       <Icon className="h-4 w-4 opacity-80" />
@@ -104,6 +105,7 @@ const Transactions = () => {
   const canNext = items.length === LIMIT;
 
   const locale = i18n.language;
+  const tz = (typeof window !== 'undefined' && localStorage.getItem('app_tz')) || undefined;
 
   const table = useMemo(() => {
     if (error) {
@@ -165,8 +167,8 @@ const Transactions = () => {
                       <td className="px-4 py-3 font-mono text-xs text-white/80 break-all">{tx.id}</td>
                       <td className="px-4 py-3">{tx.assetName}</td>
                       <td className="px-4 py-3"><Pill status={tx.status} /></td>
-                      <td className="px-4 py-3 text-white/80">{formatDate(tx.createdAt, locale)}</td>
-                      <td className="px-4 py-3 text-white/80">{formatDate(tx.updatedAt, locale)}</td>
+                      <td className="px-4 py-3 text-white/80">{formatDate(tx.createdAt, locale, tz)}</td>
+                      <td className="px-4 py-3 text-white/80">{formatDate(tx.updatedAt, locale, tz)}</td>
                       <td className="px-4 py-3 text-right font-medium">{formatAmount(tx.amount as any, locale)}</td>
                     </tr>
                 ))}
@@ -190,9 +192,9 @@ const Transactions = () => {
                     <div className="text-white/60">{t('transactions.asset')}</div>
                     <div className="text-white/90 text-right">{tx.assetName}</div>
                     <div className="text-white/60">{t('transactions.createdAt')}</div>
-                    <div className="text-white/90 text-right">{formatDate(tx.createdAt, locale)}</div>
+                    <div className="text-white/90 text-right">{formatDate(tx.createdAt, locale, tz)}</div>
                     <div className="text-white/60">{t('transactions.updatedAt')}</div>
-                    <div className="text-white/90 text-right">{formatDate(tx.updatedAt, locale)}</div>
+                    <div className="text-white/90 text-right">{formatDate(tx.updatedAt, locale, tz)}</div>
                     <div className="text-white/60">{t('transactions.amount')}</div>
                     <div className="text-white/90 text-right">{formatAmount(tx.amount as any, locale)}</div>
                   </div>
@@ -210,11 +212,11 @@ const Transactions = () => {
 
   return (
       <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 text-white">
-        <div className="container mx-auto px-4 pt-24 pb-10">
-          <div className="mb-6 flex items-end justify-between gap-4">
+        <div className="container mx-auto px-3 pt-16 md:pt-24 pb-24 md:pb-10">
+          <div className="mb-4 md:mb-6 flex items-end justify-between gap-4">
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{t('header.transactions')}</h1>
-              <p className="mt-1 text-sm text-white/60">{t('transactions.subtitle')}</p>
+              <h1 className="hidden md:block text-3xl font-bold tracking-tight">{t('header.transactions')}</h1>
+              <p className="hidden md:block mt-1 text-sm text-white/60">{t('transactions.subtitle')}</p>
             </div>
           </div>
 
@@ -227,11 +229,11 @@ const Transactions = () => {
               }}
               className="w-full"
           >
-            <TabsList className="mb-5 inline-flex flex-wrap gap-2 rounded-2xl bg-white/5 p-1 ring-1 ring-white/10 backdrop-blur">
-              <SmartTabsTrigger value="in" icon={ArrowDownRight} className="mr-2 md:mr-[10px] md:ml-[-4px]">
+            <TabsList className="mb-4 inline-flex flex-nowrap whitespace-nowrap overflow-x-auto gap-2 rounded-2xl bg-white/5 p-1 ring-1 ring-white/10 backdrop-blur -mx-3 px-3 md:mx-0 md:px-1">
+              <SmartTabsTrigger value="in" icon={ArrowDownRight} className="mr-1 md:mr-[10px] md:ml-[-4px]">
                 {t('transactions.incoming')}
               </SmartTabsTrigger>
-              <SmartTabsTrigger value="internal" icon={Shuffle} className="mr-2 md:mr-[10px]">
+              <SmartTabsTrigger value="internal" icon={Shuffle} className="mr-1 md:mr-[10px]">
                 {t('transactions.internal')}
               </SmartTabsTrigger>
               <SmartTabsTrigger value="out" icon={ArrowUpRight} className="md:mr-[-4px]">

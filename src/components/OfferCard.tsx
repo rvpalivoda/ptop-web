@@ -166,18 +166,18 @@ export const OfferCard = ({ offer, isClientOffer, onToggle, onEdit }: OfferCardP
 
                 {/* ROW 2: PAIR BANNER — big pair ticker, direction, formula */}
                 <div className="px-4 lg:px-3 pb-2">
-                    <div className="w-full rounded-lg bg-white/5 ring-1 ring-white/10 px-3 py-2.5 flex items-center gap-3">
+                    <div className="w-full rounded-lg bg-white/5 ring-1 ring-white/10 px-3 py-2 flex items-center gap-2">
                         {/* Pair ticker */}
-                        <div className="flex items-baseline gap-2">
-                            <span className="text-2xl font-bold tracking-tight">{BASE}</span>
-                            <span className="text-xl text-white/60">/</span>
-                            <span className="text-xl font-semibold text-white/90">{QUOTE}</span>
+                        <div className="flex items-baseline gap-1.5">
+                            <span className="text-lg md:text-2xl font-bold tracking-tight">{BASE}</span>
+                            <span className="text-base md:text-xl text-white/60">/</span>
+                            <span className="text-base md:text-xl font-semibold text-white/90">{QUOTE}</span>
                         </div>
 
                         {/* Direction pill */}
                         <div
                             className={cn(
-                                'ml-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs ring-1 ring-white/10',
+                                'ml-2 inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-[10px] md:text-xs ring-1 ring-white/10',
                                 type === 'buy' ? 'bg-red-500/15 text-red-300' : 'bg-green-500/15 text-green-300'
                             )}
                             title={sideLabel as string}
@@ -187,10 +187,10 @@ export const OfferCard = ({ offer, isClientOffer, onToggle, onEdit }: OfferCardP
                         </div>
 
                         {/* Formula */}
-                        <div className="ml-auto text-sm sm:text-base text-white/80">
-                            <span className="font-medium">1 {BASE}</span>
-                            <span className="mx-2 opacity-70">≈</span>
-                            <span className="font-semibold">{price} {QUOTE}</span>
+                        <div className="ml-auto text-right text-xs md:text-sm text-white/80">
+                            <span className="font-medium whitespace-nowrap">1 {BASE}</span>
+                            <span className="mx-1 md:mx-2 opacity-70">≈</span>
+                            <span className="font-semibold whitespace-nowrap">{price} {QUOTE}</span>
                         </div>
                     </div>
                 </div>

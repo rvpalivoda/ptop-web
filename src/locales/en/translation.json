@@ -11,7 +11,8 @@
     "adDeals": "Ad Deals",
     "transactions": "Transactions",
     "escrow": "Escrow",
-    "orders": "Orders"
+    "orders": "Orders",
+    "messages": "Messages"
   },
   "balance": {
     "getAddress": "Get address",
@@ -140,7 +141,12 @@
       "wallet": "Wallet",
       "transactions": "Transactions"
     },
-    "finance": "Finance"
+    "finance": "Finance",
+    "localeSection": {
+      "title": "Locale & Timezone",
+      "language": "Language",
+      "timezone": "Time zone"
+    }
   },
   "filters": {
     "title": "Filters",
@@ -222,6 +228,7 @@
     "dismiss": "Dismiss",
     "enabled": "enabled",
     "disabled": "disabled",
+    "market": "Market",
     "language": "Language",
     "languages": {
       "en": "English",
