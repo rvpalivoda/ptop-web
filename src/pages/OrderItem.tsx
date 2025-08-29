@@ -435,50 +435,7 @@ export default function OrderItem({
                 )}
             </div>
 
-            {/* Sticky mobile CTA bar (p2p стандарт UX) */}
-            {order && !isChatTyping && (
-                <div className="fixed inset-x-0 bottom-0 z-30 border-t border-white/10 bg-gray-900/90 backdrop-blur supports-[backdrop-filter]:bg-gray-900/70 p-3 sm:hidden"  style={{
-                    // фиксируем высоту, чтобы корректно рассчитать отступы
-                    height: `calc(${MOBILE_CTA_H}px + env(safe-area-inset-bottom, 0px))`,
-                    paddingBottom: 'env(safe-area-inset-bottom, 0px)',
-                }}>
-                    <div className="container mx-auto px-1 flex items-center justify-between gap-2">
-                        <div className="text-xs text-white/70">
-                            <div className="font-medium">{pair}</div>
-                            <div className="flex items-center gap-1">
-                                <Clock className="w-3.5 h-3.5" />
-                                {order.expiresAt ? (
-                                    isExpired ? (
-                                        <span className="text-rose-300">{t('orderCard.expired', 'Expired')}</span>
-                                    ) : (
-                                        <span>
-                      {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
-                    </span>
-                                    )
-                                ) : (
-                                    <span className="opacity-70">{t('orderCard.noExpiry', 'No expiry')}</span>
-                                )}
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <button
-                                type="button"
-                                onClick={() => navigate(`/orders/${order.id}`, { state: { background: location } })}
-                                className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium ring-1 ring-white/10 bg-emerald-500/20 hover:bg-emerald-500/25 transition"
-                            >
-                                {t('orderCard.open', 'Open order')}
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => navigate(goBackHref)}
-                                className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium ring-1 ring-white/10 bg-white/5 hover:bg-white/10 transition"
-                            >
-                                <ArrowLeft className="w-4 h-4" />
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            {/* Sticky mobile CTA bar — отключен, чтобы не перекрывать отправку сообщений */}
         </div>
     );
 }
